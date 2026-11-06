@@ -4,7 +4,7 @@ Show any multi-agent system's team live in the **MAS Office** panel — an anima
 where every agent has a desk. This package emits [MAS Office protocol](../../spec/README.md)
 events, runs the reference reducer and writes the snapshots the panel reads.
 
-- Python ≥ 3.9, **zero runtime dependencies**
+- Python ≥ 3.10, **zero runtime dependencies**
 - Two transports: files (works with the `file://` panel) or HTTP (`mas-office serve`)
 - Thread-safe: agents in threads can share one `Office`
 - Experimental integrations for the OpenAI Agents SDK, LangGraph and the Claude Agent SDK

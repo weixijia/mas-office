@@ -24,7 +24,7 @@ MAS Office does not run your agents. Your framework does. MAS Office gives them 
 
 ## Quick start
 
-> The first tagged release is not on npm / PyPI yet — until then, run from source (Node ≥ 18; Python ≥ 3.9 for the Python SDK). Below, `mas-office` means `node packages/cli/bin/mas-office.js`.
+> The first tagged release is not on npm / PyPI yet — until then, run from source (Node ≥ 18; Python ≥ 3.10 for the Python SDK). Below, `mas-office` means `node packages/cli/bin/mas-office.js`.
 
 ```bash
 git clone https://github.com/weixijia/mas-office && cd mas-office

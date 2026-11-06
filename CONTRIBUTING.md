@@ -15,7 +15,7 @@ By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 | `spec/` | The protocol (`README.md`), JSON Schemas, conformance cases, RFCs | Markdown + JSON |
 | `packages/js/` | `@mas-office/sdk` — reducer, file + HTTP transports | Node ≥ 18, `node:test` |
 | `packages/cli/` | `mas-office` — `serve`, `validate`, `init`, `reduce`, `export`, `hook`, `demo` | Node ≥ 18, `node:test` |
-| `packages/python/` | `mas-office` on PyPI — reducer, transports, framework integrations | Python ≥ 3.9, `pytest` |
+| `packages/python/` | `mas-office` on PyPI — reducer, transports, framework integrations | Python ≥ 3.10, `pytest` |
 | `panel/` | The office panel (vanilla JS, no build) | `node panel/tests/model.test.js` |
 | `kit/` | No-code mode: `AGENTS.md` + `harness/` for AI coding assistants | Markdown |
 | `examples/` | Finished example workspaces (must pass `mas-office validate`) | data |
