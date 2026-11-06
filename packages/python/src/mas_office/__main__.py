@@ -13,8 +13,8 @@ from .reducer import reduce, split_lines
 
 
 def _viewer_hint(workspace: Path) -> str:
-    """The command that opens the panel (run it from a clone of the mas-office repo)."""
-    return f"node packages/cli/bin/mas-office.js serve {workspace.resolve()} --open"
+    """The command that opens the panel (the `mas-office` npm package, Node >= 18)."""
+    return f"npx mas-office serve {workspace.resolve()} --open"
 
 
 def _demo(args: argparse.Namespace) -> int:
@@ -22,10 +22,10 @@ def _demo(args: argparse.Namespace) -> int:
 
     workspace = Path(args.workspace)
     print(f"Simulating a 5-agent team in {workspace / 'headphone-deals'} (about {30 / args.speed:.0f} s)…")
-    print(f"Watch it live (from your mas-office clone):  {_viewer_hint(workspace)}")
+    print(f"Watch it live:  {_viewer_hint(workspace)}")
     project = run_demo(str(workspace), speed=args.speed)
     print(f"Done. Event log: {project / 'mas' / 'events.jsonl'}")
-    print(f"View it (from your mas-office clone):        {_viewer_hint(workspace)}")
+    print(f"View it:        {_viewer_hint(workspace)}")
     return 0
 
 
@@ -44,7 +44,7 @@ def _reduce(args: argparse.Namespace) -> int:
     state = snapshot["state"]
     print(f"Wrote snapshots for {len(snapshot['statuses'])} agents in {project} "
           f"(run {state['run']}, phase {state['phase']}).")
-    print(f"View it (from your mas-office clone): {_viewer_hint(project.parent)}")
+    print(f"View it: {_viewer_hint(project.parent)}")
     return 0
 
 

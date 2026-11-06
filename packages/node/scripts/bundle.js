@@ -1,4 +1,4 @@
-// prepack: copy the panel, the JSON Schemas and the kit into this package so that
+// prepack: copy the panel, the JSON Schemas, the kit and the LICENSE into this package so that
 // `npm pack` / `npm publish` ship them. postpack (`--clean`) removes the copies again.
 
 import fs from 'node:fs';
@@ -11,6 +11,7 @@ const COPIES = [
   ['panel', 'panel'],
   ['spec/schemas', 'schemas'],
   ['kit', 'kit'],
+  ['LICENSE', 'LICENSE'],
 ];
 
 for (const [from, to] of COPIES) {

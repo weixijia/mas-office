@@ -1,52 +1,64 @@
 <div align="center">
 
+<img src="docs/assets/logo.svg" alt="MAS Office logo" width="96">
+
 # MAS Office
 
-**See your multi-agent system work.** A framework-agnostic protocol and a live, animated office for AI agent teams.
+### Watch your AI agents work — live, in a little office.
+
+An open protocol and an animated office panel for **any** multi-agent system:<br>
+OpenAI Agents SDK · LangGraph · Claude Agent SDK · Claude Code · your own Python or JS.
 
 [![CI](https://github.com/weixijia/mas-office/actions/workflows/ci.yml/badge.svg)](https://github.com/weixijia/mas-office/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Protocol](https://img.shields.io/badge/protocol-v0.1%20draft-orange.svg)](spec/README.md)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![npm](https://img.shields.io/npm/v/mas-office?color=E04E2A&label=npm)](https://www.npmjs.com/package/mas-office)
+[![License: MIT](https://img.shields.io/badge/license-MIT-2B57B5.svg)](LICENSE)
+[![Protocol v0.1](https://img.shields.io/badge/protocol-v0.1-D89A12.svg)](spec/README.md)
+[![Zero dependencies](https://img.shields.io/badge/dependencies-0-5E8C57.svg)](#-why-mas-office)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-1F8A84.svg)](CONTRIBUTING.md)
+[![GitHub stars](https://img.shields.io/github/stars/weixijia/mas-office?style=social)](https://github.com/weixijia/mas-office/stargazers)
 
-<img src="docs/assets/office.png" alt="The MAS Office panel: agents at desks in an axonometric office, with a title block listing the team and the live activity feed" width="900">
+[**Quick start**](#-quick-start) · [**Integrations**](#-plug-in-your-framework) · [**Protocol**](spec/README.md) · [**Docs**](docs/) · [**Roadmap**](ROADMAP.md) · [**Contributing**](CONTRIBUTING.md) · [**中文**](README.zh-CN.md)
+
+<img src="docs/assets/demo.gif" alt="MAS Office demo: two finder agents search in parallel, a budget checker raises a flag, a planner takes over, and the team celebrates when the result is ready" width="900">
 
 </div>
 
-Every agent gets a desk. When it works, searches, hands over, raises a flag or fails, the drawing changes — live. When the run is done, the result opens beside it, with every claim linked to its source.
+---
 
-MAS Office does not run your agents. Your framework does. MAS Office gives them a **small, written-down protocol** to report what they are doing, and a **panel** that turns it into a picture people actually look at.
+Multi-agent systems are hard to *see*. Logs scroll past, traces nest ten levels deep, and nobody outside the engineering team can tell which agent is stuck, who handed what to whom, or what the checker just caught.
 
-- **Any producer.** OpenAI Agents SDK, LangGraph, Claude Agent SDK, Claude Code, your own Python or JS — or an AI coding assistant that only knows how to write files.
-- **Zero dependencies.** The SDKs and CLI use only the standard library. The panel is plain HTML/JS with no build step and opens from `file://`.
-- **Files are the interface.** An append-only `events.jsonl` per project, reduced deterministically into snapshots. Replay, diff, commit or attach them to a bug report.
-- **Aligned with the standards.** Event types map to [AG-UI](https://docs.ag-ui.com), [OpenTelemetry GenAI](https://opentelemetry.io/docs/specs/semconv/gen-ai/) and [A2A](https://a2a-protocol.org) task states.
+**MAS Office gives every agent a desk.** When an agent works, uses a tool, hands over, raises a flag or fails, the drawing changes in real time. When the run is done, the result opens beside it — with every claim linked to its source. Your framework still runs the agents; MAS Office is the window into the room.
 
-## Quick start
+```bash
+npx mas-office demo        # 30 seconds, no API key, nothing to set up
+```
 
-Node ≥ 18:
+## ✨ Why MAS Office
+
+| | |
+|---|---|
+| 🏢 **A picture, not a log** | Desks, handoff paths, parallel stages, flags and a lounge for agents that are done. Readable at a glance — by your PM, your class, or you at 2 a.m. |
+| 🔌 **Any framework, three lines** | Drop-in integrations for the OpenAI Agents SDK, LangGraph, the Claude Agent SDK and Claude Code hooks. Everything else speaks the [protocol](spec/README.md). |
+| 🪶 **Zero dependencies** | The npm and Python packages use only the standard library. No account, no database, no cloud. The panel is plain HTML and even opens from `file://`. |
+| 📜 **An open, versioned protocol** | 18 event types mapped to [AG-UI](https://docs.ag-ui.com), [OpenTelemetry GenAI](https://opentelemetry.io/docs/specs/semconv/gen-ai/) and [A2A](https://a2a-protocol.org). A deterministic reducer, JSON Schemas, and conformance cases that both reference SDKs must pass. |
+| ⏪ **Runs you can replay** | Each project is an append-only `events.jsonl`. Replay it, diff it, commit it, attach it to a bug report. |
+| 🤖 **No-code mode** | Give `AGENTS.md` to Claude Code, Codex, Gemini CLI or Antigravity: the assistant designs a team with you and runs each role as a real subagent while the office shows it. |
+
+## 🚀 Quick start
+
+**See it** (Node ≥ 18):
 
 ```bash
 npx mas-office demo
 ```
 
-Or from source:
+A five-agent team plans a weekend in Lisbon: two finders search in parallel, a budget checker catches a problem, a planner takes over, a helper is spawned at runtime, and the lead writes the result.
+
+**Use it from Python** (≥ 3.10; PyPI release coming soon):
 
 ```bash
-git clone https://github.com/weixijia/mas-office && cd mas-office
-npm install
-node packages/node/bin/mas-office.js demo
+pip install "mas-office @ git+https://github.com/weixijia/mas-office#subdirectory=packages/python"
 ```
-
-In a clone, `mas-office` below means `node packages/node/bin/mas-office.js`. The Python SDK (Python ≥ 3.10) is not on PyPI yet — install it from a clone.
-
-A browser opens with a five-agent team: two finders search in parallel, a checker catches a problem, a planner takes over, a helper is spawned at runtime and the lead writes the result. When everyone is done, the team celebrates and the result opens beside the drawing:
-
-<img src="docs/assets/result.png" alt="A finished run: the team gathers in the lounge while the title block shows the result table, the flag the checker raised and the sources with evidence grades" width="900">
-
-## Report from your own code
-
-**Python** (`pip install -e packages/python` from the clone)
 
 ```python
 from mas_office import Office
@@ -55,14 +67,18 @@ with Office(workspace="./runs") as office:
     run = office.project("headphone-deals", title="Headphone deals").run()
     finder = run.agent("finder", name="Retail finder", emoji="🔎")
     finder.working("Searching Currys", progress=30)
-    finder.source(id="currys-xm6", title="Sony XM6 — Currys", url="https://www.currys.co.uk/", evidence="A")
+    finder.source(id="currys", title="Sony XM6 — Currys", url="https://www.currys.co.uk/", evidence="A")
     finder.handoff("lead")
     finder.done()
     run.result(markdown="## Shortlist\n- Currys — £279")
     run.finish()
 ```
 
-**JavaScript** (`npm install mas-office`)
+**Or from JavaScript / TypeScript:**
+
+```bash
+npm install mas-office
+```
 
 ```js
 import { Office } from 'mas-office';
@@ -77,80 +93,190 @@ run.finish();
 await office.close();
 ```
 
-Then look at it:
+**Then open the office:**
 
 ```bash
-npx mas-office serve ./runs --open    # live over HTTP + Server-Sent Events
-# or just open ./runs/office/index.html after `mas-office init ./runs`
+npx mas-office serve ./runs --open     # live updates over Server-Sent Events
 ```
 
-Several processes? Start `mas-office serve` once and point the SDKs at it with `Office(url="http://127.0.0.1:4747")`.
+Running agents in several processes or machines? Start `serve` once and point every SDK at it: `Office(url="http://127.0.0.1:4747")`.
 
-## Integrations
+## 🔌 Plug in your framework
 
-| Producer | How | Status |
+<details open>
+<summary><b>OpenAI Agents SDK</b> — one line</summary>
+
+```python
+from mas_office.integrations.openai_agents import install
+
+run = Office(workspace="./runs").project("support", title="Support desk").run()
+install(run)                                   # a TracingProcessor; OpenAI's own traces keep working
+result = Runner.run_sync(triage_agent, "My order never arrived")
+run.result(markdown=str(result.final_output)); run.finish()
+```
+Agents, function tools and handoffs become desks, tool uses and handoff paths.
+</details>
+
+<details>
+<summary><b>LangGraph</b> — wrap your stream</summary>
+
+```python
+from mas_office.integrations.langgraph import stream_to_office
+
+stream = graph.stream(inputs, stream_mode=["tasks", "updates", "custom"], subgraphs=True)
+for chunk in stream_to_office(stream, run):    # chunks pass through unchanged
+    ...
+```
+Nodes become agents (subgraph nodes get their parent); `get_stream_writer()({"say": "Reading 3 papers"})` sets the status line.
+</details>
+
+<details>
+<summary><b>Claude Agent SDK</b> — hooks</summary>
+
+```python
+from mas_office.integrations.claude_agent_sdk import office_hooks
+
+options = ClaudeAgentOptions(agents={...}, hooks=office_hooks(run))
+async for message in query(prompt="Review this repo", options=options):
+    ...
+```
+Subagents get desks; tool calls, permission prompts and failures show up live.
+</details>
+
+<details>
+<summary><b>Claude Code</b> — zero code, just hooks</summary>
+
+```bash
+npm install -g mas-office
+```
+Add `mas-office hook claude-code --workspace ./.mas` as a hook command in `.claude/settings.json` ([full snippet](docs/integrations.md#claude-code-hooks-no-code)), then `mas-office serve ./.mas --open` and watch Claude Code and its subagents work.
+</details>
+
+<details>
+<summary><b>Anything else</b> — the protocol</summary>
+
+Append JSON lines to `<project>/mas/events.jsonl` (or `POST` them to `mas-office serve`):
+
+```json
+{"v":"0.1","seq":3,"ts":"2026-11-06T10:00:03Z","type":"handoff","agentId":"researcher","data":{"to":"critic"}}
+```
+That's the whole contract: [`spec/README.md`](spec/README.md). Validate with `npx mas-office validate`.
+</details>
+
+| Producer | Status | Guide |
 |---|---|---|
-| OpenAI Agents SDK (Python) | `mas_office.integrations.openai_agents.install(run)` — a `TracingProcessor` | experimental |
-| LangGraph (Python) | `for chunk in stream_to_office(graph.stream(...), run): ...` | experimental |
-| Claude Agent SDK (Python) | `ClaudeAgentOptions(hooks=office_hooks(run))` | experimental |
-| Claude Code | `mas-office hook claude-code` as a hook command in `.claude/settings.json` ([setup](docs/integrations.md#claude-code-hooks-no-code)) | experimental |
-| AI coding assistants (Claude Code, Codex, Antigravity, Gemini CLI, …) | `mas-office init --kit` — the assistant follows `AGENTS.md` and writes the files itself | stable |
-| Anything else | the [protocol](spec/README.md): write events or snapshots | — |
+| OpenAI Agents SDK (Python) | 🧪 experimental | [docs](docs/integrations.md#openai-agents-sdk-python) |
+| LangGraph (Python) | 🧪 experimental | [docs](docs/integrations.md#langgraph-python) |
+| Claude Agent SDK (Python) | 🧪 experimental | [docs](docs/integrations.md#claude-agent-sdk-python) |
+| Claude Code (hooks) | 🧪 experimental | [docs](docs/integrations.md#claude-code-hooks-no-code) |
+| AI coding assistants via `AGENTS.md` (Claude Code, Codex, Gemini CLI, Antigravity, Cursor…) | ✅ stable | [kit](kit/AGENTS.md) |
+| CrewAI · AG-UI · OpenTelemetry · Google ADK · Mastra · CAMEL | 🙋 [help wanted](https://github.com/weixijia/mas-office/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) | [how to write one](CONTRIBUTING.md#2-framework-integrations) |
 
-Setup snippets for each: [`docs/integrations.md`](docs/integrations.md). CrewAI, AG-UI and OpenTelemetry ingest are next on the [roadmap](ROADMAP.md) — [help wanted](CONTRIBUTING.md#2-framework-integrations).
-
-## No-code mode: let your AI assistant run the team
+## 🤖 No-code mode: let your AI assistant build the team
 
 ```bash
 npx mas-office init --kit my-team
 ```
 
-Open `my-team` in Claude Code, Codex, Antigravity or any coding agent and say *"Read SETUP.md and follow it."* The assistant interviews you, designs a team (who does what, what runs in parallel, who checks whom), lets you refine and lock it, then runs each role as a separate subagent — while the panel shows it all. This is the mode the classroom edition, [awesome-mas](https://github.com/weixijia/awesome-mas), is built on.
+Open `my-team` in Claude Code, Codex, Gemini CLI or Antigravity and say *"Read SETUP.md and follow it."* The assistant interviews you about the task, proposes a team (who does what, what runs in parallel, who checks whom), lets you reshape it in plain words, locks it, and runs each role as a separate subagent with its own context — while the office shows every step. This is the engine behind the classroom edition, [**awesome-mas**](https://github.com/weixijia/awesome-mas).
 
-## How it works
+## 🧠 How it works
 
+```mermaid
+flowchart LR
+  A["Your agents<br/>(any framework)"] -- "integration / SDK" --> E["events.jsonl<br/>append-only log"]
+  K["AI coding assistant<br/>+ AGENTS.md"] -- "writes snapshots" --> S
+  E --> R(["reducer<br/>deterministic"]) --> S["snapshots<br/>structure · status · result"]
+  S -- "file:// or mas-office serve (SSE)" --> P["🏢 the office panel"]
 ```
-your agents ──► events.jsonl ──► reducer ──► structure · status/* · state · result ──► panel
-                 (append-only)    (spec §4)      (.json + .js twin per file)         (file:// or serve)
-```
+
+- **Events in, pictures out.** Producers report what *happened*; the reducer computes what the panel shows *now*. Producers never have to track UI state.
+- **Same answer everywhere.** The JS and Python reducers are checked against the same hand-written [conformance cases](spec/conformance/), so a log replays identically in both.
+- **Never in the way.** Emitters never raise into your code or block your agents: bad events are dropped with one warning.
+
+Details: [architecture](docs/architecture.md) · [protocol](spec/README.md) · [why it is designed this way](docs/research/prior-art.md) (a cited survey of 14 agent frameworks, 4 standards and today's visualizers).
+
+## 🧰 The CLI
 
 | Command | What it does |
 |---|---|
-| `mas-office demo` | simulated team in a temp workspace, served and opened |
+| `mas-office demo` | a simulated team in a temp workspace, served and opened |
 | `mas-office serve [dir]` | panel at `/office/`, workspace read-only, `POST /v0/events`, live `GET /v0/stream` |
-| `mas-office init [dir] [--kit]` | new workspace with the panel (and the AGENTS.md kit) |
+| `mas-office init [dir] [--kit]` | a new workspace with the panel (and the `AGENTS.md` kit) |
 | `mas-office validate [path]` | check snapshots and event logs against the JSON Schemas |
-| `mas-office reduce <project>` | rebuild snapshots from the event log |
+| `mas-office reduce <project>` | rebuild snapshots by replaying the event log |
 | `mas-office export --ag-ui <project>` | the log as AG-UI events (experimental) |
+| `mas-office hook claude-code` | turn Claude Code hook input into events (experimental) |
 
-The full contract — layout, documents, 18 event types, state machine, reducer rules, HTTP endpoints — is in [`spec/README.md`](spec/README.md). Design notes: [`docs/architecture.md`](docs/architecture.md). Why it looks like this: [`docs/research/prior-art.md`](docs/research/prior-art.md), a cited survey of today's agent frameworks, standards and visualizers.
+## 🆚 How it compares
 
-## How it compares
+MAS Office is not a tracing platform — it's the view you put on the big screen. Use it *alongside* your tracer: every event can carry `trace` ids.
 
-Tracing tools such as Langfuse, Arize Phoenix and AgentOps, and framework studios such as LangGraph Studio, are built for debugging one framework's spans and prompts. MAS Office is the opposite trade-off: a **team-level, at-a-glance** view (who is working, who is waiting for whom, what the checker caught) that works for **any** producer, needs no account or database, and is readable by people who will never open a trace. Use both — the event envelope carries `trace` ids for that.
+| | **MAS Office** | Tracing platforms<br><sub>Langfuse, Phoenix, AgentOps</sub> | Framework studios<br><sub>LangGraph Studio, AutoGen Studio</sub> |
+|---|:---:|:---:|:---:|
+| Team-level live view (who works, who waits, who checks) | ✅ | ➖ trace trees | ✅ graph |
+| Works across frameworks | ✅ | ✅ | ➖ one framework |
+| No account, server or database | ✅ | ➖ | ✅ |
+| Readable by non-engineers | ✅ | ❌ | ➖ |
+| Open, file-based protocol you can write by hand | ✅ | ➖ OTel | ❌ |
+| Prompt, token and latency debugging | ❌ use a tracer | ✅ | ✅ |
 
-## Project layout
+## 💡 Made for
 
+- **Demos and talks** — show what your multi-agent system actually does, in real time, to people who will never read a trace.
+- **Building and debugging** — spot the agent that never hands over, the stage that runs serially by accident, the checker that never fires.
+- **Teaching** — the [classroom edition](https://github.com/weixijia/awesome-mas) lets non-programmers design and run their own agent teams.
+- **Research** — replayable, diffable logs of agent collaboration in one simple format.
+
+## 🗺️ Roadmap
+
+- [x] Protocol 0.1, JS + Python SDKs, CLI with live server, panel, 4 integrations, no-code kit
+- [ ] CrewAI, AG-UI and OpenTelemetry ingest — one adapter each for whole ecosystems
+- [ ] Graph layout for `graph` topologies, observed vs declared handoff edges
+- [ ] Replay scrubber, per-agent token and cost, `export --otlp`
+
+Full list: [ROADMAP.md](ROADMAP.md). Have an idea? [Start a discussion](https://github.com/weixijia/mas-office/discussions).
+
+## 🤝 Contributing
+
+MAS Office is small on purpose and built to be extended — a new framework integration is usually **one file and a test with fake payloads**. Look for [`good first issue`](https://github.com/weixijia/mas-office/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) and [`help wanted`](https://github.com/weixijia/mas-office/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22), then read [CONTRIBUTING.md](CONTRIBUTING.md): it has a checklist for each lane (protocol, integrations, panel, SDKs). Spec changes follow a lightweight [RFC process](spec/rfcs/README.md). We use the DCO (`git commit -s`), not a CLA.
+
+```bash
+git clone https://github.com/weixijia/mas-office && cd mas-office
+npm install && npm test                                   # JS SDK, CLI, panel
+cd packages/python && pip install -e '.[dev]' && pytest   # Python SDK
 ```
-spec/            protocol, JSON Schemas, conformance cases, RFCs
-packages/node    mas-office on npm   (SDK: reducer, transports · CLI: serve, validate, init, demo, …)
-packages/python  mas-office on PyPI  (reducer, transports, integrations)
-panel/           the office panel (vanilla JS, no build)
-kit/             AGENTS.md no-code mode
-examples/        finished example workspaces
-docs/            architecture, integrations, research
+
+Please follow the [Code of Conduct](CODE_OF_CONDUCT.md) and report vulnerabilities privately ([SECURITY.md](SECURITY.md)).
+
+If MAS Office helps you, **a ⭐ helps other people find it.**
+
+<a href="https://star-history.com/#weixijia/mas-office&Date">
+  <img src="https://api.star-history.com/svg?repos=weixijia/mas-office&type=Date" alt="Star history chart" width="600">
+</a>
+
+<a href="https://github.com/weixijia/mas-office/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=weixijia/mas-office" alt="Contributors">
+</a>
+
+## 📖 Citation
+
+If you use MAS Office in research or teaching, please cite it:
+
+```bibtex
+@software{wei2026masoffice,
+  author  = {Wei, Xijia and {MAS Office contributors}},
+  title   = {{MAS Office}: an open protocol and live office view for multi-agent systems},
+  year    = {2026},
+  url     = {https://github.com/weixijia/mas-office},
+  version = {0.1.0}
+}
 ```
 
-## Contributing
+## 🙏 Acknowledgements
 
-Integrations, panel ideas, spec feedback and bug reports are all welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md) — it has a checklist per lane (protocol, integrations, panel, SDKs). Spec changes follow a small [RFC process](spec/rfcs/README.md), and both reference implementations must pass the same [conformance cases](spec/conformance/). We use the DCO (`git commit -s`), not a CLA.
+MAS Office grew out of [awesome-mas](https://github.com/weixijia/awesome-mas), a classroom kit for teaching multi-agent systems to people who don't write code. The event model borrows from [AG-UI](https://github.com/ag-ui-protocol/ag-ui), the [OpenTelemetry GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai), [A2A](https://a2a-protocol.org) and LangGraph's event streaming. The idea of agents as little people at desks owes a lot to [pixel-agents](https://github.com/pixel-agents-hq/pixel-agents) and Stanford's [Generative Agents](https://github.com/joonspk-research/generative_agents). Fonts: Archivo and Red Hat Mono (SIL Open Font License).
 
-Please read the [Code of Conduct](CODE_OF_CONDUCT.md) and report security issues privately ([SECURITY.md](SECURITY.md)). Project roles and decisions: [GOVERNANCE.md](GOVERNANCE.md).
-
-## Acknowledgements
-
-MAS Office grew out of [awesome-mas](https://github.com/weixijia/awesome-mas), a classroom kit for teaching multi-agent systems to people who don't write code. The event model borrows from [AG-UI](https://github.com/ag-ui-protocol/ag-ui), [OpenTelemetry GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai), [A2A](https://a2a-protocol.org) and LangGraph's event streaming; the idea of agents as little people at desks owes a lot to [pixel-agents](https://github.com/pixel-agents-hq/pixel-agents) and Stanford's [Generative Agents](https://github.com/joonspk-research/generative_agents). Fonts: Archivo and Red Hat Mono (SIL Open Font License).
-
-## License
+## 📄 License
 
 [MIT](LICENSE) © Xijia Wei and MAS Office contributors.

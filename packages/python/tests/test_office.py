@@ -304,8 +304,7 @@ def test_cli_demo_and_reduce(tmp_path, capsys):
     assert main(["reduce", str(pdir)]) == 0
     assert json.loads((pdir / "mas" / "state.json").read_text(encoding="utf-8")) == state
     out = capsys.readouterr().out
-    assert f"node packages/cli/bin/mas-office.js serve {tmp_path.resolve()} --open" in out
-    assert "npx" not in out
+    assert f"npx mas-office serve {tmp_path.resolve()} --open" in out
     assert main(["reduce", str(tmp_path / "nope")]) == 1
 
 
