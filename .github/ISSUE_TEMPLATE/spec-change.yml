@@ -1,0 +1,24 @@
+name: Spec change (lightweight RFC)
+description: Propose a change to the MAS Office protocol, file layout or JSON Schemas.
+labels: [spec, rfc]
+body:
+  - type: markdown
+    attributes:
+      value: Small, backwards-compatible additions can be an issue. Breaking changes need an RFC pull request in `spec/rfcs/` (see `spec/rfcs/0000-template.md`).
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+    validations: { required: true }
+  - type: textarea
+    id: change
+    attributes:
+      label: Proposed change
+      description: Exact field / event names and an example document.
+    validations: { required: true }
+  - type: dropdown
+    id: compat
+    attributes:
+      label: Compatibility
+      options: [additive (minor), breaking (major)]
+    validations: { required: true }

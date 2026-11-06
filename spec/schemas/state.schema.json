@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/weixijia/mas-office/main/spec/schemas/state.schema.json",
+  "title": "MAS Office project state",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "enum": [
+        "kit",
+        "sdk"
+      ]
+    },
+    "step": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4
+    },
+    "phase": {
+      "enum": [
+        "setup",
+        "describe",
+        "design",
+        "refine",
+        "locked",
+        "running",
+        "done",
+        "failed"
+      ]
+    },
+    "next": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "locked": {
+      "type": "boolean"
+    },
+    "run": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "runId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "updated": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "mas-office-monorepo",
+  "private": true,
+  "description": "MAS Office: a framework-agnostic protocol and animated office panel for multi-agent systems.",
+  "license": "MIT",
+  "workspaces": [
+    "packages/js",
+    "packages/cli"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "npm test --workspaces && node panel/tests/model.test.js",
+    "demo": "node packages/cli/bin/mas-office.js demo",
+    "validate": "node packages/cli/bin/mas-office.js validate examples"
+  }
+}

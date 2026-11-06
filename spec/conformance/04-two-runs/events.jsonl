@@ -1,0 +1,7 @@
+{"v": "0.1", "seq": 1, "ts": "2026-11-06T10:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Twice", "structure": {"title": "Twice", "lead": {"id": "lead", "name": "Lead"}, "groups": [{"id": "A", "label": "Do", "after": null}], "roles": [{"id": "w", "name": "Worker", "group": "A", "handsTo": "lead"}]}}}
+{"v": "0.1", "seq": 2, "ts": "2026-11-06T10:00:02Z", "runId": "r1", "type": "flag.raised", "agentId": "w", "data": {"kind": "concern", "text": "old flag"}}
+{"v": "0.1", "seq": 3, "ts": "2026-11-06T10:00:03Z", "runId": "r1", "type": "run.finished", "agentId": "lead", "data": {}}
+{"v": "0.1", "seq": 4, "ts": "2026-11-06T10:00:04Z", "runId": "r2", "type": "run.started", "agentId": "lead", "data": {}}
+{"v": "0.1", "seq": 5, "ts": "2026-11-06T10:00:05Z", "runId": "r2", "type": "agent.finished", "agentId": "w", "data": {}}
+{"v": "0.1", "seq": 6, "ts": "2026-11-06T10:00:06Z", "runId": "r2", "type": "result", "agentId": "lead", "data": {"markdown": "second"}}
+{"v": "0.1", "seq": 7, "ts": "2026-11-06T10:00:07Z", "runId": "r2", "type": "run.finished", "agentId": "lead", "data": {}}

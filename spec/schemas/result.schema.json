@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/weixijia/mas-office/main/spec/schemas/result.schema.json",
+  "title": "MAS Office result",
+  "type": "object",
+  "required": [
+    "markdown"
+  ],
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "run": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "updated": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "markdown": {
+      "type": "string"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "evidence": {
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D"
+            ]
+          },
+          "foundBy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "by": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "work": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "by",
+          "summary"
+        ],
+        "properties": {
+          "by": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

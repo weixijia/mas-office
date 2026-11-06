@@ -1,0 +1,110 @@
+{
+  "structure": {
+    "title": "Research sprint",
+    "version": 1,
+    "locked": true,
+    "topology": "dynamic",
+    "lead": {
+      "id": "lead",
+      "name": "Lead",
+      "emoji": "🧭",
+      "job": "",
+      "serves": []
+    },
+    "groups": [
+      {
+        "id": "dyn",
+        "label": "Spawned at runtime",
+        "after": null
+      }
+    ],
+    "roles": [
+      {
+        "id": "planner",
+        "name": "Planner",
+        "emoji": "🧠",
+        "job": "Split the question",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      },
+      {
+        "id": "worker-1",
+        "name": "Worker 1",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "planner"
+      },
+      {
+        "id": "reviewer",
+        "name": "reviewer",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "worker-1"
+      }
+    ]
+  },
+  "statuses": {
+    "lead": {
+      "state": "failed",
+      "say": "Worker 1 failed",
+      "to": null,
+      "flag": "Worker 1 failed",
+      "flagKind": "error",
+      "progress": 0,
+      "t": "2026-11-06T10:00:07Z"
+    },
+    "planner": {
+      "state": "working",
+      "say": "Splitting the question",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-06T10:00:03Z"
+    },
+    "worker-1": {
+      "state": "failed",
+      "say": "Rate limited",
+      "to": null,
+      "flag": "Rate limited",
+      "flagKind": "error",
+      "progress": 30,
+      "t": "2026-11-06T10:00:06Z"
+    },
+    "reviewer": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-06T10:00:05Z"
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "failed",
+    "locked": true,
+    "version": 1,
+    "run": 1,
+    "runId": "r1",
+    "updated": "2026-11-06T10:00:07Z",
+    "next": "Run failed — see the Lead's desk."
+  },
+  "result": null
+}

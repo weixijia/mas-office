@@ -1,0 +1,26 @@
+name: Bug report
+description: Something in the panel, CLI, SDKs or spec does not work as documented.
+labels: [bug, triage]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [panel, cli / server, python sdk, js sdk, spec / schemas, kit (AGENTS.md), integration, docs]
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Commands, a small workspace folder, or code. `mas-office validate <dir>` output helps a lot.
+    validations: { required: true }
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: "mas-office 0.1.0, Python 3.12, Node 20, Chrome 131, macOS 15"

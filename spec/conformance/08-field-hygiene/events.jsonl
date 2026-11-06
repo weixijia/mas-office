@@ -1,0 +1,8 @@
+{"v": "0.1", "seq": 1, "ts": "2026-11-06T10:00:01Z", "type": "run.started", "runId": "r1", "agentId": "lead", "data": {"structure": {"title": "Hygiene", "groups": [{"id": "A", "label": "A", "after": null}], "roles": [{"id": "b", "name": null, "group": "A", "handsTo": "lead"}]}}}
+{"v": "0.1", "seq": 2, "ts": "2026-11-06T10:00:02Z", "type": "agent.status", "runId": "r1", "agentId": "constructor", "agentName": "Constructor", "data": {"state": "working", "say": "proto", "progress": 0.49999999999999994}}
+{"v": "0.1", "seq": 3, "ts": "2026-11-06T10:00:03Z", "type": "handoff", "runId": "r1", "agentId": "constructor", "data": {"to": "b"}}
+{"v": "0.1", "seq": 4, "ts": "2026-11-06T10:00:04Z", "type": "agent.status", "runId": "r1", "agentId": "b", "data": {"state": "handoff", "to": {"x": 1}}}
+{"v": "0.1", "seq": 5, "ts": "2026-11-06T10:00:05Z", "type": "agent.registered", "runId": "r1", "agentId": "g", "data": {"group": 1.0}}
+{"v": "0.1", "seq": 6, "ts": "2026-11-06T10:00:06Z", "type": "result", "runId": "r1", "agentId": "lead", "data": {"markdown": "m", "sources": [{"title": "no id"}, {"id": "s1", "title": "S1"}], "flags": ["text", {"text": "real"}]}}
+{"v": "0.1", "seq": 7, "ts": "2026-11-06T10:00:07Z", "type": "handoff", "runId": "r1", "agentId": "lead", "data": {"to": "x"}}
+{"v": "0.1", "seq": 8, "ts": "2026-11-06T10:00:08Z", "type": "run.failed", "runId": "r1", "agentId": "lead", "data": {"reason": "boom"}}

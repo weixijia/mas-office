@@ -1,0 +1,21 @@
+name: New framework integration
+description: Propose (or claim) an integration for an agent framework.
+labels: [integration]
+body:
+  - type: input
+    id: framework
+    attributes:
+      label: Framework and version
+      placeholder: "e.g. Semantic Kernel 1.x"
+    validations: { required: true }
+  - type: textarea
+    id: hooks
+    attributes:
+      label: Hook point
+      description: Which callback, event stream or tracing API would the integration attach to? Link the docs.
+    validations: { required: true }
+  - type: textarea
+    id: mapping
+    attributes:
+      label: Event mapping
+      description: Which framework events map to `run.*`, `agent.registered`, `agent.status`, `handoff`, `tool.*`, `flag.raised`, `agent.finished` / `agent.failed`? (See `spec/README.md` §3.2.)

@@ -1,0 +1,1 @@
+window.MAS_STATE = {"mode": "sdk", "step": 4, "phase": "running", "locked": true, "version": 1, "run": 1, "runId": "r1", "updated": "2026-11-06T10:00:09Z", "next": "Watch the office panel — the team is working."};

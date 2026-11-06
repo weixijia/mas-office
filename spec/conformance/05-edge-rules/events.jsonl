@@ -1,0 +1,7 @@
+{"v": "0.1", "seq": 1, "ts": "2026-11-06T10:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Edges", "structure": {"title": "Edges", "lead": {"id": "lead", "name": "Lead"}, "groups": [{"id": "A", "label": "A", "after": null}], "roles": [{"id": "old", "name": "Old", "group": "A", "handsTo": "lead"}]}}}
+{"v": "0.1", "seq": 2, "ts": "2026-11-06T10:00:02Z", "runId": "r1", "type": "agent.status", "agentId": "old", "data": {"state": "working", "say": "x", "progress": 2.5}}
+{"v": "0.1", "seq": 3, "ts": "2026-11-06T10:00:03Z", "runId": "r1", "type": "flag.resolved", "agentId": "old", "data": {}}
+{"v": "0.1", "seq": 4, "ts": "2026-11-06T10:00:04Z", "runId": "r1", "type": "agent.status", "agentId": "old", "data": null}
+{"v": "0.1", "seq": 5, "ts": "2026-11-06T10:00:05Z", "runId": "r1", "type": "agent.status", "agentId": "old", "data": {"state": "handoff", "to": "nobody"}}
+{"v": "0.1", "seq": 6, "ts": "2026-11-06T10:00:06Z", "runId": "r2", "type": "run.started", "agentId": "lead", "data": {"structure": {"title": "Edges 2", "lead": {"id": "lead", "name": "Lead"}, "groups": [{"id": "B", "label": "B", "after": null}], "roles": [{"id": "new", "name": "New", "group": "B", "handsTo": "lead"}]}}}
+{"v": "0.1", "seq": 7, "ts": "2026-11-06T10:00:07Z", "runId": "r2", "type": "message", "agentId": "lead", "data": {"text": "Planning done"}}

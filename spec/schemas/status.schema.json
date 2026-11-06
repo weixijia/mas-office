@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/weixijia/mas-office/main/spec/schemas/status.schema.json",
+  "title": "MAS Office agent status",
+  "type": "object",
+  "required": [
+    "state"
+  ],
+  "properties": {
+    "state": {
+      "enum": [
+        "idle",
+        "waiting",
+        "working",
+        "handoff",
+        "flagged",
+        "done",
+        "failed"
+      ]
+    },
+    "say": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "to": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "flag": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "flagKind": {
+      "enum": [
+        "concern",
+        "needs_input",
+        "needs_approval",
+        "error",
+        null
+      ]
+    },
+    "progress": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "t": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

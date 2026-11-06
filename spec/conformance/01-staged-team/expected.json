@@ -1,0 +1,150 @@
+{
+  "structure": {
+    "title": "Headphone deals",
+    "version": 1,
+    "lead": {
+      "id": "lead",
+      "name": "Lead",
+      "emoji": "🧭",
+      "job": "Write the shortlist",
+      "serves": [
+        "R1"
+      ]
+    },
+    "groups": [
+      {
+        "id": "A",
+        "label": "Search",
+        "after": null
+      },
+      {
+        "id": "B",
+        "label": "Check",
+        "after": "A"
+      }
+    ],
+    "roles": [
+      {
+        "id": "finder-a",
+        "name": "Retail finder",
+        "emoji": "🔎",
+        "job": "Search retailers",
+        "serves": [
+          "R1"
+        ],
+        "tools": [
+          "web search"
+        ],
+        "group": "A",
+        "handsTo": "checker"
+      },
+      {
+        "id": "finder-b",
+        "name": "Market finder",
+        "emoji": "🔎",
+        "job": "Search marketplaces",
+        "serves": [
+          "R1"
+        ],
+        "tools": [
+          "web search"
+        ],
+        "group": "A",
+        "handsTo": "checker"
+      },
+      {
+        "id": "checker",
+        "name": "Catch checker",
+        "emoji": "🛡️",
+        "job": "Check offers",
+        "serves": [
+          "R1"
+        ],
+        "tools": [
+          "web search"
+        ],
+        "group": "B",
+        "handsTo": "lead"
+      }
+    ],
+    "locked": true,
+    "topology": "staged"
+  },
+  "statuses": {
+    "lead": {
+      "state": "done",
+      "say": "Result ready",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 100,
+      "t": "2026-11-06T10:00:14Z"
+    },
+    "finder-a": {
+      "state": "done",
+      "say": "Done",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 100,
+      "t": "2026-11-06T10:00:06Z"
+    },
+    "finder-b": {
+      "state": "done",
+      "say": "Handed over",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 100,
+      "t": "2026-11-06T10:00:08Z"
+    },
+    "checker": {
+      "state": "done",
+      "say": "Done",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 100,
+      "t": "2026-11-06T10:00:12Z"
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "done",
+    "locked": true,
+    "version": 1,
+    "run": 1,
+    "runId": "r1",
+    "updated": "2026-11-06T10:00:14Z",
+    "next": "Run finished — open the result."
+  },
+  "result": {
+    "title": "Headphone deals — run 1",
+    "run": 1,
+    "updated": "2026-11-06T10:00:13Z",
+    "markdown": "## Shortlist\n- Currys £279",
+    "sources": [
+      {
+        "id": "currys-xm6",
+        "title": "Sony XM6 — Currys",
+        "url": "https://www.currys.co.uk/xm6",
+        "evidence": "A",
+        "foundBy": "finder-a"
+      }
+    ],
+    "flags": [
+      {
+        "by": "checker",
+        "kind": "concern",
+        "text": "eBay unit is refurbished"
+      }
+    ],
+    "work": [
+      {
+        "by": "checker",
+        "summary": "Checked 2 offers."
+      }
+    ]
+  }
+}

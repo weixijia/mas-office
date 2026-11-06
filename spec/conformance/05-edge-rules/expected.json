@@ -1,0 +1,59 @@
+{
+  "structure": {
+    "title": "Edges 2",
+    "lead": {
+      "id": "lead",
+      "name": "Lead"
+    },
+    "groups": [
+      {
+        "id": "B",
+        "label": "B",
+        "after": null
+      }
+    ],
+    "roles": [
+      {
+        "id": "new",
+        "name": "New",
+        "group": "B",
+        "handsTo": "lead"
+      }
+    ],
+    "version": 1,
+    "locked": true,
+    "topology": "staged"
+  },
+  "statuses": {
+    "lead": {
+      "state": "working",
+      "say": "Planning done",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-06T10:00:07Z"
+    },
+    "new": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-06T10:00:06Z"
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "running",
+    "locked": true,
+    "version": 1,
+    "run": 2,
+    "runId": "r2",
+    "updated": "2026-11-06T10:00:07Z",
+    "next": "Watch the office panel — the team is working."
+  },
+  "result": null
+}

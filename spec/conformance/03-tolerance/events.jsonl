@@ -1,0 +1,9 @@
+{"v": "0.1", "seq": 3, "ts": "2026-11-06T10:00:03Z", "runId": "r1", "type": "agent.status", "agentId": "a", "data": {"state": "working", "say": "third", "progress": 150}}
+{"v": "0.1", "seq": 1, "ts": "2026-11-06T10:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Tolerance"}}
+{"v": "0.1", "seq": 2, "ts": "2026-11-06T10:00:02Z", "runId": "r1", "type": "agent.status", "agentId": "a", "agentName": "A", "data": {"state": "working", "say": "first"}}
+{"v": "0.1", "seq": 2, "ts": "2026-11-06T10:00:02Z", "runId": "r1", "type": "agent.status", "agentId": "a", "data": {"state": "done", "say": "duplicate seq must be ignored"}}
+not json at all
+{"seq": 7, "ts": "2026-11-06T10:00:07Z", "v": "0.1"}
+{"v": "0.1", "seq": 6, "ts": "2026-11-06T10:00:06Z", "runId": "r1", "type": "agent.status", "agentId": "a", "data": {"state": "sleeping"}}
+{"v": "0.1", "seq": 5, "ts": "2026-11-06T10:00:05Z", "runId": "r1", "type": "agent.finished", "agentId": "ghost", "data": {}}
+{"v": "0.1", "seq": 4, "ts": "2026-11-06T10:00:04Z", "runId": "r1", "type": "custom.weather", "agentId": "lead", "data": {"sky": "grey"}}

@@ -1,0 +1,7 @@
+{"v": "0.1", "seq": 1, "ts": "2026-11-06T10:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Research sprint"}}
+{"v": "0.1", "seq": 2, "ts": "2026-11-06T10:00:02Z", "runId": "r1", "type": "agent.registered", "agentId": "planner", "agentName": "Planner", "parentId": "lead", "data": {"emoji": "🧠", "job": "Split the question"}}
+{"v": "0.1", "seq": 3, "ts": "2026-11-06T10:00:03Z", "runId": "r1", "type": "agent.status", "agentId": "planner", "data": {"state": "working", "say": "Splitting the question"}}
+{"v": "0.1", "seq": 4, "ts": "2026-11-06T10:00:04Z", "runId": "r1", "type": "agent.status", "agentId": "worker-1", "agentName": "Worker 1", "parentId": "planner", "data": {"state": "working", "say": "Reading papers", "progress": 30}}
+{"v": "0.1", "seq": 5, "ts": "2026-11-06T10:00:05Z", "runId": "r1", "type": "handoff", "agentId": "worker-1", "data": {"to": "reviewer"}}
+{"v": "0.1", "seq": 6, "ts": "2026-11-06T10:00:06Z", "runId": "r1", "type": "agent.failed", "agentId": "worker-1", "data": {"reason": "Rate limited"}}
+{"v": "0.1", "seq": 7, "ts": "2026-11-06T10:00:07Z", "runId": "r1", "type": "run.failed", "agentId": "lead", "data": {"reason": "Worker 1 failed"}}

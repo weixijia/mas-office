@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAS Office · live panel</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="rule">
+  <span class="wm">MAS Office</span>
+  <span class="proj" id="proj">Your project</span>
+  <ol class="steps" id="steps" aria-label="Steps"></ol>
+  <span class="steps-short" id="steps-short" aria-hidden="true"></span>
+  <span class="mode-note" id="mode-note" hidden></span>
+  <button class="sb-toggle" id="sb-toggle" type="button" aria-controls="sidebar" aria-expanded="true"></button>
+</header>
+<main class="sheet">
+  <section class="stage" aria-label="The office drawing">
+    <div class="status">
+      <h1 id="headline" aria-live="polite">Say hi to your assistant to begin.</h1>
+      <p class="subline" id="subline"></p>
+      <p class="fresh"><span id="fresh"></span><button class="replay" id="replay" type="button" hidden>Replay demo</button></p>
+    </div>
+    <div class="drawing-host" id="drawing-host"></div>
+    <div class="index-sheet" id="index-sheet" hidden></div>
+  </section>
+  <aside class="side" id="sidebar" aria-label="Title block">
+    <div class="cells" id="cells">
+      <section class="cell folder" id="c-folder" hidden></section>
+      <section class="cell role" id="c-role" hidden></section>
+      <section class="cell result" id="c-result" hidden></section>
+      <section class="cell" id="c-task"></section>
+      <section class="cell" id="c-team"></section>
+      <section class="cell" id="c-activity"></section>
+    </div>
+    <div class="title-block" id="title-block"></div>
+  </aside>
+</main>
+<script src="model.js"></script>
+<script src="office.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

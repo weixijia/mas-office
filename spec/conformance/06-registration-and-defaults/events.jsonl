@@ -1,0 +1,4 @@
+{"v": "0.1", "seq": 1, "ts": "2026-11-06T10:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"structure": {"lead": {"id": "lead", "name": "Lead"}, "groups": [], "roles": []}}}
+{"v": "0.1", "seq": 2, "ts": "2026-11-06T10:00:02Z", "runId": "r1", "type": "tool.finished", "agentId": "quiet", "agentName": "Quiet", "data": {"name": "grep"}}
+{"v": "0.1", "seq": 3, "ts": "2026-11-06T10:00:03Z", "runId": "r1", "type": "agent.status", "agentId": "quiet", "data": {"state": "working", "say": null, "progress": null}}
+{"v": "0.1", "seq": 4, "ts": "2026-11-06T10:00:04Z", "runId": "r1", "type": "result", "agentId": "lead", "data": {}}

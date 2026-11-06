@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/weixijia/mas-office/main/spec/schemas/event.schema.json",
+  "title": "MAS Office event",
+  "type": "object",
+  "required": [
+    "v",
+    "seq",
+    "ts",
+    "type"
+  ],
+  "properties": {
+    "v": {
+      "type": "string",
+      "pattern": "^0\\.1$"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "ts": {
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "type": "string",
+      "pattern": "^(run\\.(started|finished|failed)|stage\\.(started|finished)|agent\\.(registered|status|finished|failed)|handoff|message|tool\\.(started|finished|failed)|flag\\.(raised|resolved)|artifact|result|custom\\.[A-Za-z0-9_.-]+)$"
+    },
+    "runId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "agentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agentName": {
+      "type": "string"
+    },
+    "parentId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "data": {
+      "type": "object"
+    },
+    "raw": {},
+    "trace": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}

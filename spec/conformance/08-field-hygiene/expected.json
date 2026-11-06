@@ -1,0 +1,147 @@
+{
+  "structure": {
+    "title": "Hygiene",
+    "version": 1,
+    "locked": true,
+    "topology": "staged",
+    "lead": {
+      "id": "lead",
+      "name": "Lead",
+      "emoji": "🧭",
+      "job": "",
+      "serves": []
+    },
+    "groups": [
+      {
+        "id": "A",
+        "label": "A",
+        "after": null
+      },
+      {
+        "id": "dyn",
+        "label": "Spawned at runtime",
+        "after": "A"
+      }
+    ],
+    "roles": [
+      {
+        "id": "b",
+        "name": null,
+        "group": "A",
+        "handsTo": "lead"
+      },
+      {
+        "id": "constructor",
+        "name": "Constructor",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      },
+      {
+        "id": "g",
+        "name": "g",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      },
+      {
+        "id": "x",
+        "name": "x",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      }
+    ]
+  },
+  "statuses": {
+    "lead": {
+      "state": "failed",
+      "say": "boom",
+      "to": "x",
+      "flag": "boom",
+      "flagKind": "error",
+      "progress": 0,
+      "t": "2026-11-06T10:00:08Z"
+    },
+    "b": {
+      "state": "handoff",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-06T10:00:04Z"
+    },
+    "constructor": {
+      "state": "handoff",
+      "say": "Handing over to b",
+      "to": "b",
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-06T10:00:03Z"
+    },
+    "g": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-06T10:00:05Z"
+    },
+    "x": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-06T10:00:07Z"
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "failed",
+    "locked": true,
+    "version": 1,
+    "run": 1,
+    "runId": "r1",
+    "updated": "2026-11-06T10:00:08Z",
+    "next": "Run failed — see the Lead's desk."
+  },
+  "result": {
+    "title": "Hygiene — run 1",
+    "run": 1,
+    "updated": "2026-11-06T10:00:06Z",
+    "markdown": "m",
+    "sources": [
+      {
+        "id": "s1",
+        "title": "S1"
+      }
+    ],
+    "flags": [
+      {
+        "text": "real"
+      }
+    ],
+    "work": []
+  }
+}
