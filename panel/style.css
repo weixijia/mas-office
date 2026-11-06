@@ -14,7 +14,6 @@
   --ease: cubic-bezier(.16, 1, .3, 1);
   --side: clamp(340px, 32vw, 460px);
 }
-@media (min-width: 1101px) { body.wide-side { --side: clamp(460px, 45vw, 680px); } }
 :root {
   color-scheme: light;
 }
@@ -55,7 +54,9 @@ body:not(.sb-closed) .sb-toggle { background: var(--ink); color: var(--paper); }
 body.sb-closed .sheet { grid-template-columns: minmax(0, 1fr) 0px; }
 body.sb-closed .side { border-left-width: 0; }
 .stage { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 26px 32px 12px; overflow-y: auto; }
-.status { position: relative; flex: none; padding-right: 150px; }
+/* Reserve a stable status band: changing headlines must not resize or move the office.
+   Longer custom names remain readable by scrolling this band, not by zooming the drawing. */
+.status { position: relative; flex: none; height: calc(clamp(28px, 2.6vw + 6px, 44px) * 3.15 + 58px); overflow-y: auto; padding-right: 150px; }
 .status h1 { margin: 0; font-size: clamp(28px, 2.6vw + 6px, 44px); line-height: 1.05; font-weight: 600; letter-spacing: -.03em; max-width: 30ch; text-wrap: balance; }
 .subline { margin: 10px 0 0; color: var(--ink-2); font-size: 16px; }
 .subline .sep { color: var(--hair); }
@@ -337,7 +338,7 @@ body.isolate .role [data-req] { opacity: 1; }
   .rule { gap: 14px; padding: 0 16px; }
   .mode-note { display: none; }
   .stage { padding: 20px 16px 8px; }
-  .status { padding-right: 0; }
+  .status { padding-right: 0; height: calc(clamp(28px, 2.6vw + 6px, 44px) * 4.2 + 98px); }
   .fresh { position: static; flex-direction: row; align-items: center; margin-top: 8px; }
 }
 /* ---------- phone: one column, the page scrolls ---------- */

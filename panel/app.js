@@ -45,7 +45,7 @@
   function resetProject() {
     Object.assign(S, { data: {}, statuses: M.dict(), history: M.dict(), feed: [], timing: M.dict(), run: { start: 0, end: 0 }, sigs: {}, selected: null,
       phase: undefined, warnings: {}, loadedOnce: false, autoRun: undefined });
-    document.body.classList.remove('isolate', 'wide-side');
+    document.body.classList.remove('isolate');
     office.reset();
   }
 
@@ -323,7 +323,7 @@
     ['#c-task', '#c-team', '#c-activity'].forEach((k) => { $(k).hidden = S.index; });
     if (S.index) {
       $('#c-role').hidden = true; $('#c-result').hidden = true;
-      document.body.classList.remove('wide-side', 'isolate');
+      document.body.classList.remove('isolate');
       setHTML($('#title-block'), titleBlock());
       return;
     }
@@ -331,7 +331,6 @@
     role.hidden = !sel;
     if (sel) setHTML(role, roleCard(sel));
     const ri = resultInfo();
-    document.body.classList.toggle('wide-side', !!ri); // a ready result gets a wider title block to read in
     $('#c-result').hidden = !ri || !!sel;
     if (ri && !sel) setHTML($('#c-result'), resultHtml(ri.r));
     $('#c-task').hidden = M.isSdk(data()) && !data().task; // an SDK run may have no task file

@@ -660,5 +660,16 @@ test('static embedding preserves the demo timeline', () => {
   assert.deepStrictEqual(calls.intervals.map((x) => x.delay), [1000, 250]);
 });
 
+test('status updates and ready results cannot resize the office viewport', () => {
+  const css = fs.readFileSync(path.join(__dirname, '..', 'style.css'), 'utf8');
+  const app = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
+  const statusRules = Array.from(css.matchAll(/(?:^|\n)\s*\.status\s*\{([^}]+)\}/g), (m) => m[1]);
+  assert.ok(statusRules.length >= 2, 'desktop and narrow status bands are explicit');
+  statusRules.forEach((rule) => assert.match(rule, /(?:^|;)\s*height\s*:/, 'status text gets a fixed, responsive band'));
+  assert.match(statusRules[0], /overflow-y:\s*auto/, 'long custom names remain accessible');
+  assert.doesNotMatch(css, /body\.wide-side/, 'results keep the same sidebar width');
+  assert.doesNotMatch(app, /classList\.toggle\('wide-side'/, 'a ready result does not resize the drawing');
+});
+
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

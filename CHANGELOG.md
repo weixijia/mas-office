@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-11-06
+
+### Fixed
+- **Panel**: the office viewport stays stable across status headline changes and when the result appears; people animation is no longer accompanied by unintended office resizing.
+
 ## [0.1.0] — 2026-11-06
 
 First public version. MAS Office grows out of [awesome-mas](https://github.com/weixijia/awesome-mas) (the classroom edition), whose workspaces remain valid.
