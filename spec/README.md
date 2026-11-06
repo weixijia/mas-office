@@ -191,7 +191,7 @@ Conformance (after AG-UI): a producer MUST emit at least `run.started` and `agen
 
 ## 4. The reducer
 
-The reducer is a pure function `reduce(lines) → {structure, statuses, state, result}`. Both reference implementations (`packages/js`, `packages/python`) MUST produce identical output for every case in [`conformance/`](conformance/).
+The reducer is a pure function `reduce(lines) → {structure, statuses, state, result}`. Both reference implementations (`packages/node`, `packages/python`) MUST produce identical output for every case in [`conformance/`](conformance/).
 
 ### 4.1 Reading the log
 

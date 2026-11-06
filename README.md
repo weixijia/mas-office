@@ -24,13 +24,21 @@ MAS Office does not run your agents. Your framework does. MAS Office gives them 
 
 ## Quick start
 
-> The first tagged release is not on npm / PyPI yet — until then, run from source (Node ≥ 18; Python ≥ 3.10 for the Python SDK). Below, `mas-office` means `node packages/cli/bin/mas-office.js`.
+Node ≥ 18:
+
+```bash
+npx mas-office demo
+```
+
+Or from source:
 
 ```bash
 git clone https://github.com/weixijia/mas-office && cd mas-office
 npm install
-node packages/cli/bin/mas-office.js demo
+node packages/node/bin/mas-office.js demo
 ```
+
+In a clone, `mas-office` below means `node packages/node/bin/mas-office.js`. The Python SDK (Python ≥ 3.10) is not on PyPI yet — install it from a clone.
 
 A browser opens with a five-agent team: two finders search in parallel, a checker catches a problem, a planner takes over, a helper is spawned at runtime and the lead writes the result. When everyone is done, the team celebrates and the result opens beside the drawing:
 
@@ -54,10 +62,10 @@ with Office(workspace="./runs") as office:
     run.finish()
 ```
 
-**JavaScript** (the `@mas-office/sdk` workspace is linked by `npm install`)
+**JavaScript** (`npm install mas-office`)
 
 ```js
-import { Office } from '@mas-office/sdk';
+import { Office } from 'mas-office';
 
 const office = new Office({ workspace: './runs' });
 const run = office.project('headphone-deals', { title: 'Headphone deals' }).run();
@@ -72,7 +80,7 @@ await office.close();
 Then look at it:
 
 ```bash
-node packages/cli/bin/mas-office.js serve ./runs --open    # live over HTTP + Server-Sent Events
+npx mas-office serve ./runs --open    # live over HTTP + Server-Sent Events
 # or just open ./runs/office/index.html after `mas-office init ./runs`
 ```
 
@@ -94,7 +102,7 @@ Setup snippets for each: [`docs/integrations.md`](docs/integrations.md). CrewAI,
 ## No-code mode: let your AI assistant run the team
 
 ```bash
-node packages/cli/bin/mas-office.js init --kit my-team
+npx mas-office init --kit my-team
 ```
 
 Open `my-team` in Claude Code, Codex, Antigravity or any coding agent and say *"Read SETUP.md and follow it."* The assistant interviews you, designs a team (who does what, what runs in parallel, who checks whom), lets you refine and lock it, then runs each role as a separate subagent — while the panel shows it all. This is the mode the classroom edition, [awesome-mas](https://github.com/weixijia/awesome-mas), is built on.
@@ -125,9 +133,8 @@ Tracing tools such as Langfuse, Arize Phoenix and AgentOps, and framework studio
 
 ```
 spec/            protocol, JSON Schemas, conformance cases, RFCs
-packages/js      @mas-office/sdk  (reducer, transports)
-packages/cli     mas-office       (serve, validate, init, demo, …)
-packages/python  mas-office       (reducer, transports, integrations)
+packages/node    mas-office on npm   (SDK: reducer, transports · CLI: serve, validate, init, demo, …)
+packages/python  mas-office on PyPI  (reducer, transports, integrations)
 panel/           the office panel (vanilla JS, no build)
 kit/             AGENTS.md no-code mode
 examples/        finished example workspaces

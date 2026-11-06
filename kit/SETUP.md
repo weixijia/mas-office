@@ -10,7 +10,7 @@ This folder should contain `AGENTS.md`, `harness/operations.md` and `office/inde
 npx mas-office init --kit .
 ```
 
-(or, from a clone of https://github.com/weixijia/mas-office: `node packages/cli/bin/mas-office.js init --kit <this folder>`).
+(or, from a clone of https://github.com/weixijia/mas-office: `node packages/node/bin/mas-office.js init --kit <this folder>`).
 
 If any of the three files is missing, show the person that command, ask them to run it (or ask permission to run it yourself), and stop until the files exist. **Never overwrite or delete files that are already here.**
 

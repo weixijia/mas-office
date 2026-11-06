@@ -22,8 +22,8 @@ pip install -e mas-office/packages/python
 
 PyPI package: coming with the first release.
 
-The viewer needs Node.js 18+. Commands below that start with `node packages/cli/...` are run
-from the root of your `mas-office` clone.
+The viewer needs Node.js 18+: `npx mas-office serve …` runs it from npm. From your `mas-office`
+clone, `node packages/node/bin/mas-office.js serve …` (run from the root of the clone) does the same.
 
 ## Example
 
@@ -45,14 +45,14 @@ with Office(workspace="./runs") as office:
     run.finish()
 ```
 
-Then view it with the Node CLI: `node packages/cli/bin/mas-office.js serve ./runs --open`.
+Then view it with the Node CLI: `npx mas-office serve ./runs --open`.
 
 Try it without writing any code — a simulated 5-agent team over about 30 seconds:
 
 ```bash
 cd mas-office
 python -m mas_office demo --workspace ./runs     # or: mas-office-py demo
-node packages/cli/bin/mas-office.js serve ./runs --open
+npx mas-office serve ./runs --open
 ```
 
 ## API

@@ -13,8 +13,7 @@ By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 | Path | What | Language / tests |
 |---|---|---|
 | `spec/` | The protocol (`README.md`), JSON Schemas, conformance cases, RFCs | Markdown + JSON |
-| `packages/js/` | `@mas-office/sdk` — reducer, file + HTTP transports | Node ≥ 18, `node:test` |
-| `packages/cli/` | `mas-office` — `serve`, `validate`, `init`, `reduce`, `export`, `hook`, `demo` | Node ≥ 18, `node:test` |
+| `packages/node/` | `mas-office` on npm — SDK (`src/sdk/`: reducer, file + HTTP transports) and CLI (`src/cli/`: `serve`, `validate`, `init`, `reduce`, `export`, `hook`, `demo`) | Node ≥ 18, `node:test` |
 | `packages/python/` | `mas-office` on PyPI — reducer, transports, framework integrations | Python ≥ 3.10, `pytest` |
 | `panel/` | The office panel (vanilla JS, no build) | `node panel/tests/model.test.js` |
 | `kit/` | No-code mode: `AGENTS.md` + `harness/` for AI coding assistants | Markdown |
@@ -25,9 +24,9 @@ By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ```bash
 git clone https://github.com/weixijia/mas-office && cd mas-office
-npm install                                   # links the JS workspaces; no runtime dependencies
-npm test                                      # JS SDK + CLI + panel tests
-node packages/cli/bin/mas-office.js demo      # see it working
+npm install                                   # links the npm workspace; no runtime dependencies
+npm test                                      # SDK + CLI + panel tests
+node packages/node/bin/mas-office.js demo     # see it working
 
 cd packages/python
 python3 -m venv .venv && . .venv/bin/activate
@@ -49,7 +48,7 @@ The spec is the contract between producers and the panel, so it moves carefully.
 
 New integrations are very welcome. Each one should:
 
-- live in `packages/python/src/mas_office/integrations/<framework>.py` (or `packages/js/src/integrations/`), import the framework **lazily**, and add an optional extra in `pyproject.toml`;
+- live in `packages/python/src/mas_office/integrations/<framework>.py` (or `packages/node/src/sdk/integrations/`), import the framework **lazily**, and add an optional extra in `pyproject.toml`;
 - attach to the framework's **public** hook API (callbacks, tracing processors, event streams) and cite the docs URL in the module docstring;
 - never raise into the user's code and never block the agent: drop events rather than fail;
 - map to the event types in `spec/README.md` §3.2 and put the framework's original payload in `raw` when it is small and serialisable;
@@ -68,7 +67,7 @@ Use the "New framework integration" issue template to claim one so two people do
 
 ### 4. SDKs and CLI
 
-- Zero runtime dependencies in `@mas-office/sdk`, `mas-office` (npm) and `mas-office` (PyPI). Dev dependencies are fine.
+- Zero runtime dependencies in `mas-office` (npm) and `mas-office` (PyPI). Dev dependencies are fine.
 - Keep the JS and Python public APIs in step (same method names, camelCase vs snake_case). If you add a method to one, open a follow-up issue for the other.
 - `serve` is a local dev server: keep it read-only for workspace files and impossible to traverse out of the workspace. Security-sensitive changes need a test.
 

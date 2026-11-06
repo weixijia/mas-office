@@ -1,0 +1,53 @@
+{
+  "name": "mas-office",
+  "version": "0.1.0",
+  "description": "Show any multi-agent system's team live in an animated office panel: SDK (events, reducer, snapshot writers) and CLI (serve, validate, replay, demo).",
+  "type": "module",
+  "bin": {
+    "mas-office": "bin/mas-office.js"
+  },
+  "main": "./src/sdk/index.js",
+  "exports": {
+    ".": "./src/sdk/index.js",
+    "./server": "./src/cli/server.js",
+    "./cli": "./src/cli/cli.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "src",
+    "panel",
+    "schemas",
+    "kit",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/sdk/reducer.test.js test/sdk/files.test.js test/sdk/office-file.test.js test/sdk/office-http.test.js test/cli/schema.test.js test/cli/validate.test.js test/cli/server.test.js test/cli/hook.test.js test/cli/export.test.js test/cli/cli.test.js",
+    "prepack": "node scripts/bundle.js",
+    "postpack": "node scripts/bundle.js --clean"
+  },
+  "keywords": [
+    "multi-agent",
+    "agents",
+    "llm",
+    "observability",
+    "visualization",
+    "dashboard",
+    "cli",
+    "mas",
+    "claude-code",
+    "ag-ui",
+    "opentelemetry"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weixijia/mas-office.git",
+    "directory": "packages/node"
+  },
+  "homepage": "https://github.com/weixijia/mas-office#readme",
+  "bugs": "https://github.com/weixijia/mas-office/issues"
+}

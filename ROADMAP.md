@@ -5,7 +5,7 @@ This is a direction, not a promise. Items link to issues once someone picks them
 ## v0.1 — the protocol works end to end (this release)
 
 - [x] Protocol 0.1: workspace layout, snapshots, event log, deterministic reducer, JSON Schemas, conformance cases
-- [x] `@mas-office/sdk` (JS) and `mas-office` (Python): reducer, file transport, HTTP transport
+- [x] JS SDK (in the `mas-office` npm package) and `mas-office` (Python): reducer, file transport, HTTP transport
 - [x] `mas-office` CLI: `serve` (live SSE), `validate`, `init` (`--kit`), `reduce`, `export --ag-ui`, `hook claude-code`, `demo`
 - [x] Panel: SDK mode, `failed` state, dynamic agents, live updates over HTTP
 - [x] Integrations (experimental): OpenAI Agents SDK, LangGraph, Claude Agent SDK, Claude Code hooks

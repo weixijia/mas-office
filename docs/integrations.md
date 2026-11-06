@@ -89,31 +89,31 @@ office.close()
 
 ## Claude Code (hooks, no code)
 
-`mas-office hook claude-code` (from a clone: `node packages/cli/bin/mas-office.js hook claude-code`) reads one hook payload from stdin and appends events to a workspace. It always exits 0 and prints nothing, so it can never block Claude Code; errors go to `<workspace>/home/hook-errors.log`. Add it to your project's `.claude/settings.json`:
+`mas-office hook claude-code` (from a clone: `node packages/node/bin/mas-office.js hook claude-code`) reads one hook payload from stdin and appends events to a workspace. It always exits 0 and prints nothing, so it can never block Claude Code; errors go to `<workspace>/home/hook-errors.log`. Add it to your project's `.claude/settings.json`:
 
 ```json
 {
   "hooks": {
-    "SessionStart": [{ "hooks": [{ "type": "command", "command": "node /path/to/mas-office/packages/cli/bin/mas-office.js hook claude-code --workspace ./.mas" }] }],
-    "UserPromptSubmit": [{ "hooks": [{ "type": "command", "command": "node /path/to/mas-office/packages/cli/bin/mas-office.js hook claude-code --workspace ./.mas" }] }],
-    "SubagentStart": [{ "hooks": [{ "type": "command", "command": "node /path/to/mas-office/packages/cli/bin/mas-office.js hook claude-code --workspace ./.mas" }] }],
-    "SubagentStop": [{ "hooks": [{ "type": "command", "command": "node /path/to/mas-office/packages/cli/bin/mas-office.js hook claude-code --workspace ./.mas" }] }],
-    "PreToolUse": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "node /path/to/mas-office/packages/cli/bin/mas-office.js hook claude-code --workspace ./.mas" }] }],
-    "PostToolUse": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "node /path/to/mas-office/packages/cli/bin/mas-office.js hook claude-code --workspace ./.mas" }] }],
-    "PostToolUseFailure": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "node /path/to/mas-office/packages/cli/bin/mas-office.js hook claude-code --workspace ./.mas" }] }],
-    "Notification": [{ "hooks": [{ "type": "command", "command": "node /path/to/mas-office/packages/cli/bin/mas-office.js hook claude-code --workspace ./.mas" }] }],
-    "Stop": [{ "hooks": [{ "type": "command", "command": "node /path/to/mas-office/packages/cli/bin/mas-office.js hook claude-code --workspace ./.mas" }] }]
+    "SessionStart": [{ "hooks": [{ "type": "command", "command": "mas-office hook claude-code --workspace ./.mas" }] }],
+    "UserPromptSubmit": [{ "hooks": [{ "type": "command", "command": "mas-office hook claude-code --workspace ./.mas" }] }],
+    "SubagentStart": [{ "hooks": [{ "type": "command", "command": "mas-office hook claude-code --workspace ./.mas" }] }],
+    "SubagentStop": [{ "hooks": [{ "type": "command", "command": "mas-office hook claude-code --workspace ./.mas" }] }],
+    "PreToolUse": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "mas-office hook claude-code --workspace ./.mas" }] }],
+    "PostToolUse": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "mas-office hook claude-code --workspace ./.mas" }] }],
+    "PostToolUseFailure": [{ "matcher": "*", "hooks": [{ "type": "command", "command": "mas-office hook claude-code --workspace ./.mas" }] }],
+    "Notification": [{ "hooks": [{ "type": "command", "command": "mas-office hook claude-code --workspace ./.mas" }] }],
+    "Stop": [{ "hooks": [{ "type": "command", "command": "mas-office hook claude-code --workspace ./.mas" }] }]
   }
 }
 ```
 
-Replace `/path/to/mas-office` with your clone. Then watch it with `node /path/to/mas-office/packages/cli/bin/mas-office.js serve ./.mas --open`.
+This assumes a global install (`npm install -g mas-office`). From a clone, use `node /path/to/mas-office/packages/node/bin/mas-office.js hook claude-code --workspace ./.mas` instead, with an absolute path to a clone you trust. Then watch it with `mas-office serve ./.mas --open`.
 
-> Use an absolute path to a clone you trust. Don't put `npx <package>` in a hook: hooks run on every tool call, and the npm package is not published yet.
+> Don't put `npx mas-office` in a hook: hooks run on every tool call, and `npx` may resolve or download the package each time. Install it once.
 
 ## AI coding assistants (kit mode)
 
-`node packages/cli/bin/mas-office.js init --kit <dir>` copies `AGENTS.md`, `harness/` and the panel. Any assistant that reads `AGENTS.md` (Claude Code, Codex, Antigravity, Gemini CLI, Cursor, …) then designs and runs the team by writing snapshots directly — no package needed. See [`kit/AGENTS.md`](../kit/AGENTS.md).
+`npx mas-office init --kit <dir>` (from a clone: `node packages/node/bin/mas-office.js init --kit <dir>`) copies `AGENTS.md`, `harness/` and the panel. Any assistant that reads `AGENTS.md` (Claude Code, Codex, Antigravity, Gemini CLI, Cursor, …) then designs and runs the team by writing snapshots directly — no package needed. See [`kit/AGENTS.md`](../kit/AGENTS.md).
 
 ## Write your own
 

@@ -23,4 +23,4 @@ body:
     id: versions
     attributes:
       label: Versions
-      placeholder: "mas-office 0.1.0, Python 3.12, Node 20, Chrome 131, macOS 15"
+      placeholder: "mas-office 0.1.0 (npm or PyPI), Python 3.12, Node 20, Chrome 131, macOS 15"

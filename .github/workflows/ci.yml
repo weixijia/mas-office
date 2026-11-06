@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   js:
-    name: JS SDK, CLI and panel (Node ${{ matrix.node }})
+    name: npm package (SDK + CLI) and panel (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -24,7 +24,7 @@ jobs:
       - run: npm install --no-audit --no-fund
       - run: npm test
       - name: Validate example workspaces
-        run: node packages/cli/bin/mas-office.js validate examples
+        run: node packages/node/bin/mas-office.js validate examples
 
   python:
     name: Python SDK (Python ${{ matrix.python }})

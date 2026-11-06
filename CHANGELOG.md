@@ -4,6 +4,9 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Changed
+- npm: one package `mas-office` (SDK + CLI); `@mas-office/sdk` is not published.
+
 ## [0.1.0] — 2026-11-06
 
 First public version. MAS Office grows out of [awesome-mas](https://github.com/weixijia/awesome-mas) (the classroom edition), whose workspaces remain valid.
