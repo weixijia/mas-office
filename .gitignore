@@ -11,3 +11,6 @@ build/
 .claude/settings.local.json
 # local runs written by the SDK examples
 /runs/
+# Local design tooling history and assembled GitHub Pages output
+/site/.taste-skill/
+/_site/

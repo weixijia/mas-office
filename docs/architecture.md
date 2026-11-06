@@ -41,7 +41,7 @@ Snapshots are what a viewer needs (who is doing what *now*); events are what pro
 | Component | Responsibility | Never does |
 |---|---|---|
 | Reducer (JS + Python) | events → snapshots, exactly per spec §4 | I/O |
-| File transport | append to `events.jsonl`, reduce, write snapshots atomically, keep `home/projects` current | block or raise into agent code |
+| File transport | synchronously append to `events.jsonl`, reduce, write snapshots atomically, keep `home/projects` current | raise emission failures into agent code |
 | HTTP transport | batch events to `mas-office serve` | block or raise into agent code |
 | `mas-office serve` | serve panel + workspace read-only, accept events, push changes over SSE | write outside the workspace, accept non-local traffic by default |
 | Panel | draw the office from snapshots | execute agent-written HTML, write anything |
@@ -51,6 +51,12 @@ Snapshots are what a viewer needs (who is doing what *now*); events are what pro
 
 - **File transport: one writer process per project.** Threads inside that process are fine (the SDKs lock per project). For several processes, run `mas-office serve` and use the HTTP transport — the server is then the single writer and assigns `seq`.
 - Snapshot files are replaced atomically (write a temp file, then rename), so the panel never reads half a file. If it does read a broken file (e.g. hand-written by an assistant), it keeps the last good version and shows a warning.
+
+## Static website embedding
+
+For an immutable example on a static host, use `office/index.html?root=../examples/price-compare/&static=1`. The explicit `static=1` option loads the complete snapshot once, skips the `/v0/health` probe and SSE connection, and disables repeated snapshot polling. Desk selection, the result view and office animation still work. Adding `&demo=1` keeps the simulated demo timeline running. Reload the iframe to fetch newer files.
+
+Without `static=1`, the panel retains its normal live-server detection and fallback polling. Use that default when following a workspace that changes during a run.
 
 ## Topologies
 

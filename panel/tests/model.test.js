@@ -611,5 +611,54 @@ test('agent ids named like Object.prototype members work everywhere ids are keys
   assert.ok(ids.every((id) => M.demoStatusesAt(script, 41.5)[id].state === 'done'));
 });
 
+// Exercise the real startup and live-probe code with a recording browser boundary.
+function startup(search) {
+  const vm = require('vm');
+  const source = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
+  const staticDeclaration = source.match(/  const STATIC = [^\n]+/)[0];
+  const liveCode = source.slice(source.indexOf('  async function startLive()'), source.indexOf('  /* ---------- start ---------- */'));
+  const startupCode = source.slice(source.indexOf("  $('#replay').hidden"), source.lastIndexOf('})();'));
+  const calls = { polls: 0, fetches: 0, intervals: [] };
+  const context = {
+    params: new URLSearchParams(search), location: { protocol: 'https:' },
+    window: { EventSource: function () {}, fetch: true },
+    fetch: () => { calls.fetches++; return new Promise(() => {}); },
+    setInterval: (fn, delay) => calls.intervals.push({ fn, delay }),
+    setTimeout: () => 1, clearTimeout: () => {},
+    $: () => ({}), ICON: { panel: '' }, S: { sidebar: false, demo: new URLSearchParams(search).get('demo') === '1' },
+    LIVE: { on: false }, Date, performance: { now: () => 0 },
+    setSidebar() {}, renderTop() {}, renderSidebar() {}, renderOffice() {},
+    poll: () => { calls.polls++; }, demoTick() {}, demoStart: 0, lastPoll: 0
+  };
+  vm.runInNewContext(staticDeclaration + '\n' + liveCode + '\n' + startupCode, context);
+  return calls;
+}
+
+test('static embedding loads snapshots once without a server probe or repeated polling', () => {
+  const calls = startup('?static=1');
+  assert.strictEqual(calls.polls, 1, 'the complete initial poll still runs');
+  assert.strictEqual(calls.fetches, 0, 'no health probe on a static host');
+  assert.deepStrictEqual(calls.intervals.map((x) => x.delay), [1000], 'only the drawing refresh remains');
+  calls.intervals.forEach((x) => x.fn());
+  assert.strictEqual(calls.polls, 1);
+});
+
+test('normal panel startup keeps live probing and fallback snapshot polling', () => {
+  const calls = startup('');
+  assert.strictEqual(calls.fetches, 1);
+  assert.strictEqual(calls.polls, 1);
+  const polling = calls.intervals.find((x) => x.delay === 2000);
+  assert.ok(polling);
+  polling.fn();
+  assert.strictEqual(calls.polls, 2);
+  assert.strictEqual(startup('?static=0').fetches, 1, 'only explicit static=1 opts out');
+});
+
+test('static embedding preserves the demo timeline', () => {
+  const calls = startup('?static=1&demo=1');
+  assert.strictEqual(calls.fetches, 0);
+  assert.deepStrictEqual(calls.intervals.map((x) => x.delay), [1000, 250]);
+});
+
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

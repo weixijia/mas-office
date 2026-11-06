@@ -1,0 +1,53 @@
+name: Pages
+
+# The project website: site/ at the root, the live panel at office/ and the example workspaces at
+# examples/, so the panel opens office/index.html?root=../examples/<name>/ with relative paths only.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "panel/**"
+      - "examples/**"
+      - "docs/assets/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble _site
+        run: |
+          mkdir -p _site/office _site/examples
+          rsync -a --exclude '.taste-skill' site/ _site/
+          rsync -a --exclude 'tests' panel/ _site/office/
+          rsync -a examples/ _site/examples/
+          touch _site/.nojekyll
+          test -f _site/index.html
+          test -f _site/office/index.html
+          test -f _site/examples/price-compare/mas/structure.js
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

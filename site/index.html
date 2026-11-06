@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="sharp" data-ground="sage" data-buttons="solid" data-motion>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MAS Office: a live office view for multi-agent systems</title>
+<meta name="description" content="An open protocol and an animated office panel for any multi-agent system: OpenAI Agents SDK, LangGraph, Claude Agent SDK, Claude Code or your own Python and JS. MIT licence.">
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
+<meta name="theme-color" content="#F3F4F1">
+<link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+<meta property="og:title" content="MAS Office: a live office view for multi-agent systems">
+<meta property="og:description" content="An open protocol and an animated office panel for any multi-agent system. Try it with npx mas-office demo.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://www.xijiawei.com/mas-office/">
+<meta property="og:url" content="https://www.xijiawei.com/mas-office/">
+<!-- The brand's own fonts, self-hosted from the panel (panel/fonts, SIL Open Font License), in place of
+     the Google Fonts link start.mjs printed: Archivo (variable, width and weight) and Red Hat Mono. -->
+<link rel="preload" href="office/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="office/fonts/red-hat-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: "Archivo"; src: url("office/fonts/archivo-latin-wdth-normal.woff2") format("woff2"); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Archivo"; src: url("office/fonts/archivo-latin-ext-wdth-normal.woff2") format("woff2"); font-weight: 100 900; font-stretch: 62% 125%; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Red Hat Mono"; src: url("office/fonts/red-hat-mono-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Red Hat Mono"; src: url("office/fonts/red-hat-mono-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+</style>
+<link rel="stylesheet" href="assets/system.css">
+<link rel="stylesheet" href="assets/ui/cards.css">
+<link rel="stylesheet" href="assets/motion/motion.css">
+<link rel="stylesheet" href="assets/backgrounds/backgrounds.css">
+<link rel="stylesheet" href="assets/layout/layout.css">
+<link rel="stylesheet" href="assets/icons/icon.css">
+<!-- start.mjs brand --page software --bg #F3F4F1 --surface #FAFBF9 --ink #1B1F23 --muted #4A5259
+     --accent #E04E2A --type archivo --radius sharp (forced: the panel's own face). Printed block kept;
+     the brand lines after it: the mono is the panel's Red Hat Mono, the filled action is the panel's
+     ink (its filled toggle), vermilion stays the accent, and the corners are the panel's square ones. -->
+<style>
+:root {
+  --p-bg: #f3f4f1; --p-surface: #fafbf9; --p-ink: #1b1f23; --p-muted: #4a5259;
+  --p-accent: #e04e2a; --p-accent-ink: #111111; --p-action: #e04e2a; --p-action-ink: #111111;
+  --p-inv-bg: #1b1f23; --p-inv-surface: #272b2f; --p-inv-ink: #f3f4f1; --p-inv-muted: #999b9c;
+  --p-inv-accent: #e04e2a; --p-inv-accent-ink: #111111; --p-inv-action: #e04e2a; --p-inv-action-ink: #111111;
+  --font-display: "Archivo", system-ui, sans-serif;
+  --font-text: "Archivo", system-ui, sans-serif;
+  --font-mono: "Martian Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --display-weight: 500;
+  --display-tracking: -0.025em;
+  --display-tracking-xl: -0.035em;
+  --display-stretch: 110%;
+  --ly-scale: 0.9;
+}
+/* brand (MAS Office panel, panel/style.css) */
+:root {
+  --font-mono: "Red Hat Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --p-action: #1b1f23; --p-action-ink: #fafbf9;
+  --p-inv-action: #f3f4f1; --p-inv-action-ink: #1b1f23;
+  --verm-ink: #b53a1c; --cobalt: #2b57b5; --ochre: #d89a12; --sage: #5e8c57; --teal: #1f8a84;
+}
+html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px; }
+</style>
+<link rel="stylesheet" href="assets/ui/base.css">
+<link rel="stylesheet" href="assets/ui/code/fragment.css">
+<link rel="stylesheet" href="assets/diagrams/diagram.css">
+<script src="assets/backgrounds/backgrounds.js"></script>
+<script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+<link rel="modulepreload" href="assets/moments/moments.js">
+<link rel="modulepreload" href="assets/moments/lib.js">
+<link rel="modulepreload" href="assets/moments/marquee-row/moment.js">
+<!-- page CSS: inside the visuals (the live panel frames, the code window, the table), one --p-h for
+     the card group, and the brand's drawing-sheet details (the ruled header, numbered tags, square
+     corners, the title block in the legal row) -->
+<style>
+  /* the drawing sheet: the header ruled in ink like the panel's top rule; square pills */
+  .nav { border-bottom-color: var(--ink); }
+  @media (min-width: 1024px) and (max-width: 1199px) {
+    .nav__actions > .nav__link { display: none; }
+    .nav__bar { gap: 16px; }
+    .nav__actions .btn { padding-inline: 12px; font-size: 13px; }
+    .nav--centre .nav__links { position: static; transform: none; margin-left: auto; flex: 0 1 auto; }
+  }
+  @media (max-width: 639px) {
+    .nav:not(.is-open) .nav__actions { display: none; }
+    .nav:not(.is-open) .nav__actions + .nav__toggle { margin-left: auto; }
+    :root { --gut: 16px; }
+  }
+  .pill { border-radius: var(--r-sm); }
+  code, kbd, .mono { font-family: var(--font-mono); }
+
+  /* the copy button: the command in the panel's mono, a glyph that swaps to a check */
+  .btn-copy code { font: 500 1em/1 var(--font-mono); letter-spacing: 0; }
+  .btn-copy .ic-copy, .btn-copy .ic-done { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; }
+  .btn-copy .ic-done { display: none; }
+  .btn-copy.is-copied .ic-copy { display: none; }
+  .btn-copy.is-copied .ic-done { display: block; }
+
+  /* hero: the live panel rising out of the lit frame (layout.css 10), at its true size */
+  .hero--centred .hero__c { gap: var(--s-3); }
+  .hero--centred h1 { max-width: 24ch; font-size: clamp(32px, 3.4vw, 52px); }
+  .hero--centred .hero__window { min-height: 260px; margin-top: var(--s-5); mask-image: none; -webkit-mask-image: none; }
+  .hero--centred .hero__window > .ly-piece.office-win { top: 0; width: 100%; height: 100%; background: var(--p-bg); border: 1px solid var(--ink); }
+  .office-win > iframe, .app-live iframe { display: block; width: 100%; height: 100%; border: 0; background: var(--p-bg); }
+  @media (max-width: 639px) { .hero--centred .hero__window > .ly-piece.office-win { left: 0; } }
+
+  /* the examples: one live panel across the .wrap, the panel's own ruled header as its chrome */
+  #examples .head { align-items: start; }
+  #examples .tabs { margin-top: var(--s-5); }
+  .app-live { position: relative; margin-top: var(--s-7); border: 1px solid var(--ink); background: var(--p-bg); overflow: hidden; }
+  .app-live > [role="tabpanel"] { position: absolute; inset: 0; }
+
+  /* how it works: one panel height for the group; the office drawing cropped to its floor plan */
+  #how .panel { --p-h: 336px; }
+  #how .panel > .frame__img { object-position: 50% 40%; }
+  /* the panel's numbered tags: an ink square, the number in mono */
+  .step-num { width: 28px; height: 28px; border: 0; border-radius: 0; background: var(--ink); color: var(--bg); font: 500 13px/1 var(--font-mono); }
+  #how .card > .step-num { margin-bottom: var(--s-3); }
+
+  /* the protocol table (comparison-table): four columns on the grid, a 1px rule closing each row */
+  .spec { margin-top: var(--s-7); }
+  .spec__row { padding-block: var(--s-3); border-bottom: 1px solid var(--line); align-items: baseline; }
+  .spec__row--head { border-bottom-color: var(--ink); padding-top: 0; }
+  .spec__row--head > * { font-size: var(--t-label); font-weight: 500; color: var(--muted); }
+  .spec__row code { font-size: 14px; }
+  .spec__row > :first-child code { font-weight: 500; color: var(--ink); }
+  #protocol.bg-band { display: block; padding-block: var(--padt) calc(var(--padb) + var(--bar)); }
+  #protocol > .wrap { min-width: 0; }
+  #protocol .spec { font-variant-numeric: tabular-nums; }
+  #protocol [data-moment] { margin-top: var(--s-8); }
+  #protocol .mo-mq__track li { font: 500 15px/1 var(--font-mono); }
+  @media (min-width: 640px) and (max-width: 1279px) {
+    #how { height: 200svh; min-height: 200svh; align-content: start; }
+  }
+  @media (max-width: 1023px) {
+    .spec__row--head { display: none; }
+    .spec__row > * { grid-column: 1 / -1; }
+    .spec__row > :not(:first-child)::before { content: attr(data-k) " "; color: var(--muted); font-size: var(--t-label); }
+  }
+
+  /* integrations: the status rows with real icons */
+  .ic-rows > li { display: flex; align-items: center; gap: var(--s-3); padding-block: var(--s-3); border-bottom: 1px solid var(--line); }
+  .ic-rows > li > img { width: 24px; height: 24px; flex: none; object-fit: contain; }
+  .ic-rows > li > span:first-of-type { flex: 1; font-weight: 500; }
+  .tag { font: 500 13px/20px var(--font-mono); padding: 0 6px; border: 1px solid var(--ink); white-space: nowrap; }
+  .tag--exp { background: color-mix(in oklab, var(--ochre) 30%, var(--p-surface)); }
+  .tag--ok { background: color-mix(in oklab, var(--sage) 28%, var(--p-surface)); }
+  #integrations .frame { --ratio: 80%; }
+
+  /* the code window: the steps beside the snippet, two panes in one window */
+  .code-win { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: var(--s-7); border: 1px solid var(--ink); background: var(--p-surface); }
+  .code-win > * { min-width: 0; }
+  .code-win__steps { padding: var(--s-6); border-right: 1px solid var(--line); display: grid; align-content: start; gap: var(--s-5); }
+  .code-win__steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: var(--s-1) var(--s-3); align-items: start; }
+  .code-win__steps li > p { grid-column: 2; }
+  .code-win__steps pre { grid-column: 2; margin: 0; padding: var(--s-3) var(--s-4); background: var(--p-bg); border: 1px solid var(--line); font: 400 14px/1.5 var(--font-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .code-win__code { display: flex; flex-direction: column; min-height: 0; }
+  .code-win__code .tabs { padding: var(--s-4) var(--s-5) 0; }
+  .code-win__code [role="tabpanel"] { flex: 1; min-height: 0; }
+  .code-win .ui-code { width: 100%; border: 0; border-radius: 0; box-shadow: none; background: transparent; }
+  .code-win .ui-code__pre { color: var(--ink); }
+  .code-win .ui-code__ln { white-space: pre-wrap; overflow-wrap: anywhere; padding-left: calc(48px + 8ch); text-indent: -8ch; }
+  .code-win .ui-code__tabs { display: none; }
+  @media (max-width: 1023px) {
+    .code-win { grid-template-columns: minmax(0, 1fr); }
+    .code-win__steps { border-right: 0; border-bottom: 1px solid var(--line); }
+  }
+
+  /* steps card 1: the event log, cut by its right edge */
+  #how .ui-code { width: 640px; }
+  #how .ui-code__tabs .ui-code__lang { font-family: var(--font-mono); }
+
+  /* no-code: the panel's result view, cut by the frame's right and bottom edges */
+  #nocode .frame { --ratio: 80%; background: var(--p-bg); }
+  #nocode .shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; }
+  #nocode pre { margin: 0; padding: var(--s-3) var(--s-4); background: var(--p-surface); border: 1px solid var(--line); font: 400 15px/1.5 var(--font-mono); white-space: pre-wrap; }
+  @media (max-width: 639px) {
+    #protocol { --hm: 2; }
+    #how, #code, #integrations, #contribute { --hm: 2; }
+    .ic-rows > li { flex-wrap: wrap; }
+    .ic-rows > li > span:first-of-type { flex-basis: calc(100% - 48px); }
+    .ic-rows .tag { margin-left: 36px; }
+  }
+
+  /* contribute: four lanes, each with its file's real icon */
+  #contribute .card { gap: var(--s-3); }
+  #contribute .card img { width: 32px; height: 32px; }
+  .help-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-5); margin-top: var(--s-8); padding-top: var(--s-5); border-top: 1px solid var(--ink); }
+  .help-row > p { margin-right: auto; }
+
+  /* the legal row as the drawing's title block (panel: .title-block) */
+  .title-block { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: var(--s-7); border: 1px solid var(--ink); border-top-width: 2px; }
+  .title-block > div { padding: var(--s-2) var(--s-4) var(--s-3); border-right: 1px solid var(--ink); min-width: 0; }
+  .title-block > div:last-child { border-right: 0; }
+  .title-block dt { font-size: var(--t-label); color: var(--muted); }
+  .title-block dd { margin: 0; font-size: var(--t-small); font-weight: 500; }
+  @media (max-width: 1023px) { .title-block { grid-template-columns: repeat(2, minmax(0, 1fr)); } .title-block > div:nth-child(2) { border-right: 0; } .title-block > div:nth-child(-n+2) { border-bottom: 1px solid var(--ink); } }
+</style>
+</head>
+<body>
+<!-- type: software (a developer tool: an open protocol and an animated office panel for multi-agent systems)
+     deal: hero centred (dealt again: triptych's use, a product with many outputs in a collage of pieces, does not fit one live window),
+           palette brand (the panel's own tokens), type archivo (forced, the panel's Archivo; Red Hat Mono in place of Martian Mono, self-hosted),
+           radius sharp (square, as the panel), nav nav-centre, close close-type, footer footer-columns, rhythm space, buttons solid,
+           mark: the client's logo, lit ground sage, grounds how bg-halo + protocol bg-band,
+           effect grain-gradient in the hero frame (held still: the centred hero's motion is the window's own story),
+           card grounds: none fit (pick: no effects in the grain family besides grain-gradient), so the panels take the lit ground plain
+     moment: marquee-row (#protocol, the event names)
+     plan, one screen each at 1440x900: hero, examples (app-frame), how (steps), protocol (table + marquee), integrations
+     (split + fanin diagram), code (code window), nocode (split + panel capture), contribute (lanes), faq, footer.closing -->
+<header class="nav nav--centre">
+  <div class="wrap nav__bar">
+    <a class="nav__logo" href="#top"><img src="assets/img/logo.svg" alt="" width="27" height="24">MAS Office</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item"><a class="nav__link" href="#examples">Examples</a></div>
+      <div class="nav__item"><a class="nav__link" href="#protocol">Protocol</a></div>
+      <div class="nav__item">
+        <a class="nav__link" href="#integrations">Integrations <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="nav__menu">
+          <div class="wrap grid">
+            <div class="menu-col span-3">
+              <p class="t-label">Frameworks</p>
+              <a href="#integrations">OpenAI Agents SDK<span>A tracing processor</span></a>
+              <a href="#integrations">LangGraph<span>Wraps your stream</span></a>
+              <a href="#integrations">Claude Agent SDK<span>Hooks for subagents</span></a>
+              <a href="#integrations">Claude Code<span>Hook command, no code</span></a>
+            </div>
+            <div class="menu-col span-3">
+              <p class="t-label">Your own code</p>
+              <a href="#code">Python SDK<span>Standard library only</span></a>
+              <a href="#code">JavaScript SDK<span>In the npm package</span></a>
+              <a href="#nocode">AGENTS.md kit<span>For AI coding assistants</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav__item"><a class="nav__link" href="#code">Code</a></div>
+      <div class="nav__item"><a class="nav__link" href="#contribute">Contribute</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="nav__link" href="https://github.com/weixijia/mas-office">GitHub</a>
+      <button class="btn btn--primary btn-copy" type="button" data-copy="npx mas-office demo"><span class="sr-only">Copy </span><code>npx mas-office demo</code><svg class="ic-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.25" y="5.25" width="8" height="8"/><path d="M10.75 3V2.75h-8v8H3"/></svg><svg class="ic-done" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></button>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero hero--centred" aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text">
+      <div class="hero__c">
+        <a class="pill" href="#protocol"><span>Protocol v0.1</span><span class="muted">18 event types, MIT licence</span></a>
+        <h1 id="hero-h">A live office view for agent teams</h1>
+        <p class="hero__lead">An open protocol and an animated panel for any multi-agent system. Each agent gets a desk, and every tool call, handoff, flag or failure shows as it happens.</p>
+        <div class="btn-row">
+          <button class="btn btn--primary btn-copy" type="button" data-copy="npx mas-office demo"><span class="sr-only">Copy </span><code>npx mas-office demo</code><svg class="ic-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.25" y="5.25" width="8" height="8"/><path d="M10.75 3V2.75h-8v8H3"/></svg><svg class="ic-done" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></button>
+          <a class="btn btn--secondary" href="https://github.com/weixijia/mas-office">View on GitHub</a>
+        </div>
+      </div>
+      <div class="hero__window" data-fx="grain-gradient" data-fx-seed="4" data-fx-params='{"speed":0,"grainMotion":0,"calm":0}'>
+        <div class="ly-piece office-win" data-office-live>
+          <iframe data-src-live="office/index.html?static=1&amp;root=../examples/price-compare/&amp;demo=1" data-src-still="office/index.html?static=1&amp;root=../examples/price-compare/" title="MAS Office panel running the headphone deals example: two finders search in parallel, two checkers check the offers, the lead writes the shortlist"></iframe>
+          <script>/* a phone and reduced motion get the finished run: the hero's own motion rests there */
+            (function () { var f = document.currentScript.previousElementSibling; f.src = f.getAttribute(matchMedia('(max-width: 639px), (prefers-reduced-motion: reduce)').matches ? 'data-src-still' : 'data-src-live'); })();</script>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="section" id="examples" aria-labelledby="examples-h">
+    <div class="wrap">
+      <div class="grid head">
+        <h2 class="span-5" id="examples-h">Three example runs, live in the panel</h2>
+        <div class="span-6 start-7">
+          <p class="t-lead">Each example is a real workspace folder. Click a desk or a role to follow its thread; the result sits beside the drawing with its sources.</p>
+          <div class="tabs" role="tablist" aria-label="Example runs">
+            <button class="tab" role="tab" type="button" id="tab-headphones" aria-controls="ex-headphones" aria-selected="true">Compare headphone deals</button>
+            <button class="tab" role="tab" type="button" id="tab-lisbon" aria-controls="ex-lisbon" aria-selected="false">Plan a Lisbon weekend</button>
+            <button class="tab" role="tab" type="button" id="tab-thesis" aria-controls="ex-thesis" aria-selected="false">Check a thesis idea</button>
+          </div>
+        </div>
+      </div>
+      <div class="ui app-live fill" data-ui-pause-host>
+        <div role="tabpanel" id="ex-headphones" aria-labelledby="tab-headphones">
+          <iframe src="office/index.html?static=1&amp;root=../examples/price-compare/" loading="lazy" title="MAS Office panel: the finished headphone deals run and its shortlist"></iframe>
+        </div>
+        <div role="tabpanel" id="ex-lisbon" aria-labelledby="tab-lisbon" hidden>
+          <iframe src="office/index.html?static=1&amp;root=../examples/trip-planning/" loading="lazy" title="MAS Office panel: the finished Lisbon weekend run and its plan"></iframe>
+        </div>
+        <div role="tabpanel" id="ex-thesis" aria-labelledby="tab-thesis" hidden>
+          <iframe src="office/index.html?static=1&amp;root=../examples/thesis-feasibility/" loading="lazy" title="MAS Office panel: the finished thesis feasibility run and its report"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-halo" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="how-h">Events become an office in three steps</h2>
+        <p>Your framework still runs the agents. MAS Office reads what they report.</p>
+      </div>
+      <div class="grid">
+        <article class="card card--row card--open span-4">
+          <span class="step-num">1</span>
+          <h3>Producers append events</h3>
+          <p>Integrations and SDKs write one JSON line per event to an append-only log.</p>
+          <div class="panel">
+            <div class="stage stage--fade-r"><div class="at-corner" style="--ax:24px;--ay:40px">
+              <div class="ui ui-panel ui-code" data-ui="code" data-ui-still>
+                <div class="ui-code__tabs">
+                  <span class="ui-code__tab is-on"><i class="ui-code__lang">{}</i>mas/events.jsonl</span>
+                  <span class="ui-spacer"></span>
+                </div>
+                <pre class="ui-code__pre"><code><span class="ui-code__ln" data-n="1">{"v":"0.1","seq":1,"type":"run.started","ts":"2026-11-06T10:00:00Z"}</span>
+<span class="ui-code__ln" data-n="2">{"v":"0.1","seq":2,"ts":"2026-11-06T10:00:01Z","type":"agent.status","agentId":"finder","data":{"state":"working"}}</span>
+<span class="ui-code__ln" data-n="3">{"v":"0.1","seq":3,"ts":"2026-11-06T10:00:02Z","type":"tool.started","agentId":"finder","data":{"name":"web search"}}</span>
+<span class="ui-code__ln is-mark" data-n="4">{"v":"0.1","seq":4,"ts":"2026-11-06T10:00:03Z","type":"handoff","agentId":"finder","data":{"to":"lead"}}</span>
+<span class="ui-code__ln" data-n="5">{"v":"0.1","seq":5,"ts":"2026-11-06T10:00:04Z","type":"agent.finished","agentId":"finder"}</span>
+<span class="ui-code__ln" data-n="6">{"v":"0.1","seq":6,"ts":"2026-11-06T10:00:05Z","type":"result","data":{"markdown":"## Shortlist"}}</span>
+<span class="ui-code__ln" data-n="7">{"v":"0.1","seq":7,"ts":"2026-11-06T10:00:06Z","type":"run.finished"}</span></code></pre>
+                <div class="ui-code__hint" data-code-hint><span class="ui-dot"></span><span data-code-text>Line 4 draws a handoff path to the lead.</span></div>
+              </div>
+            </div></div>
+          </div>
+        </article>
+        <article class="card card--row card--open span-4">
+          <span class="step-num">2</span>
+          <h3>The reducer builds snapshots</h3>
+          <p>The same deterministic reducer in JS and Python turns the log into snapshot files.</p>
+          <div class="panel">
+            <div class="dg" data-diagram><script type="application/json">{"layout":"lanes","alt":"The event log goes into the reducer, which writes the team structure, one status per agent and the result.","input":{"label":"events.jsonl","icon":"ui:file-json","sub":"append-only"},"core":{"label":"Reducer","icon":"ui:git-merge"},"lanes":[{"label":"structure","icon":"ui:users","done":true,"sub":"the team"},{"label":"status","icon":"ui:activity","done":true,"sub":"one per agent"},{"label":"result","icon":"ui:file-check","done":true,"sub":"with sources"}]}</script></div>
+          </div>
+        </article>
+        <article class="card card--row card--open span-4">
+          <span class="step-num">3</span>
+          <h3>The panel draws the office</h3>
+          <p>Desks, handoff paths and flags, from a file:// page or live over Server-Sent Events.</p>
+          <div class="panel">
+            <img class="frame__img" src="assets/img/office-plan.webp" alt="The office drawing: five agents at their desks in coloured work zones, the budget checker raising a flag" width="820" height="672" loading="lazy" decoding="async" data-source="client" data-subject="the MAS Office panel">
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-band" id="protocol" aria-labelledby="protocol-h">
+    <div class="wrap">
+      <div class="grid head">
+        <h2 class="span-5" id="protocol-h">An open protocol with 18 event types</h2>
+        <div class="span-6 start-7 stack-4">
+          <p class="t-lead">JSON Schemas, a deterministic reducer and conformance cases that both reference SDKs must pass. Every event maps to AG-UI, OpenTelemetry GenAI and A2A.</p>
+          <a class="link" href="https://github.com/weixijia/mas-office/blob/main/spec/README.md">Read the protocol</a>
+        </div>
+      </div>
+      <div class="spec" role="table" aria-label="How MAS Office events map to AG-UI, OpenTelemetry GenAI and A2A">
+        <div class="grid spec__row spec__row--head" role="row"><span class="span-3" role="columnheader">MAS Office event</span><span class="span-3" role="columnheader">AG-UI</span><span class="span-3" role="columnheader">OpenTelemetry GenAI</span><span class="span-3" role="columnheader">A2A</span></div>
+        <div class="grid spec__row" role="row"><span class="span-3" role="cell"><code>agent.status</code></span><span class="span-3" role="cell" data-k="AG-UI"><code>ACTIVITY_SNAPSHOT</code></span><span class="span-3" role="cell" data-k="OTel">span attributes</span><span class="span-3" role="cell" data-k="A2A"><code>TaskStatusUpdateEvent</code></span></div>
+        <div class="grid spec__row" role="row"><span class="span-3" role="cell"><code>handoff</code></span><span class="span-3" role="cell" data-k="AG-UI"><code>CUSTOM</code></span><span class="span-3" role="cell" data-k="OTel">span link</span><span class="span-3" role="cell" data-k="A2A"><code>referenceTaskIds</code></span></div>
+        <div class="grid spec__row" role="row"><span class="span-3" role="cell"><code>tool.started</code></span><span class="span-3" role="cell" data-k="AG-UI"><code>TOOL_CALL_START</code></span><span class="span-3" role="cell" data-k="OTel"><code>execute_tool</code> span start</span><span class="span-3" role="cell" data-k="A2A">none</span></div>
+        <div class="grid spec__row" role="row"><span class="span-3" role="cell"><code>flag.raised</code></span><span class="span-3" role="cell" data-k="AG-UI">interrupt</span><span class="span-3" role="cell" data-k="OTel">none</span><span class="span-3" role="cell" data-k="A2A"><code>INPUT_REQUIRED</code></span></div>
+        <div class="grid spec__row" role="row"><span class="span-3" role="cell"><code>agent.failed</code></span><span class="span-3" role="cell" data-k="AG-UI"><code>SUBAGENT_ERROR</code></span><span class="span-3" role="cell" data-k="OTel">span end with <code>error.type</code></span><span class="span-3" role="cell" data-k="A2A"><code>FAILED</code></span></div>
+      </div>
+      <div data-moment="marquee-row" data-moment-opts='{"speed": 32}'>
+        <ul class="mo-mq__track"><li>run.started</li><li>agent.registered</li><li>agent.status</li><li>tool.started</li><li>tool.finished</li><li>message</li><li>handoff</li><li>flag.raised</li><li>flag.resolved</li><li>artifact</li><li>agent.finished</li><li>result</li><li>run.finished</li><li>run.failed</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="integrations" aria-labelledby="integrations-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="span-5 stack-5">
+          <h2 id="integrations-h">Works with four agent frameworks</h2>
+          <p class="t-lead">Agents, tool calls and handoffs become desks, tool uses and handoff paths. Your framework's own traces keep working.</p>
+          <ul class="ic-rows">
+            <li><img loading="lazy" decoding="async" data-icon="openai" src="assets/icons/openai.svg" alt="" width="24" height="24"><span>OpenAI Agents SDK</span><span class="tag tag--exp">experimental</span></li>
+            <li><img loading="lazy" decoding="async" data-icon="si:langgraph" src="assets/icons/langgraph.svg" alt="" width="24" height="24"><span>LangGraph</span><span class="tag tag--exp">experimental</span></li>
+            <li><img loading="lazy" decoding="async" data-icon="claude" src="assets/icons/claude.svg" alt="" width="24" height="24"><span>Claude Agent SDK</span><span class="tag tag--exp">experimental</span></li>
+            <li><img loading="lazy" decoding="async" data-icon="claude-code" src="assets/icons/claude-code.svg" alt="" width="24" height="24"><span>Claude Code hooks</span><span class="tag tag--exp">experimental</span></li>
+          </ul>
+          <a class="link" href="https://github.com/weixijia/mas-office/blob/main/docs/integrations.md">Read the integration guides</a>
+        </div>
+        <div class="frame frame--split span-6 start-7">
+          <div class="dg" data-diagram><script type="application/json">{"layout":"fanin","alt":"The OpenAI Agents SDK, LangGraph, the Claude Agent SDK, Claude Code and your own code all write to one events.jsonl log, which the office panel draws.","sources":[{"label":"OpenAI Agents SDK","icon":"openai","sub":"TracingProcessor"},{"label":"LangGraph","icon":"si:langgraph","sub":"stream_to_office"},{"label":"Claude Agent SDK","icon":"claude","sub":"office_hooks"},{"label":"Claude Code","icon":"claude-code","sub":"hook command"},{"label":"Your code","icon":"python","sub":"Python or JS SDK"}],"target":{"label":"events.jsonl","icon":"ui:file-json"},"then":{"label":"Office panel","icon":"ui:building-2","meta":"live"}}</script></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="code" aria-labelledby="code-h">
+    <div class="wrap">
+      <div class="grid head">
+        <h2 class="span-5" id="code-h">Report a run from Python or JavaScript</h2>
+        <p class="span-6 start-7 t-lead">The packages use only the standard library: no account, no database, no cloud. Emission failures are warned and dropped; HTTP transport batches events in the background.</p>
+      </div>
+      <div class="code-win">
+        <ol class="code-win__steps">
+          <li><span class="step-num">1</span><p>Install the Python SDK (3.10 or later; PyPI release coming soon)</p><pre>pip install "mas-office @ git+https://github.com/weixijia/mas-office#subdirectory=packages/python"</pre></li>
+          <li><span class="step-num">2</span><p>Or the JavaScript one</p><pre>npm install mas-office</pre></li>
+          <li><span class="step-num">3</span><p>Open the office, live over Server-Sent Events</p><pre>npx mas-office serve ./runs --open</pre></li>
+        </ol>
+        <div class="code-win__code">
+          <div class="tabs" role="tablist" aria-label="Language">
+            <button class="tab" role="tab" type="button" id="tab-py" aria-controls="code-py" aria-selected="true">Python</button>
+            <button class="tab" role="tab" type="button" id="tab-js" aria-controls="code-js" aria-selected="false">JavaScript</button>
+          </div>
+          <div role="tabpanel" id="code-py" aria-labelledby="tab-py" data-ui-loop>
+            <div class="ui ui-panel ui-code" data-ui="code">
+              <div class="ui-code__tabs"><span class="ui-code__tab is-on"><i class="ui-code__lang">PY</i>Python</span><span class="ui-spacer"></span></div>
+              <pre class="ui-code__pre"><code><span class="ui-code__ln" data-n="1"><span class="k">from</span> mas_office <span class="k">import</span> Office</span>
+<span class="ui-code__ln" data-n="2"> </span>
+<span class="ui-code__ln" data-n="3"><span class="k">with</span> <span class="f">Office</span>(workspace="./runs") <span class="k">as</span> office:</span>
+<span class="ui-code__ln" data-n="4">    run = office.<span class="f">project</span>("headphone-deals", title="Headphone deals").<span class="f">run</span>()</span>
+<span class="ui-code__ln" data-n="5">    finder = run.<span class="f">agent</span>("finder", name="Retail finder", emoji="🔎")</span>
+<span class="ui-code__ln is-mark" data-n="6">    finder.<span class="f">working</span>("Searching Currys", progress=<span class="n">30</span>)</span>
+<span class="ui-code__ln" data-n="7">    finder.<span class="f">source</span>(id="currys", title="Sony XM6 — Currys", url="https://www.currys.co.uk/", evidence="A")</span>
+<span class="ui-code__ln" data-n="8" data-note="The handoff path runs from the finder's desk to the lead.">    finder.<span class="f">handoff</span>("lead")</span>
+<span class="ui-code__ln" data-n="9">    finder.<span class="f">done</span>()</span>
+<span class="ui-code__ln" data-n="10" data-note="The result opens beside the office, its source linked.">    run.<span class="f">result</span>(markdown="## Shortlist\n- Currys — £279")</span>
+<span class="ui-code__ln" data-n="11">    run.<span class="f">finish</span>()</span></code></pre>
+              <div class="ui-code__hint" data-code-hint><span class="ui-dot"></span><span data-code-text>The finder's desk reads “Searching Currys” at 30%.</span></div>
+            </div>
+          </div>
+          <div role="tabpanel" id="code-js" aria-labelledby="tab-js" hidden>
+            <div class="ui ui-panel ui-code" data-ui="code" data-ui-still>
+              <div class="ui-code__tabs"><span class="ui-code__tab is-on"><i class="ui-code__lang">JS</i>JavaScript</span><span class="ui-spacer"></span></div>
+              <pre class="ui-code__pre"><code><span class="ui-code__ln" data-n="1"><span class="k">import</span> { Office } <span class="k">from</span> 'mas-office';</span>
+<span class="ui-code__ln" data-n="2"> </span>
+<span class="ui-code__ln" data-n="3"><span class="k">const</span> office = <span class="k">new</span> <span class="f">Office</span>({ workspace: './runs' });</span>
+<span class="ui-code__ln" data-n="4"><span class="k">const</span> run = office.<span class="f">project</span>('headphone-deals', { title: 'Headphone deals' }).<span class="f">run</span>();</span>
+<span class="ui-code__ln" data-n="5"><span class="k">const</span> finder = run.<span class="f">agent</span>('finder', { name: 'Retail finder', emoji: '🔎' });</span>
+<span class="ui-code__ln is-mark" data-n="6">finder.<span class="f">working</span>('Searching Currys', { progress: <span class="n">30</span> });</span>
+<span class="ui-code__ln" data-n="7">finder.<span class="f">done</span>();</span>
+<span class="ui-code__ln" data-n="8" data-note="The result opens beside the office.">run.<span class="f">result</span>({ markdown: '## Shortlist\n- Currys — £279' });</span>
+<span class="ui-code__ln" data-n="9">run.<span class="f">finish</span>();</span>
+<span class="ui-code__ln" data-n="10"><span class="k">await</span> office.<span class="f">close</span>();</span></code></pre>
+              <div class="ui-code__hint" data-code-hint><span class="ui-dot"></span><span data-code-text>The finder's desk reads “Searching Currys” at 30%.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="nocode" aria-labelledby="nocode-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="span-5 stack-5">
+          <h2 id="nocode-h">No-code mode for AI coding assistants</h2>
+          <p class="t-lead">Give <code>AGENTS.md</code> to Claude Code, Codex, Gemini CLI or Antigravity. The assistant designs a team with you, locks it, and runs each role as its own subagent while the office shows every step.</p>
+          <pre>npx mas-office init --kit my-team</pre>
+          <a class="link" href="https://github.com/weixijia/awesome-mas">See awesome-mas, the classroom edition</a>
+        </div>
+        <div class="frame frame--split span-6 start-7">
+          <img class="shot" src="assets/img/result.webp" alt="The office panel after a run: the team at the party table and the result beside it, a shortlist table with its flags and sources" width="1440" height="900" loading="lazy" decoding="async" data-source="client" data-subject="the MAS Office panel with a result">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contribute" aria-labelledby="contribute-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="contribute-h">Four lanes for contributors</h2>
+        <p>A new framework integration is usually one file and a test with fake payloads. We use the DCO, not a CLA.</p>
+      </div>
+      <div class="grid">
+        <a class="card span-3" href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md#1-protocol-changes-spec">
+          <img loading="lazy" decoding="async" data-icon="file:json" src="assets/icons/json.svg" alt="" width="32" height="32">
+          <h3>Change the protocol</h3>
+          <p>Spec changes go through a lightweight RFC, with schemas and conformance cases.</p>
+        </a>
+        <a class="card span-3" href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md#2-framework-integrations">
+          <img loading="lazy" decoding="async" data-icon="python" src="assets/icons/python.svg" alt="" width="32" height="32">
+          <h3>Add an integration</h3>
+          <p>One file that maps a framework's events, and a test with fake payloads.</p>
+        </a>
+        <a class="card span-3" href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md#3-panel">
+          <img loading="lazy" decoding="async" data-icon="file:html" src="assets/icons/html.svg" alt="" width="32" height="32">
+          <h3>Improve the panel</h3>
+          <p>Plain HTML, CSS and JS with no build step, opened straight from file://.</p>
+        </a>
+        <a class="card span-3" href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md#4-sdks-and-cli">
+          <img loading="lazy" decoding="async" data-icon="npm" src="assets/icons/npm.svg" alt="" width="32" height="32">
+          <h3>Extend the SDKs</h3>
+          <p>The JS and Python SDKs and the CLI, both checked against one set of cases.</p>
+        </a>
+      </div>
+      <div class="help-row">
+        <p>Help wanted: CrewAI, AG-UI and OpenTelemetry ingest, Google ADK, Mastra, CAMEL.</p>
+        <a class="link" href="https://github.com/weixijia/mas-office/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">Find a good first issue</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="span-5 stack-4">
+          <h2 id="faq-h">Questions</h2>
+          <p class="t-lead">Something else? Ask in the project's discussions.</p>
+          <a class="link" href="https://github.com/weixijia/mas-office/discussions">Start a discussion</a>
+        </div>
+        <div class="faq span-6 start-7">
+          <div class="faq__item"><h3>Is MAS Office a tracing platform?</h3><p>No. It is the view you put on the big screen. Use it beside your tracer: every event can carry trace ids.</p></div>
+          <div class="faq__item"><h3>Do I need an account, a server or a database?</h3><p>No. A project is a folder of files, and the panel is plain HTML that even opens from file://.</p></div>
+          <div class="faq__item"><h3>Are the framework integrations stable?</h3><p>Not yet. The four integrations are experimental; the AGENTS.md kit for coding assistants is stable.</p></div>
+          <div class="faq__item"><h3>Is the Python package on PyPI?</h3><p>Not yet. Install it from GitHub with pip for now; the first tagged release to npm and PyPI is on the roadmap.</p></div>
+          <div class="faq__item"><h3>Can I replay a run?</h3><p>Yes. Each project keeps an append-only events.jsonl, and <code>mas-office reduce</code> rebuilds every snapshot from it.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer closing" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">See a five-agent team in 30 seconds</h2>
+        <p class="t-small muted">Node 18 or later. No API key, nothing to set up.</p>
+      </div>
+      <button class="btn btn--primary btn--xl btn--wide btn-copy" type="button" data-copy="npx mas-office demo"><span class="sr-only">Copy </span><code>npx mas-office demo</code><svg class="ic-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.25" y="5.25" width="8" height="8"/><path d="M10.75 3V2.75h-8v8H3"/></svg><svg class="ic-done" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></button>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="#top"><img loading="lazy" decoding="async" src="assets/img/logo.svg" alt="" width="27" height="24">MAS Office</a>
+          <p class="footer__lede">A window into the room where your agents work.</p>
+        </div>
+        <div class="span-2 footer__col"><h4>Product</h4><ul><li><a href="#examples">Examples</a></li><li><a href="#code">Code</a></li><li><a href="#nocode">No-code mode</a></li></ul></div>
+        <div class="span-2 footer__col"><h4>Protocol</h4><ul><li><a href="#protocol">Event types</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/spec/README.md">Specification</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/docs/architecture.md">Architecture</a></li></ul></div>
+        <div class="span-2 footer__col"><h4>Integrations</h4><ul><li><a href="#integrations">Frameworks</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/docs/integrations.md">Guides</a></li><li><a href="https://github.com/weixijia/awesome-mas">awesome-mas</a></li></ul></div>
+        <div class="span-2 footer__col"><h4>Contribute</h4><ul><li><a href="https://github.com/weixijia/mas-office">GitHub</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/ROADMAP.md">Roadmap</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md">Contributing</a></li></ul></div>
+      </div>
+      <dl class="title-block">
+        <div><dt>Project</dt><dd>MAS Office</dd></div>
+        <div><dt>Licence</dt><dd><a href="https://github.com/weixijia/mas-office/blob/main/LICENSE">MIT</a> &copy; 2026 Xijia Wei and contributors</dd></div>
+        <div><dt>Fonts</dt><dd>Archivo and Red Hat Mono, SIL Open Font License</dd></div>
+        <div><dt>Marks</dt><dd>Product names and logos are trademarks of their owners</dd></div>
+      </dl>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="assets/system.js"></script>
+<script type="module" src="assets/motion/motion.js"></script>
+<script type="module" src="assets/layout/layout.js"></script>
+<script type="module" src="assets/diagrams/mount.js"></script>
+<script type="module" src="assets/site.js"></script>
+</body>
+</html>

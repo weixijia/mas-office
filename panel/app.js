@@ -13,6 +13,8 @@
   const FIXED_ROOT = params.get('root') === null ? null : M.safeRoot(params.get('root'));
   let ROOT = FIXED_ROOT || '../';
   const FIXED = !!FIXED_ROOT || params.get('demo') === '1';
+  // Published examples are immutable: load once, without live-server probing or snapshot polling.
+  const STATIC = params.get('static') === '1';
 
   const FILES = { env: 'mas/env.js', state: 'mas/state.js', task: 'me/task.js', structure: 'mas/structure.js', result: 'outputs/result.js' };
   const GLOBALS = { env: 'MAS_ENV', state: 'MAS_STATE', task: 'MAS_TASK', structure: 'MAS_STRUCTURE', result: 'MAS_RESULT' };
@@ -499,7 +501,7 @@
   const LIVE = { on: false, es: null, retry: 0, timer: 0, debounce: 0 };
   function setLive(on) { if (LIVE.on !== on) { LIVE.on = on; renderTop(); } }
   async function startLive() {
-    if (!/^https?:$/.test(location.protocol) || !window.EventSource || !window.fetch) return;
+    if (STATIC || !/^https?:$/.test(location.protocol) || !window.EventSource || !window.fetch) return;
     clearTimeout(LIVE.timer);
     let ok = false;
     try {
@@ -530,7 +532,7 @@
   renderSidebar();
   poll();
   // Fallback polling: every 2 s, slowed to every 10 s while the event stream tells us about changes.
-  setInterval(() => { if (!LIVE.on || Date.now() - lastPoll >= 9900) poll(); }, 2000);
+  if (!STATIC) setInterval(() => { if (!LIVE.on || Date.now() - lastPoll >= 9900) poll(); }, 2000);
   startLive();
   setInterval(() => { if (S.loadedOnce) { renderTop(); renderOffice(); renderSidebar(); } }, 1000);
   if (S.demo) { demoStart = performance.now(); setInterval(demoTick, 250); }

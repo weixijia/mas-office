@@ -17,7 +17,7 @@ OpenAI Agents SDK · LangGraph · Claude Agent SDK · Claude Code · your own Py
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-1F8A84.svg)](CONTRIBUTING.md)
 [![GitHub stars](https://img.shields.io/github/stars/weixijia/mas-office?style=social)](https://github.com/weixijia/mas-office/stargazers)
 
-[**Quick start**](#-quick-start) · [**Integrations**](#-plug-in-your-framework) · [**Protocol**](spec/README.md) · [**Docs**](docs/) · [**Roadmap**](ROADMAP.md) · [**Contributing**](CONTRIBUTING.md) · [**中文**](README.zh-CN.md)
+[**Website & live examples**](https://www.xijiawei.com/mas-office/) · [**Quick start**](#-quick-start) · [**Integrations**](#-plug-in-your-framework) · [**Protocol**](spec/README.md) · [**Docs**](docs/) · [**Roadmap**](ROADMAP.md) · [**Contributing**](CONTRIBUTING.md) · [**中文**](README.zh-CN.md)
 
 <img src="docs/assets/demo.gif" alt="MAS Office demo: two finder agents search in parallel, a budget checker raises a flag, a planner takes over, and the team celebrates when the result is ready" width="900">
 
@@ -192,7 +192,7 @@ flowchart LR
 
 - **Events in, pictures out.** Producers report what *happened*; the reducer computes what the panel shows *now*. Producers never have to track UI state.
 - **Same answer everywhere.** The JS and Python reducers are checked against the same hand-written [conformance cases](spec/conformance/), so a log replays identically in both.
-- **Never in the way.** Emitters never raise into your code or block your agents: bad events are dropped with one warning.
+- **Best-effort reporting.** Emission failures are warned and dropped. File transport writes synchronously; HTTP transport batches events in the background.
 
 Details: [architecture](docs/architecture.md) · [protocol](spec/README.md) · [why it is designed this way](docs/research/prior-art.md) (a cited survey of 14 agent frameworks, 4 standards and today's visualizers).
 

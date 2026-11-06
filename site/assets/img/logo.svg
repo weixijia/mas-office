@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 108" width="120" height="108" role="img" aria-label="MAS Office logo: a small office in axonometric view with three coloured work zones">
+  <g stroke="#1B1F23" stroke-width="2.4" stroke-linejoin="round">
+    <path d="M16 70 V38 L60 14 V46 Z" fill="#3A4048"/>
+    <path d="M60 46 V14 L104 38 V70 Z" fill="#1B1F23"/>
+    <path d="M60 46 L104 70 L60 94 L16 70 Z" fill="#ECEEE8"/>
+  </g>
+  <g stroke="#1B1F23" stroke-width="1.6" stroke-linejoin="round">
+    <path d="M60 50.8 L75.4 59.2 L60 67.6 L44.6 59.2 Z" fill="#E04E2A"/>
+    <path d="M79.8 61.6 L95.2 70 L79.8 78.4 L64.4 70 Z" fill="#2B57B5"/>
+    <path d="M40.2 61.6 L55.6 70 L40.2 78.4 L24.8 70 Z" fill="#D89A12"/>
+  </g>
+  <path d="M60 94 V100 L16 76 V70 M60 100 L104 76 V70" fill="none" stroke="#1B1F23" stroke-width="2.4" stroke-linejoin="round"/>
+</svg>

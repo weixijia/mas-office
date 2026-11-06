@@ -15,7 +15,7 @@ OpenAI Agents SDK · LangGraph · Claude Agent SDK · Claude Code · 你自己�
 [![Protocol v0.1](https://img.shields.io/badge/protocol-v0.1-D89A12.svg)](spec/README.md)
 [![GitHub stars](https://img.shields.io/github/stars/weixijia/mas-office?style=social)](https://github.com/weixijia/mas-office/stargazers)
 
-[**快速开始**](#-快速开始) · [**框架接入**](#-接入你的框架) · [**协议**](spec/README.md) · [**文档**](docs/) · [**路线图**](ROADMAP.md) · [**参与贡献**](CONTRIBUTING.md) · [**English**](README.md)
+[**项目网站与在线示例**](https://www.xijiawei.com/mas-office/) · [**快速开始**](#-快速开始) · [**框架接入**](#-接入你的框架) · [**协议**](spec/README.md) · [**文档**](docs/) · [**路线图**](ROADMAP.md) · [**参与贡献**](CONTRIBUTING.md) · [**English**](README.md)
 
 <img src="docs/assets/demo.gif" alt="MAS Office 演示：两个搜索 agent 并行工作，预算检查员提出问题，规划员接手，结果完成后团队开派对" width="900">
 
@@ -104,7 +104,7 @@ flowchart LR
 
 - **事件进，画面出**：producer 只报告"发生了什么"，reducer 算出面板"现在该显示什么"。
 - **处处结果一致**：JS 和 Python 两套 reducer 用同一批手工推算的 [conformance 用例](spec/conformance/)检验。
-- **绝不碍事**：emitter 从不向你的代码抛异常、也不阻塞 agent，坏事件只警告一次后丢弃。
+- **尽力报告，不中断任务**：emission 失败会警告并丢弃。File transport 同步写文件；HTTP transport 在后台批量发送事件。
 
 ## 🆚 和其他工具的区别
 
