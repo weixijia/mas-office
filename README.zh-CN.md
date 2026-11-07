@@ -40,7 +40,7 @@ npx mas-office demo        # 30 秒，不需要 API key，不需要配置
 | 🪶 **零依赖** | npm 和 Python 包只用标准库。不要账号、不要数据库、不要云服务。面板是纯 HTML，双击 `file://` 也能打开。 |
 | 📜 **开放、有版本的协议** | 18 种事件类型，对齐 [AG-UI](https://docs.ag-ui.com)、[OpenTelemetry GenAI](https://opentelemetry.io/docs/specs/semconv/gen-ai/) 和 [A2A](https://a2a-protocol.org)。确定性 reducer、JSON Schema，以及两套参考 SDK 都必须通过的 conformance 用例。 |
 | ⏪ **可回放的运行记录** | 每个项目一份只追加的 `events.jsonl`：可以回放、diff、提交进 git，或附在 bug 报告里。 |
-| 🤖 **无代码模式** | 把 `AGENTS.md` 交给 Claude Code、Codex、Gemini CLI 或 Antigravity：AI 助手和你一起设计团队，再把每个角色作为真正的 subagent 跑起来，办公室实时显示。 |
+| 🤖 **无代码模式** | 把 `AGENTS.md` 交给 Claude Code、Codex、Gemini CLI 或 Antigravity：AI 助手和你一起设计团队，再把每个角色作为真正的 subagent 跑起来，办公室实时显示。在 Claude Code 里首次打开时选择 “Yes, I trust this folder”，终端底部的状态行就会显示团队进度；角色还能用一个不带你任何登录状态的临时 Chrome（`mas-browser`）去读那些拦截普通抓取的网页。 |
 
 ## 🚀 快速开始
 

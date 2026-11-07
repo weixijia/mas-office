@@ -4,7 +4,7 @@
 (function () {
   'use strict';
 
-  const TOOLS = ['web search', 'read my files'];
+  const TOOLS = ['web search', 'browse the web', 'read my files'];
   const STATES = ['idle', 'waiting', 'working', 'handoff', 'flagged', 'done', 'failed'];
   const FINISHED = ['done', 'failed']; // terminal states: nothing more will happen at this desk this run
   const MAX_DESKS = 12; // roles drawn at a desk; the rest are counted ("+N more") and listed in the Team cell

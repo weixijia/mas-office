@@ -30,6 +30,7 @@
     expand: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 2.25h4.25V6.5M6.5 13.75H2.25V9.5M13.75 2.25 9 7M2.25 13.75 7 9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     shrink: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.75 6.5H9.5V2.25M2.25 9.5H6.5v4.25M9.5 6.5l4.25-4.25M6.5 9.5l-4.25 4.25" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     close: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
+    browser: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="10.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1.75 5.75h12.5" stroke="currentColor" stroke-width="1.5"/><circle cx="3.9" cy="4.25" r=".6" fill="currentColor"/></svg>',
     globe: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1.8 8h12.4M8 1.8c-3 3.4-3 9 0 12.4M8 1.8c3 3.4 3 9 0 12.4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     folder: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.75 3.25h4.5l1.5 1.5h6.5v8H1.75z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     ask: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.6" fill="#BDCBEA" stroke="#1B1F23" stroke-width="1.2"/><path d="M6 6.3a2 2 0 1 1 2.6 1.9c-.5.2-.6.5-.6 1v.5M8 11.3v.5" fill="none" stroke="#1B1F23" stroke-width="1.4" stroke-linecap="round"/></svg>',
@@ -387,7 +388,7 @@
     const lead = s.lead || {}, roles = (s.roles || []).filter(Boolean), cost = M.costInfo(roles.length);
     const row = (id, m, color) => '<button class="org-row" type="button" data-select="' + esc(id) + '"><span class="sw" style="background:' + color + '"></span><span class="on-name">' + esc(m.name || id) + '</span>' +
       '<span class="reqs-in">' + (m.serves || []).map((r) => rid(r, task)).join('') + '</span>' + stateBadge(id) + '</button>';
-    const sub = (r) => '<div class="org-to">' + (r.tools || []).map((t) => (t === 'web search' ? ICON.globe : ICON.folder)).join('') + ' hands to ' + esc(nameOf(s, r.handsTo || 'lead')) +
+    const sub = (r) => '<div class="org-to">' + (r.tools || []).map((t) => (t === 'web search' ? ICON.globe : t === 'browse the web' ? ICON.browser : ICON.folder)).join('') + ' hands to ' + esc(nameOf(s, r.handsTo || 'lead')) +
       (r.dynamic && r.parent && r.parent !== 'lead' ? ' · spawned by ' + esc(nameOf(s, r.parent)) : '') + '</div>';
     let html = '<h2>Team ' + num((s.locked ? 'v' : 'draft v') + (s.version || 1)) + '</h2><div class="org">' + row('lead', Object.assign({ name: 'Lead' }, lead), '#1B1F23');
     const groups = M.orderGroups(s), orphans = roles.filter((r) => !groups.some((g) => g.id === r.group));

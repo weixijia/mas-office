@@ -21,6 +21,7 @@ window.MAS_ENV = {
   "os": "macOS",                    // macOS | Windows | Linux
   "canWrite": true,
   "canSearch": true,                // could you run a web search?
+  "canBrowse": true,                // could you open a page in a real browser? (tested in setup; see "browse the web")
   "subagents": "parallel",          // parallel | sequential — tested in setup; the panel shows "Real agents" or "Role-play mode"
   "setupAt": "2026-11-05T14:00:00Z"
 };
@@ -156,7 +157,10 @@ Rules:
 - `group` ids are `A`, `B`, `C`… Roles in the same group run **at the same time**; a group starts after the group named in `after` finishes. `after: null` = starts first.
 - `handsTo` is another role id or `lead`; if it is missing, it means `lead`.
 - `serves` lists requirement ids from `me/task.js`. Every role serves at least one.
-- `tools` uses only: `web search`, `read my files` (reads `raw/`). No tools → `[]` in JS and `- tools: none` in Markdown.
+- `tools` uses only these words. No tools → `[]` in JS and `- tools: none` in Markdown.
+  - `web search` — search the web and read simple pages (your web search and web fetch tools).
+  - `browse the web` — open pages in a real browser window: pages that a plain fetch can't read (403 / "Access Denied", cookie or consent walls, pages built by JavaScript, search forms such as flight or hotel searches). Only when `home/env.js` says `"canBrowse": true`. In Claude Code these are the `mcp__mas-browser__…` tools.
+  - `read my files` — read the student's files in `raw/`.
 - `why` is one short sentence naming the split reason (see `harness/roles.md`).
 - On `lock`: set `"locked": true`. On `unlock`: set `"locked": false` and add 1 to `version`.
 - `structure.js` is the complete record. Fields that `structure.md` does not show (`rationale`, group `label`/`after`, `version`, `locked`, ids) are kept from `structure.js` when you sync the Markdown back.

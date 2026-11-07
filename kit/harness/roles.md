@@ -28,6 +28,7 @@ If none applies, **don't split** — let an existing role (or the Lead) do it. O
 3. Merge roles that would do the same job with the same sources.
 4. Make sure every requirement is served by at least one role (or the Lead), and every role serves at least one requirement.
 5. Group roles: independent roles share a group (they run together); roles that need others' output go in a later group.
+6. Give each role only the tools it needs (`harness/formats.md` → tools). A finder or checker that must read live prices, booking sites or official pages needs `browse the web` when it is available — a plain web search often only sees summaries of those pages.
 
 ## Role patterns (to explain, not a fixed menu)
 

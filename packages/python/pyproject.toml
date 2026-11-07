@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mas-office"
-version = "0.2.0"
+version = "0.2.1"
 description = "Show any multi-agent system's team live in the MAS Office panel: a tiny event emitter, reducer and snapshot writer."
 readme = "README.md"
 requires-python = ">=3.10"

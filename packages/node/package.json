@@ -1,6 +1,6 @@
 {
   "name": "mas-office",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Show any multi-agent system's team live in an animated office panel: SDK (events, reducer, snapshot writers) and CLI (serve, validate, replay, demo).",
   "type": "module",
   "bin": {
@@ -25,7 +25,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node --test test/sdk/reducer.test.js test/sdk/files.test.js test/sdk/office-file.test.js test/sdk/office-http.test.js test/cli/schema.test.js test/cli/validate.test.js test/cli/server.test.js test/cli/hook.test.js test/cli/export.test.js test/cli/cli.test.js",
+    "test": "node --test test/sdk/reducer.test.js test/sdk/files.test.js test/sdk/office-file.test.js test/sdk/office-http.test.js test/cli/schema.test.js test/cli/validate.test.js test/cli/server.test.js test/cli/hook.test.js test/cli/export.test.js test/cli/cli.test.js test/cli/kit-statusline.test.js",
     "prepack": "node scripts/bundle.js",
     "postpack": "node scripts/bundle.js --clean"
   },

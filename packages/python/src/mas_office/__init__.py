@@ -7,7 +7,7 @@ from .files import write_snapshots
 from .office import Agent, Office, Project, Run, ToolCall, slugify
 from .reducer import SPEC_VERSION, STATES, Reducer, reduce, validate_event
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 __all__ = [
     "Agent",

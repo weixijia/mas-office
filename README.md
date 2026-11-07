@@ -180,6 +180,10 @@ npx mas-office init --kit my-team
 
 Open `my-team` in Claude Code, Codex, Gemini CLI or Antigravity and say *"Read SETUP.md and follow it."* The assistant interviews you about the task, proposes a team (who does what, what runs in parallel, who checks whom), lets you reshape it in plain words, locks it, and runs each role as a separate subagent with its own context — while the office shows every step. This is the engine behind the classroom edition, [**awesome-mas**](https://github.com/weixijia/awesome-mas).
 
+In Claude Code, choose **"Yes, I trust this folder"** when you first open it: only a trusted folder applies the kit's settings. They give you:
+- **The team in your terminal**: the status line shows who is working, who is done and what was flagged, with a link to the office.
+- **A real browser for the roles** (`mas-browser`): a Chrome window with a temporary profile and none of your logins, for pages that block simple fetches. It needs Google Chrome.
+
 ## 🧠 How it works
 
 ```mermaid

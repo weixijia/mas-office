@@ -72,7 +72,7 @@ test('init creates a workspace, never overwrites without --force, and copies the
     assert.equal(again.code, 0);
     assert.match(again.stdout, /Kept \d+ existing file/);
     assert.equal(fs.readFileSync(path.join(ws, 'office/app.js'), 'utf8'), '// mine');
-    for (const rel of ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'SETUP.md', 'harness/operations.md', '.claude/settings.json']) {
+    for (const rel of ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'SETUP.md', 'harness/operations.md', '.claude/settings.json', '.claude/mas-statusline.mjs', '.claude/mas-guard.mjs', '.claude/mas-browser.pac.js', '.mcp.json']) {
       assert.ok(fs.existsSync(path.join(ws, rel)), rel);
     }
     await runCli(['init', ws, '--force']);

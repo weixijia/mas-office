@@ -4,6 +4,7 @@
     "allow": [
       "WebSearch",
       "WebFetch",
+      "mcp__mas-browser__*",
       "Edit(/home/**)",
       "Edit(/*/me/**)",
       "Edit(/*/mas/**)",
@@ -19,7 +20,47 @@
       "Edit(/harness/**)",
       "Edit(/examples/**)",
       "Edit(/AGENTS.md)",
-      "Edit(/SETUP.md)"
+      "Edit(/SETUP.md)",
+      "Edit(/.claude/**)",
+      "Edit(/.mcp.json)",
+      "mcp__mas-browser__upload_file",
+      "mcp__mas-browser__screencast_start",
+      "mcp__mas-browser__screencast_stop",
+      "mcp__mas-browser__lighthouse_audit",
+      "Edit(**/CLAUDE.md)",
+      "Edit(**/CLAUDE.local.md)",
+      "Edit(**/AGENTS.md)",
+      "Edit(**/GEMINI.md)",
+      "Edit(**/SETUP.md)",
+      "Edit(**/.claude/**)",
+      "Edit(**/.mcp.json)",
+      "Edit(~/.claude/**)",
+      "Edit(~/.claude.json)"
     ]
+  },
+  "enabledMcpjsonServers": [
+    "mas-browser"
+  ],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__mas-browser__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/mas-guard.mjs\""
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node .claude/mas-statusline.mjs",
+    "refreshInterval": 2
+  },
+  "subagentStatusLine": {
+    "type": "command",
+    "command": "node .claude/mas-statusline.mjs --subagents"
   }
 }
