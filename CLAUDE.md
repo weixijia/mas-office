@@ -34,7 +34,7 @@ Before implementing any component:
 1. Look it up in **`docs/design/reuse-map.md`**. It maps each of our components to the reference projects, the exact files to read, and how they may be reused.
 2. Read the referenced code in `references/repos/<owner>__<repo>/`. If the folder is missing, run `node references/fetch.mjs`.
 3. Pick the lightest reuse mode that works:
-   - **Depend**: add the package as a dependency. Adding a runtime dependency to an existing package is a design decision; raise it with the maintainer first. The published `mas-office` package is zero-dependency today.
+   - **Depend**: add the package as a dependency. Adding a runtime dependency to an existing package is a design decision; raise it with the maintainer first. The published `mas-office` package stays zero-dependency. Features that need native or heavy dependencies go in a separate optional package (decided 2026-11-07: the raw-terminal tab's `xterm.js` + `node-pty`).
    - **Adapt**: copy and modify code. Only from MIT, Apache-2.0, BSD or ISC sources.
    - **Idea only**: reimplement from the design, without copying code.
 4. When you adapt code:
@@ -102,3 +102,4 @@ Source: `references/docs/claude__legal-and-compliance.md`; summary in `docs/rese
   - `git diff --check`
 - Commits use DCO (`git commit -s`). Release steps are in `.omc/RELEASE_RULE.md` (local) and `development_log.md` §6.
 - Do not commit `references/repos/`, `references/docs/`, `.omc/` or generated tarballs.
+- Run kit end-to-end tests in a folder **outside** this repository. Claude Code loads parent `CLAUDE.md` files, so this file would leak developer instructions into a kit session started inside the repo.
