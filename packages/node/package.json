@@ -1,6 +1,6 @@
 {
   "name": "mas-office",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Show any multi-agent system's team live in an animated office panel: SDK (events, reducer, snapshot writers) and CLI (serve, validate, replay, demo).",
   "type": "module",
   "bin": {

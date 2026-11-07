@@ -27,7 +27,7 @@ OpenAI Agents SDK · LangGraph · Claude Agent SDK · Claude Code · your own Py
 
 Multi-agent systems are hard to *see*. Logs scroll past, traces nest ten levels deep, and nobody outside the engineering team can tell which agent is stuck, who handed what to whom, or what the checker just caught.
 
-**MAS Office gives every agent a desk.** When an agent works, uses a tool, hands over, raises a flag or fails, the drawing changes in real time. When the run is done, the result opens beside it — with every claim linked to its source. Your framework still runs the agents; MAS Office is the window into the room.
+**MAS Office gives every agent a desk.** When an agent works, uses a tool, hands over, raises a flag or fails, the drawing changes in real time. When the run is done, the team celebrates and the result slides out over the office, every claim linked to its source. Your framework still runs the agents; MAS Office is the window into the room.
 
 ```bash
 npx mas-office demo        # 30 seconds, no API key, nothing to set up
@@ -42,7 +42,7 @@ npx mas-office demo        # 30 seconds, no API key, nothing to set up
 | 🪶 **Zero dependencies** | The npm and Python packages use only the standard library. No account, no database, no cloud. The panel is plain HTML and even opens from `file://`. |
 | 📜 **An open, versioned protocol** | 18 event types mapped to [AG-UI](https://docs.ag-ui.com), [OpenTelemetry GenAI](https://opentelemetry.io/docs/specs/semconv/gen-ai/) and [A2A](https://a2a-protocol.org). A deterministic reducer, JSON Schemas, and conformance cases that both reference SDKs must pass. |
 | ⏪ **Runs you can replay** | Each project is an append-only `events.jsonl`. Replay it, diff it, commit it, attach it to a bug report. |
-| 🤖 **No-code mode** | Give `AGENTS.md` to Claude Code, Codex, Gemini CLI or Antigravity: the assistant designs a team with you and runs each role as a real subagent while the office shows it. |
+| 🤖 **No-code mode** | Give `AGENTS.md` to Claude Code, Codex, Gemini CLI or Antigravity: the assistant designs a team with you and runs each role as a real subagent while the office shows it. Ask follow-up questions and the Lead sends only the roles it needs back to work. |
 
 ## 🚀 Quick start
 
@@ -178,7 +178,7 @@ That's the whole contract: [`spec/README.md`](spec/README.md). Validate with `np
 npx mas-office init --kit my-team
 ```
 
-Open `my-team` in Claude Code, Codex, Gemini CLI or Antigravity and say *"Read SETUP.md and follow it."* The assistant interviews you about the task, proposes a team (who does what, what runs in parallel, who checks whom), lets you reshape it in plain words, locks it, and runs each role as a separate subagent with its own context — while the office shows every step. This is the engine behind the classroom edition, [**awesome-mas**](https://github.com/weixijia/awesome-mas).
+Open `my-team` in Claude Code, Codex, Gemini CLI or Antigravity and say *"Read SETUP.md and follow it."* The assistant interviews you about the task, proposes a team (who does what, what runs in parallel, who checks whom), lets you reshape it in plain words, locks it, and runs each role as a separate subagent with its own context — while the office shows every step. Then ask follow-up questions about the result: the Lead decides which roles a question needs, sends only those back to work (fresh agents that build on their earlier work), and adds the answer as a new round. This is the engine behind the classroom edition, [**awesome-mas**](https://github.com/weixijia/awesome-mas).
 
 In Claude Code, choose **"Yes, I trust this folder"** when you first open it: only a trusted folder applies the kit's settings. They give you:
 - **The team in your terminal**: the status line shows who is working, who is done and what was flagged, with a link to the office.
@@ -234,10 +234,14 @@ MAS Office is not a tracing platform — it's the view you put on the big screen
 
 ## 🗺️ Roadmap
 
+Next, MAS Office learns to **drive** the team, not only show it: a research team you design, can watch, and that checks its own work, running on the AI subscriptions you already have. Each role runs in an official coding agent you are already signed in to (`claude -p`, `codex exec`, …); MAS Office does the team part.
+
 - [x] Protocol 0.1, JS + Python SDKs, CLI with live server, panel, 4 integrations, no-code kit
-- [ ] CrewAI, AG-UI and OpenTelemetry ingest — one adapter each for whole ecosystems
-- [ ] Graph layout for `graph` topologies, observed vs declared handoff edges
-- [ ] Replay scrubber, per-agent token and cost, `export --otlp`
+- [x] 0.2: result drawer, follow-up rounds, a real browser for roles, the team in Claude Code's status line
+- [ ] M0: an evaluation of one agent vs a MAS team on research tasks; role backends for `claude -p` and `codex exec`; chat and office in one terminal screen
+- [ ] M1: `mas run` — the team runs itself, with per-role tools and permissions, checker rework and resume
+- [ ] M2–M4: any coding agent as the Lead (MCP), one-window terminal and desktop apps
+- [ ] Any time: CrewAI, AG-UI and OpenTelemetry ingest; replay scrubber; PyPI release
 
 Full list: [ROADMAP.md](ROADMAP.md). Have an idea? [Start a discussion](https://github.com/weixijia/mas-office/discussions).
 
@@ -273,7 +277,7 @@ If you use MAS Office in research or teaching, please cite it:
   title   = {{MAS Office}: an open protocol and live office view for multi-agent systems},
   year    = {2026},
   url     = {https://github.com/weixijia/mas-office},
-  version = {0.1.0}
+  version = {0.2.2}
 }
 ```
 

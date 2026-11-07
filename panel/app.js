@@ -39,17 +39,19 @@
   // The icon for a status that carries a flag (a found problem, a question for you, a failure), else ''.
   const flagIcon = (st) => { const f = M.flagInfo(st); return f ? ICON[f.icon] : ''; };
   const narrow = () => window.innerWidth <= 1100;
+  const DRAWER_DELAY = 2500; // ms between a result arriving and the drawer sliding out
   const S = {
     demo: params.get('demo') === '1', data: {}, statuses: M.dict(), history: M.dict(), feed: [], timing: M.dict(), run: { start: 0, end: 0 },
     sigs: {}, lastChange: 0, loadedOnce: false, warnings: {}, selected: null, phase: undefined,
-    sidebar: params.get('sidebar') ? params.get('sidebar') === 'open' : !narrow(), userSidebar: !!params.get('sidebar'), autoRun: undefined, drawer: false, drawerFull: false,
+    sidebar: params.get('sidebar') ? params.get('sidebar') === 'open' : !narrow(), userSidebar: !!params.get('sidebar'), autoRun: undefined, seenKeys: new Set(), drawer: false, drawerFull: false,
     home: null, current: undefined, index: false
   };
   // A different MAS is now followed: everything per project starts over, as if the page had just opened.
   function resetProject() {
     Object.assign(S, { data: {}, statuses: M.dict(), history: M.dict(), feed: [], timing: M.dict(), run: { start: 0, end: 0 }, sigs: {}, selected: null,
-      phase: undefined, warnings: {}, loadedOnce: false, autoRun: undefined });
+      phase: undefined, warnings: {}, loadedOnce: false, autoRun: undefined, seenKeys: new Set() });
     document.body.classList.remove('isolate');
+    clearTimeout(S.drawerTimer);
     setDrawer(false);
     office.reset();
   }
@@ -434,8 +436,8 @@
   function roundLabel(x) { return x.round === 1 && !x.question ? 'Result' : 'Follow-up'; }
   function drawerHtml(ri) {
     const r = ri.r, s = struct(), many = ri.rounds.length > 1;
-    const art = (x) => '<article class="dr-round" id="dr-round-' + x.round + '" data-round="' + x.round + '">' +
-      '<p class="dr-k">' + num('Round ' + String(x.round).padStart(2, '0')) + '<span>' + roundLabel(x) + '</span>' + (x.latest && many ? '<span class="dr-latest">Latest</span>' : '') + '</p>' +
+    const art = (x) => '<article class="dr-round" id="dr-round-' + x.round + '" data-round="' + x.round + '">' + (!many ? '' :
+      '<p class="dr-k">' + num('Round ' + String(x.round).padStart(2, '0')) + '<span>' + roundLabel(x) + '</span>' + (x.latest ? '<span class="dr-latest">Latest</span>' : '') + '</p>') +
       (x.question ? '<p class="dr-q"><span class="quiet">You asked</span>' + esc(x.question) + '</p>' : '') +
       (x.title && (x.latest || x.title !== r.title) ? '<p class="res-title">' + esc(x.title) + '</p>' : '') +
       '<div class="md">' + md(x.markdown) + '</div></article>';
@@ -552,21 +554,33 @@
     renderOffice();
     if (S.index) { renderSidebar(); return; }
     const ri = resultInfo();
+    // A result file already there at the first look, before its run is done, is an old one: never pop it up later.
+    // (A new result is written a moment before its run is marked done, so "present but not ready" alone proves nothing.)
+    if (S.autoRun === undefined && S.loadedOnce && !ri && data().result) S.seenKeys.add(resultKeys(data().result).key);
     if (ri && ri.key !== S.autoRun) { // a new result or follow-up round: once per key
       // it arrived while the page was open: the drawer slides out over the office (the drawing keeps its size);
       // a result that was already there on opening only gets its card in the title block
       // the replayed demo (?demo=1, e.g. the website) keeps its wrap party in view: card only
-      const due = !S.demo && M.drawerDue(S.autoRun, ri.key);
-      S.autoRun = ri.key;
+      const due = !S.demo && M.drawerDue(S.autoRun, ri.key) && !S.seenKeys.has(ri.key);
+      S.autoRun = ri.key; S.seenKeys.add(ri.key);
       if (due) {
-        if (S.selected) select(null);
-        if (S.drawer) showLatestRound(); else setDrawer(true); // already open: jump to the new round
+        if (S.drawer) showLatestRound(); // already open: jump to the new round
+        else { // let the team's wrap-up show for a moment, then slide out (unless something changed meanwhile)
+          const key = ri.key;
+          clearTimeout(S.drawerTimer);
+          S.drawerTimer = setTimeout(() => {
+            const now = resultInfo();
+            if (!now || now.key !== key || S.index || S.drawer) return;
+            if (S.selected) select(null);
+            setDrawer(true);
+          }, DRAWER_DELAY);
+        }
       } else if (!S.sidebar) $('#sb-toggle').classList.add('news');
       const c = $('#cells'); if (c && !S.selected) c.scrollTop = 0;
     }
-    // looked and saw no ready result: the next one that arrives is new. A stale result file from the previous
-    // run or round keeps its key, so it never pops up again as if it were new (e.g. a run that fails without one).
-    if (!ri && S.loadedOnce) S.autoRun = data().result ? resultKeys(data().result).key : null;
+    // Looked and saw no ready result: the next one that arrives is new, unless its key was seen before
+    // (a run that fails without writing a new result leaves the previous one in place).
+    if (!ri && S.loadedOnce) S.autoRun = null;
     renderSidebar();
   }
 

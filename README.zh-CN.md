@@ -25,7 +25,7 @@ OpenAI Agents SDK · LangGraph · Claude Agent SDK · Claude Code · 你自己�
 
 多智能体系统很难"看见"：日志一路滚过，trace 嵌套十几层，团队之外的人根本看不出哪个 agent 卡住了、谁把什么交给了谁、检查员刚刚抓到了什么问题。
 
-**MAS Office 给每个 agent 一张工位。** agent 工作、调用工具、交接、提出问题或失败时，画面实时变化；运行结束后，结果在旁边展开，每条结论都链接到来源。你的框架照常运行 agent，MAS Office 是看进这间办公室的那扇窗。
+**MAS Office 给每个 agent 一张工位。** agent 工作、调用工具、交接、提出问题或失败时，画面实时变化；运行结束后，团队开个小派对，结果从右侧滑出、浮在办公室上方，每条结论都链接到来源。你的框架照常运行 agent，MAS Office 是看进这间办公室的那扇窗。
 
 ```bash
 npx mas-office demo        # 30 秒，不需要 API key，不需要配置
@@ -40,7 +40,7 @@ npx mas-office demo        # 30 秒，不需要 API key，不需要配置
 | 🪶 **零依赖** | npm 和 Python 包只用标准库。不要账号、不要数据库、不要云服务。面板是纯 HTML，双击 `file://` 也能打开。 |
 | 📜 **开放、有版本的协议** | 18 种事件类型，对齐 [AG-UI](https://docs.ag-ui.com)、[OpenTelemetry GenAI](https://opentelemetry.io/docs/specs/semconv/gen-ai/) 和 [A2A](https://a2a-protocol.org)。确定性 reducer、JSON Schema，以及两套参考 SDK 都必须通过的 conformance 用例。 |
 | ⏪ **可回放的运行记录** | 每个项目一份只追加的 `events.jsonl`：可以回放、diff、提交进 git，或附在 bug 报告里。 |
-| 🤖 **无代码模式** | 把 `AGENTS.md` 交给 Claude Code、Codex、Gemini CLI 或 Antigravity：AI 助手和你一起设计团队，再把每个角色作为真正的 subagent 跑起来，办公室实时显示。在 Claude Code 里首次打开时选择 “Yes, I trust this folder”，终端底部的状态行就会显示团队进度；角色还能用一个不带你任何登录状态的临时 Chrome（`mas-browser`）去读那些拦截普通抓取的网页。 |
+| 🤖 **无代码模式** | 把 `AGENTS.md` 交给 Claude Code、Codex、Gemini CLI 或 Antigravity：AI 助手和你一起设计团队，再把每个角色作为真正的 subagent 跑起来，办公室实时显示。拿到结果后可以继续追问，Lead 只把需要的角色派回去接着干。在 Claude Code 里首次打开时选择 “Yes, I trust this folder”，终端底部的状态行就会显示团队进度；角色还能用一个不带你任何登录状态的临时 Chrome（`mas-browser`）去读那些拦截普通抓取的网页。 |
 
 ## 🚀 快速开始
 
@@ -118,6 +118,18 @@ MAS Office 不是 tracing 平台，而是投在大屏上的那个视图。和你
 | 非工程师也能看懂 | ✅ | ❌ | ➖ |
 | 可以手写的开放文件协议 | ✅ | ➖ OTel | ❌ |
 | prompt / token / 延迟调试 | ❌ 请用 tracer | ✅ | ✅ |
+
+## 🗺️ 路线图
+
+下一步，MAS Office 不只把团队画出来，还要真正驱动它：一支你自己设计、看得见、会互相审查的研究团队，用的是你已经有的 AI 订阅。每个角色跑在你已登录的官方 coding agent 里（`claude -p`、`codex exec` 等），MAS Office 负责团队这一层。
+
+- [x] 0.1：协议、JS/Python SDK、CLI、面板、4 个框架接入、无代码 kit
+- [x] 0.2：结果抽屉、多轮追问、角色可用的真浏览器、Claude Code 状态行显示团队
+- [ ] M0：在研究类任务上对比单个 agent 和 MAS 团队；`claude -p` 与 `codex exec` 作为角色后端；对话和办公室在同一个终端界面
+- [ ] M1：`mas run`，团队自己跑起来：按角色的工具与权限、checker 打回返工、断点续跑
+- [ ] M2–M4：任意 coding agent 当 Lead（MCP）、同一窗口的终端版和桌面版
+
+完整列表见 [ROADMAP.md](ROADMAP.md)。
 
 ## 🤝 参与贡献
 

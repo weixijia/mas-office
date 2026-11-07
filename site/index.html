@@ -172,7 +172,7 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
   /* no-code: the panel's result view, cut by the frame's right and bottom edges */
   #nocode .frame { --ratio: 80%; background: var(--p-bg); }
   #nocode .shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; }
-  #nocode pre { margin: 0; padding: var(--s-3) var(--s-4); background: var(--p-surface); border: 1px solid var(--line); font: 400 15px/1.5 var(--font-mono); white-space: pre-wrap; }
+  #nocode pre { margin-bottom: 0; padding: var(--s-3) var(--s-4); background: var(--p-surface); border: 1px solid var(--line); font: 400 15px/1.5 var(--font-mono); white-space: pre-wrap; }
   @media (max-width: 639px) {
     #protocol { --hm: 2; }
     #how, #code, #integrations, #contribute { --hm: 2; }
@@ -273,7 +273,7 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
       <div class="grid head">
         <h2 class="span-5" id="examples-h">Three example runs, live in the panel</h2>
         <div class="span-6 start-7">
-          <p class="t-lead">Each example is a real workspace folder. Click a desk or a role to follow its thread; the result sits beside the drawing with its sources.</p>
+          <p class="t-lead">Each example is a real workspace folder. Click a desk or a role to follow its thread; open the result to read it in a drawer over the drawing, with its sources.</p>
           <div class="tabs" role="tablist" aria-label="Example runs">
             <button class="tab" role="tab" type="button" id="tab-headphones" aria-controls="ex-headphones" aria-selected="true">Compare headphone deals</button>
             <button class="tab" role="tab" type="button" id="tab-lisbon" aria-controls="ex-lisbon" aria-selected="false">Plan a Lisbon weekend</button>
@@ -418,7 +418,7 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
 <span class="ui-code__ln" data-n="7">    finder.<span class="f">source</span>(id="currys", title="Sony XM6 — Currys", url="https://www.currys.co.uk/", evidence="A")</span>
 <span class="ui-code__ln" data-n="8" data-note="The handoff path runs from the finder's desk to the lead.">    finder.<span class="f">handoff</span>("lead")</span>
 <span class="ui-code__ln" data-n="9">    finder.<span class="f">done</span>()</span>
-<span class="ui-code__ln" data-n="10" data-note="The result opens beside the office, its source linked.">    run.<span class="f">result</span>(markdown="## Shortlist\n- Currys — £279")</span>
+<span class="ui-code__ln" data-n="10" data-note="The result slides out over the office, its source linked.">    run.<span class="f">result</span>(markdown="## Shortlist\n- Currys — £279")</span>
 <span class="ui-code__ln" data-n="11">    run.<span class="f">finish</span>()</span></code></pre>
               <div class="ui-code__hint" data-code-hint><span class="ui-dot"></span><span data-code-text>The finder's desk reads “Searching Currys” at 30%.</span></div>
             </div>
@@ -433,7 +433,7 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
 <span class="ui-code__ln" data-n="5"><span class="k">const</span> finder = run.<span class="f">agent</span>('finder', { name: 'Retail finder', emoji: '🔎' });</span>
 <span class="ui-code__ln is-mark" data-n="6">finder.<span class="f">working</span>('Searching Currys', { progress: <span class="n">30</span> });</span>
 <span class="ui-code__ln" data-n="7">finder.<span class="f">done</span>();</span>
-<span class="ui-code__ln" data-n="8" data-note="The result opens beside the office.">run.<span class="f">result</span>({ markdown: '## Shortlist\n- Currys — £279' });</span>
+<span class="ui-code__ln" data-n="8" data-note="The result slides out over the office.">run.<span class="f">result</span>({ markdown: '## Shortlist\n- Currys — £279' });</span>
 <span class="ui-code__ln" data-n="9">run.<span class="f">finish</span>();</span>
 <span class="ui-code__ln" data-n="10"><span class="k">await</span> office.<span class="f">close</span>();</span></code></pre>
               <div class="ui-code__hint" data-code-hint><span class="ui-dot"></span><span data-code-text>The finder's desk reads “Searching Currys” at 30%.</span></div>
@@ -450,11 +450,12 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
         <div class="span-5 stack-5">
           <h2 id="nocode-h">No-code mode for AI coding assistants</h2>
           <p class="t-lead">Give <code>AGENTS.md</code> to Claude Code, Codex, Gemini CLI or Antigravity. The assistant designs a team with you, locks it, and runs each role as its own subagent while the office shows every step.</p>
+          <p>Ask follow-up questions about the result: the Lead sends only the roles a question needs back to work, and the answer joins the result as a new round. In Claude Code the team also shows in the status line, and roles get a sandboxed browser for pages that block simple fetches.</p>
           <pre>npx mas-office init --kit my-team</pre>
           <a class="link" href="https://github.com/weixijia/awesome-mas">See awesome-mas, the classroom edition</a>
         </div>
         <div class="frame frame--split span-6 start-7">
-          <img class="shot" src="assets/img/result.webp" alt="The office panel after a run: the team at the party table and the result beside it, a shortlist table with its flags and sources" width="1440" height="900" loading="lazy" decoding="async" data-source="client" data-subject="the MAS Office panel with a result">
+          <img class="shot" src="assets/img/result.webp" alt="The office panel after a run: the result drawer open over the office, with a short answer and a shortlist table" width="1440" height="900" loading="lazy" decoding="async" data-source="client" data-subject="the MAS Office panel with a result">
         </div>
       </div>
     </div>
@@ -507,7 +508,8 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
           <div class="faq__item"><h3>Is MAS Office a tracing platform?</h3><p>No. It is the view you put on the big screen. Use it beside your tracer: every event can carry trace ids.</p></div>
           <div class="faq__item"><h3>Do I need an account, a server or a database?</h3><p>No. A project is a folder of files, and the panel is plain HTML that even opens from file://.</p></div>
           <div class="faq__item"><h3>Are the framework integrations stable?</h3><p>Not yet. The four integrations are experimental; the AGENTS.md kit for coding assistants is stable.</p></div>
-          <div class="faq__item"><h3>Is the Python package on PyPI?</h3><p>Not yet. Install it from GitHub with pip for now; the first tagged release to npm and PyPI is on the roadmap.</p></div>
+          <div class="faq__item"><h3>Is the Python package on PyPI?</h3><p>Not yet. The npm package is released; install the Python SDK from GitHub with pip for now. A PyPI release is on the roadmap.</p></div>
+          <div class="faq__item"><h3>What comes next?</h3><p>Driving the team, not only showing it: each role runs in an official coding agent you are already signed in to, and MAS Office plans, schedules and checks the team. See the <a href="https://github.com/weixijia/mas-office/blob/main/ROADMAP.md">roadmap</a>.</p></div>
           <div class="faq__item"><h3>Can I replay a run?</h3><p>Yes. Each project keeps an append-only events.jsonl, and <code>mas-office reduce</code> rebuilds every snapshot from it.</p></div>
         </div>
       </div>

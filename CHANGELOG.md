@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.2.2] — 2026-11-07
+
+### Fixed
+- **Panel**: the result drawer did not slide out when a run finished live (both the kit Lead and the SDK write the result just before marking the run done, and that result was mistaken for an old one). It now slides out about 2.5 s after the run finishes, so the team's wrap-up shows first. A single-round result no longer shows a round label.
+
+### Changed
+- **Docs**: README (both languages) and website describe the result drawer, follow-up rounds and the new roadmap; new demo GIF and result screenshot.
+
 ## [0.2.1] — 2026-11-07
 
 ### Added
