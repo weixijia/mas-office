@@ -741,6 +741,22 @@
     if (w && typeof w === 'object') return Object.keys(w).map((k) => ({ by: k, summary: typeof w[k] === 'string' ? w[k] : String((w[k] && w[k].summary) || '') }));
     return [];
   }
+  // A result is one round of a run (round 1) or the answer to a follow-up question (round 2, 3 …).
+  // Earlier rounds of the same run travel in result.previous, oldest first. Returns every round, oldest first.
+  function resultRounds(r) {
+    if (!r || typeof r !== 'object') return [];
+    const int = (n) => (Number.isInteger(n) && n > 0 ? n : null);
+    const text = (v) => (typeof v === 'string' ? v : '');
+    const prev = (Array.isArray(r.previous) ? r.previous : []).filter((x) => x && typeof x === 'object' && typeof x.markdown === 'string');
+    let last = 0; // round numbers always increase, so each round has its own anchor
+    const rounds = prev.map((x) => { last = Math.max(int(x.round) || 0, last + 1); return { round: last, question: text(x.question), title: text(x.title), markdown: x.markdown, updated: text(x.updated), latest: false }; });
+    rounds.push({ round: Math.max(int(r.round) || 0, last + 1), question: text(r.question), title: text(r.title), markdown: text(r.markdown), updated: text(r.updated), latest: true });
+    return rounds;
+  }
+  // The result drawer slides out by itself once for each result (or follow-up round) that arrives while the page
+  // is open, never for one that was already there when the page opened. lastKey: undefined before the first look,
+  // null once the page has looked and seen no result, else the key of the last result seen.
+  const drawerDue = (lastKey, key) => key != null && lastKey !== undefined && key !== lastKey;
   const VERBS = { search: 'searching', check: 'checking', sheet: 'working out the numbers', write: 'writing', plan: 'planning', type: 'working' };
   const listJoin = (a) => (a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]);
   // The one status sentence at the top of the sheet.
@@ -882,7 +898,7 @@
     coverage, costInfo, isSdk, deriveProgress, wrapUp, flagInfo, stateLabel, needsYou, formatHint, renderMarkdown, evalDataFile, pushSay, timeAgo,
     phaseLine, activityFor, clampProgress, formatElapsed, formatClock, teamProgress, statusKey,
     buildDemoScript, demoStatusesAt, demoWork,
-    PLAN, planOffice, gridRoute, polyXRange, convexHull, layoutLabels, leaderPath, pathsCross, roleBoxes, leaderCrossings, pathLength, polysOverlap, letterRooms, normalizeWork, normalizeHome, headline, seededRandom, loungeLayout, pickStation, partyDue, figBox, boxesOverlap
+    PLAN, planOffice, gridRoute, polyXRange, convexHull, layoutLabels, leaderPath, pathsCross, roleBoxes, leaderCrossings, pathLength, polysOverlap, letterRooms, normalizeWork, resultRounds, drawerDue, normalizeHome, headline, seededRandom, loungeLayout, pickStation, partyDue, figBox, boxesOverlap
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof window !== 'undefined') window.MASModel = api;

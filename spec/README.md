@@ -127,6 +127,8 @@ JSON Schemas for every document are in [`schemas/`](schemas/). Unknown fields MU
  "work":    [{"by": "checker", "summary": "Checked 2 offers."}]}
 ```
 
+Optional, for producers that keep a conversation about a result (the kit's follow-ups): `round` (integer ≥ 1; 1 = the run's own result, 2+ = answers to follow-up questions), `question` (the follow-up this round answers) and `previous` (earlier rounds of the same run, oldest first: `{round?, question?, title?, markdown, updated?}`). A viewer shows the rounds as one thread; without them a result is round 1. The reducer does not produce these fields in v0.1.
+
 `markdown` and `work[].summary` may use headings, lists, tables, bold, italics, code and links only. `evidence`: `A` can be bought or run · `B` study with data · `C` demo or marketing · `D` opinion.
 
 ### 2.5 `home/projects`

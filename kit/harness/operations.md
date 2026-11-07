@@ -114,9 +114,39 @@ The panel animates the office from the status files, so **status updates are par
 
    Wait for the whole group to finish. In sequential mode, do the same yourself for each role in turn.
 4. After each role finishes: make sure its status shows `handoff` to its `handsTo`, then set it to `done` ("Handed over"). Between groups, update `lead.js` (`working`, e.g. "Group A done — starting the checkers").
-5. Lead: status `working` ("Writing the result"). Combine `outputs/work/*.md` into `outputs/result.md` — the answer to the task, every fact linked to its source card, problems the checkers found clearly marked, and a closing line that leaves the decision to the student. **Keep it short and readable for a non-specialist**: start with a 2–3 line answer, then at most one main table and a short "what the checkers caught" list (about one screen in total). Link to `outputs/work/<role-id>.md` for detail instead of copying it. Write `outputs/result.js` directly with your file tool, not with a script (`run` = previous run + 1), including `work`: one 3–5 line summary per role of what it found or decided (the panel shows it when the student clicks that agent). If an earlier `outputs/result.md` exists, first copy it to `outputs/result-run<N>.md`.
-6. Lead status `done` ("Result ready"). `mas/state.js`: `phase: "done"`, `next: "Done! Change a condition in me/task.md and type run again — or type unlock to change your team."`
-7. Reply: the headline result in 2–4 lines, a link to `outputs/result.md`, and the **"a chat can't do this"** moments the student just saw: agents working at the same time, a checker catching what a finder missed (if it happened), every claim linked to a source they can open, and that `run again` repeats the whole workflow in one line.
+5. Lead: status `working` ("Writing the result"). Combine `outputs/work/*.md` into `outputs/result.md` — the answer to the task, every fact linked to its source card, problems the checkers found clearly marked, and a closing line that leaves the decision to the student. **Keep it short and readable for a non-specialist**: start with a 2–3 line answer, then at most one main table and a short "what the checkers caught" list (about one screen in total). Link to `outputs/work/<role-id>.md` for detail instead of copying it. Write `outputs/result.js` directly with your file tool, not with a script (`run` = previous run + 1, `round: 1`, no `question` or `previous`), including `work`: one 3–5 line summary per role of what it found or decided (the panel shows it when the student clicks that agent). If an earlier `outputs/result.md` exists, first copy it to `outputs/result-run<N>.md`.
+6. Lead status `done` ("Result ready"). `mas/state.js`: `phase: "done"`, `next: "Done! Ask a follow-up question, change a condition in me/task.md and type run again — or type unlock to change your team."`
+7. Reply: the headline result in 2–4 lines, a link to `outputs/result.md`, and the **"a chat can't do this"** moments the student just saw: agents working at the same time, a checker catching what a finder missed (if it happened), every claim linked to a source they can open, and that `run again` repeats the whole workflow in one line. End with: "Ask me anything about the result — if it needs more work, I'll send the right agents back to it."
+
+---
+
+## follow-up  (after a run · a question about the result, or more work on it)
+
+Input: the student's question or request, in their own words. The team stays as it is; this adds a **round** to the current run.
+
+1. Re-read `me/task.md`, `mas/structure.js`, `outputs/result.md`, `outputs/result.js` and the files in `outputs/work/` — never answer from memory.
+2. Decide what the question needs, and say it in one line:
+   - **An answer from what the team already found** (e.g. "why is Currys first?") — no agent needed. Do step 4, set only `lead.js` to `working` ("Reading your follow-up") and leave `mas/state.js` as it is, then go to step 7 and answer from the work files and source cards.
+   - **More work by roles the team has** (e.g. "also check Argos", "what is the warranty?") — pick the **smallest set of roles** that can do it. If a picked role hands to a checker, pick that checker too, so new facts are still checked. Keep the groups' order.
+   - **A job no role in the team can do** — say so and offer `unlock` to add a role. Don't do the job yourself.
+   - **A different task** — suggest `new`.
+   Thanks or small talk need no round: just reply.
+3. For more work, tell the student which roles go back to work and why (one line each), and ask "Send them back to work?" — continue on yes. Ask once; if the student already said which roles to send, don't ask.
+4. Round number `K` = `round` in `outputs/result.js` (1 if missing) + 1. Copy `outputs/result.md` unchanged to `outputs/rounds/run<N>-round<K-1>.md` (N = its run number) before anything else.
+5. Status: rewrite the status file of each picked role to `waiting` ("Back for round K"). Leave every other role as it is — its desk shows it is done and resting. `lead.js` `working` ("Reading your follow-up"). `mas/state.js`: `phase: "running"`, `next: "Watch the office panel — your team is working on your follow-up."`
+6. Start the picked roles group by group exactly as in `run` steps 3–4 (same clean-context rules, same honesty about the mode), giving each this **follow-up brief** instead of the run brief:
+
+   > You are **<role name>** in a small multi-agent team. **Work only inside the folder `<folder>/`** — every path below is inside it (write `<folder>/mas/status/<role-id>.js`, not `mas/status/<role-id>.js`).
+   > Your job description is in `team/<role-id>.md` — read it first and follow it.
+   > This is **follow-up round K** of this run. The student asked: "<the question, in their words>". Work only on what this question needs.
+   > Read and write files with your file tools, one file per call — no shell commands, heredocs or scripts (they trigger approval prompts for the student), and never write outside `<folder>/`.
+   > The task is in `me/task.md`. Your earlier work is in `outputs/work/<role-id>.md` — read it first and build on it; don't redo what is already there, and **don't change that file**. Your other inputs: <this round's files from roles that hand to you, `outputs/work/<their-id>-round<K>.md`, or "none">.
+   > While you work, keep `mas/status/<role-id>.js` updated exactly as in a normal run (`working`, a short `say` for each major action, `flagged` with a short `flag` for any problem, a rough `progress`, and finally `handoff` with `"to": "<handsTo>"`).
+   > Save each new web source as a card in `sources/`; never invent sources, prices or quotes.
+   > Write this round's work to `outputs/work/<role-id>-round<K>.md` and finish with a 3-line summary.
+7. Lead status `working` ("Writing the answer"). Write the answer as the new `outputs/result.md`: first line `Follow-up: <the question>`, then a 2–3 line answer, what changed since the previous round (or "nothing changes"), and links to this round's work files and source cards. Keep it short; the earlier rounds stay in `outputs/rounds/` and in the panel. Then write `outputs/result.js` (format in `harness/formats.md`): the same `run`, `round: K`, `question`, the new `markdown`, and `previous` = the old `previous` plus the round you are replacing (its `round`, `question` if any, `title`, `markdown`, `updated` — copied unchanged). Keep every earlier source and flag and add the new ones. In `work`, keep the entries of roles that did not work this round and update the others with what they found this round.
+8. Picked roles `done` ("Handed over"); lead `done` ("Answer ready"). `mas/state.js`: `phase: "done"`, `next: "Ask another follow-up, change a condition in me/task.md and type run again — or type unlock to change your team."` `runs` in `home/projects.js` does not change — a follow-up is part of the same run.
+9. Reply: the answer in 2–4 lines, which roles worked on it (or that the answer came from their earlier work), a link to `outputs/result.md`, and "The panel keeps every round — open the result to read them in order."
 
 ---
 

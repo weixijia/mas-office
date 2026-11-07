@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-11-07
+
+### Added
+- **Panel**: the result opens in a drawer that slides out from the right over the office, slightly see-through, with a side view and a full-screen view (Esc closes). It slides out by itself once for each result that arrives while you watch; the title block keeps a short card with an *Open result* button. The office never changes size for it.
+- **Panel**: a result can hold several **rounds** — the run's own answer, then answers to follow-up questions — shown as one thread with round tabs.
+- **Kit**: `follow-up` — after a result, ask a question or for more work in plain words. The Lead decides which roles the question needs and sends only those back to work (each again a fresh agent with a clean context that reads its earlier work file first), then adds the answer as a new round.
+- **Spec**: optional `round`, `question` and `previous` fields on `result` (schema updated; the reducer does not produce them yet).
+
 ## [0.1.1] — 2026-11-06
 
 ### Fixed

@@ -23,6 +23,43 @@
     "markdown": {
       "type": "string"
     },
+    "round": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "question": {
+      "type": "string"
+    },
+    "previous": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "markdown"
+        ],
+        "properties": {
+          "round": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "question": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "markdown": {
+            "type": "string"
+          },
+          "updated": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
     "sources": {
       "type": "array",
       "items": {

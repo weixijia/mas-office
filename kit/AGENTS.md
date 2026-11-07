@@ -40,6 +40,7 @@ Each MAS lives in its own folder next to this file (e.g. `headphone-deals/`), ho
 | `new`, "new MAS", or "switch to …" / a MAS name | `choose` |
 | `next` | the next operation — see the table below |
 | a change in plain words ("add a budget checker") | `refine` (if the team is not locked; if locked, offer `unlock`) |
+| a question about the result, or more work on it ("also check Argos", "why is this one first?") — once `outputs/result.md` exists | `follow-up` |
 | `run again` | `run` |
 | `unlock` | `unlock` |
 | anything else | answer helpfully, then say what `next` will do |
@@ -56,7 +57,7 @@ Each MAS lives in its own folder next to this file (e.g. `headphone-deals/`), ho
 | `mas/structure.js` is missing | `design` |
 | the structure is not locked | ask "Happy with your team? I'll lock it." → if yes, `lock` |
 | the structure is locked and `outputs/result.md` is missing | `run` |
-| `outputs/result.md` exists | explain the options: change a condition in `me/task.md` and type `run again`, type `unlock` to change the team, or type `new` to start another MAS |
+| `outputs/result.md` exists | explain the options: ask a follow-up question about the result (the team goes back to work on it if needed), change a condition in `me/task.md` and type `run again`, type `unlock` to change the team, or type `new` to start another MAS |
 
 **Before every operation, read its section in `harness/operations.md`.** Role design rules are in `harness/roles.md`; file formats in `harness/formats.md`.
 
@@ -71,6 +72,8 @@ The panel animates the office from `mas/status/*.js`. **Before starting the firs
   - Codex: spawn one subagent per role (the built-in default agent is fine) **without forked history** (`fork_turns: "none"`), all in a single request, then wait for all of them.
   - Antigravity: use your subagent tool (e.g. `invoke_subagent`) — one per role, all of a group together; if that is not possible, use sequential mode.
 - **Otherwise (sequential mode)**: play each role yourself, one at a time, reading only that role's file and inputs before you act as it.
+
+**Follow-ups use the same team.** After a result, the student can keep asking. You read the question, decide which roles it needs, and start only those again — each still a new agent with a clean context; only their status files are rewritten, the rest of the team stays done. What a role did before is in its `outputs/work/` file, and the follow-up brief tells it to read that file first and build on it. The files carry the memory, so a follow-up works in any tool and even after this conversation was closed.
 
 `home/env.js` records which mode works for this tool (`"subagents": "parallel"` or `"sequential"`), tested during setup. **Be honest about the mode**: when a run starts, tell the student either "Your agents are starting as separate subagents, each with its own context — group A runs at the same time" or "Your tool can't start separate agents here, so I'll play each role in turn, reading only that role's file". If `env.js` says sequential but you can start subagents after all, update `env.js` and use them.
 

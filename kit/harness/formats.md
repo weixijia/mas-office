@@ -211,7 +211,7 @@ Relevance: R1 — lowest new price found at a major retailer.
 
 Free Markdown in the format the role's `team/` file asks for, linking source cards. The Lead combines these into the result.
 
-## `outputs/result.md` + `outputs/result.js` — written by `run`
+## `outputs/result.md` + `outputs/result.js` — written by `run` and `follow-up`
 
 `result.md` is the final answer for the student. Every factual claim links its source card.
 
@@ -233,4 +233,22 @@ window.MAS_RESULT = {
 };
 ```
 
-`markdown` and each `work` summary may use headings, lists, tables, bold and links only. `work` has one entry per role (an entry for `lead` is optional). Relative links in `result.md` and in `markdown` are relative to the `outputs/` folder (e.g. `../sources/currys-xm6.md`, `work/catch-checker.md`).
+After a follow-up, the result is the latest **round** of the same run and carries the earlier rounds:
+
+```js
+window.MAS_RESULT = {
+  "title": "Headphone deal finder — run 1, follow-up 1",
+  "run": 1,
+  "round": 2,                       // 1 = the run's own result; 2, 3 … = answers to follow-ups
+  "question": "Could you also check Argos?",   // the follow-up this round answers, in the student's words
+  "markdown": "Follow-up: Could you also check Argos?\n\nArgos is £319 — above your £300 limit, so the shortlist stands. ...",
+  "previous": [                     // earlier rounds of this run, oldest first, copied unchanged
+    {"round": 1, "title": "Headphone deal finder — run 1", "markdown": "## Shortlist\n...", "updated": "2026-11-05T14:30:00Z"}
+  ],
+  "sources": [ ... every source of every round ... ],
+  "flags": [ ... ],
+  "work": [ ... ]
+};
+```
+
+`markdown` (also in `previous`) and each `work` summary may use headings, lists, tables, bold and links only. `work` has one entry per role (an entry for `lead` is optional). A new `run` starts again at `round: 1` without `question` or `previous`; earlier rounds are kept in `outputs/rounds/run<N>-round<K>.md`, and each role's follow-up work in `outputs/work/<role-id>-round<K>.md`. Relative links in `result.md` and in `markdown` are relative to the `outputs/` folder (e.g. `../sources/currys-xm6.md`, `work/catch-checker.md`).

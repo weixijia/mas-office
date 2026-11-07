@@ -27,6 +27,9 @@
     tick: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" fill="#5E8C57" stroke="#1B1F23" stroke-width="1.2"/><path d="M4.6 8.2 7 10.6l4.4-5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="square"/></svg>',
     back: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3.5M7.5 3.5 3 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     panel: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.75 2.75h12.5v10.5H1.75zM10.25 2.75v10.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
+    expand: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 2.25h4.25V6.5M6.5 13.75H2.25V9.5M13.75 2.25 9 7M2.25 13.75 7 9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
+    shrink: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.75 6.5H9.5V2.25M2.25 9.5H6.5v4.25M9.5 6.5l4.25-4.25M6.5 9.5l-4.25 4.25" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
+    close: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     globe: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1.8 8h12.4M8 1.8c-3 3.4-3 9 0 12.4M8 1.8c3 3.4 3 9 0 12.4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     folder: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.75 3.25h4.5l1.5 1.5h6.5v8H1.75z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     ask: '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.6" fill="#BDCBEA" stroke="#1B1F23" stroke-width="1.2"/><path d="M6 6.3a2 2 0 1 1 2.6 1.9c-.5.2-.6.5-.6 1v.5M8 11.3v.5" fill="none" stroke="#1B1F23" stroke-width="1.4" stroke-linecap="round"/></svg>',
@@ -38,7 +41,7 @@
   const S = {
     demo: params.get('demo') === '1', data: {}, statuses: M.dict(), history: M.dict(), feed: [], timing: M.dict(), run: { start: 0, end: 0 },
     sigs: {}, lastChange: 0, loadedOnce: false, warnings: {}, selected: null, phase: undefined,
-    sidebar: params.get('sidebar') ? params.get('sidebar') === 'open' : !narrow(), userSidebar: !!params.get('sidebar'), autoRun: undefined,
+    sidebar: params.get('sidebar') ? params.get('sidebar') === 'open' : !narrow(), userSidebar: !!params.get('sidebar'), autoRun: undefined, drawer: false, drawerFull: false,
     home: null, current: undefined, index: false
   };
   // A different MAS is now followed: everything per project starts over, as if the page had just opened.
@@ -46,6 +49,7 @@
     Object.assign(S, { data: {}, statuses: M.dict(), history: M.dict(), feed: [], timing: M.dict(), run: { start: 0, end: 0 }, sigs: {}, selected: null,
       phase: undefined, warnings: {}, loadedOnce: false, autoRun: undefined });
     document.body.classList.remove('isolate');
+    setDrawer(false);
     office.reset();
   }
 
@@ -192,7 +196,13 @@
     const phase = d.state && d.state.phase;
     const busy = Object.values(S.statuses).some((x) => !ENDED.includes(x.state) && x.state !== 'idle');
     const ready = S.demo ? leadDone : phase === 'done' || phase === 'failed' || leadDone || (!phase && !busy);
-    return ready ? { r, key: S.demo ? 'demo-' + demoLoop + '-' + (S.replays || 0) : String(r.run != null ? r.run : r.title) } : null; // a demo replay is a new run
+    return ready ? resultKeys(r) : null;
+  }
+  // A follow-up round is a new result, not a new run: the drawer keys on run + round, the office on the run only.
+  function resultKeys(r) {
+    const runKey = S.demo ? 'demo-' + demoLoop + '-' + (S.replays || 0) : String(r.run != null ? r.run : r.title); // a demo replay is a new run
+    const rounds = M.resultRounds(r);
+    return { r, rounds, runKey, key: runKey + '#' + rounds[rounds.length - 1].round };
   }
   function modeInfo() {
     const env = data().env, m = env && env.subagents;
@@ -296,7 +306,7 @@
     let a;
     if (!s) a = { mode: 'empty', structure: null, statuses: { lead: { state: 'working', say: M.isSdk(d) ? 'Waiting for the first run' : d.task ? 'Reading your task…' : 'Listening…' } } };
     else if (!s.locked && !S.demo) a = { mode: 'draft', structure: s, statuses: { lead: { state: 'working', say: 'Planning your team…' } } };
-    else a = { mode: 'live', structure: s, statuses: S.statuses, entrance: phase === 'locked' && !Object.keys(S.statuses).length, runKey: (resultInfo() || {}).key };
+    else a = { mode: 'live', structure: s, statuses: S.statuses, entrance: phase === 'locked' && !Object.keys(S.statuses).length, runKey: (resultInfo() || {}).runKey };
     office.setData(Object.assign({ task: d.task, timing: S.timing }, a));
   }
 
@@ -310,6 +320,7 @@
   function select(id) {
     if (id && id === S.selected) id = null;
     S.selected = id;
+    if (id) setDrawer(false);
     office.setSelected(id);
     if (id && narrow() && window.innerWidth > 600) setSidebar(true);
     renderSidebar();
@@ -324,6 +335,7 @@
     if (S.index) {
       $('#c-role').hidden = true; $('#c-result').hidden = true;
       document.body.classList.remove('isolate');
+      setDrawer(false);
       setHTML($('#title-block'), titleBlock());
       return;
     }
@@ -332,7 +344,9 @@
     if (sel) setHTML(role, roleCard(sel));
     const ri = resultInfo();
     $('#c-result').hidden = !ri || !!sel;
-    if (ri && !sel) setHTML($('#c-result'), resultHtml(ri.r));
+    if (ri && !sel) setHTML($('#c-result'), resultCard(ri));
+    if (!ri) setDrawer(false);
+    renderDrawer(ri);
     $('#c-task').hidden = M.isSdk(data()) && !data().task; // an SDK run may have no task file
     setHTML($('#c-task'), taskHtml());
     setHTML($('#c-team'), teamHtml());
@@ -407,14 +421,75 @@
         '<span class="quiet"> · found by ' + esc(nameOf(s, x.foundBy)) + (x.id ? ' · <a href="' + esc(ROOT + 'sources/' + x.id + '.md') + '" target="_blank" rel="noopener">card</a>' : '') + '</span></span></li>';
     }).join('') + '</ul><p class="ev-key">' + Object.keys(M.EVIDENCE).map((k) => '<span><span class="ev ev-' + k + '">' + k + '</span>' + esc(M.EVIDENCE[k]) + '</span>').join('') + '</p>';
   }
-  function resultHtml(r) {
-    const s = struct();
+  // The title block keeps a short card; the full result opens in the drawer over the office.
+  function resultCard(ri) {
+    const r = ri.r, last = ri.rounds[ri.rounds.length - 1], nf = (r.flags || []).filter(Boolean).length, ns = (r.sources || []).length;
+    const counts = [ri.rounds.length > 1 ? ri.rounds.length + ' rounds' : '', nf ? nf + (nf > 1 ? ' flags' : ' flag') : '', ns ? ns + (ns > 1 ? ' sources' : ' source') : ''].filter(Boolean).join(' · ');
+    return '<h2>Result ' + (r.run != null ? num('run ' + r.run) : '') + '</h2><p class="res-title">' + esc(r.title || 'Result') + '</p>' +
+      (last.question ? '<p class="res-q"><span class="quiet">Latest follow-up</span> ' + esc(last.question) + '</p>' : '') +
+      '<div class="md res-peek" aria-hidden="true" inert>' + md(last.markdown) + '</div>' +
+      '<p class="res-open"><button class="dr-open" type="button" data-drawer="open">' + ICON.panel + 'Open result</button>' + (counts ? num(counts) : '') + '</p>';
+  }
+  function roundLabel(x) { return x.round === 1 && !x.question ? 'Result' : 'Follow-up'; }
+  function drawerHtml(ri) {
+    const r = ri.r, s = struct(), many = ri.rounds.length > 1;
+    const art = (x) => '<article class="dr-round" id="dr-round-' + x.round + '" data-round="' + x.round + '">' +
+      '<p class="dr-k">' + num('Round ' + String(x.round).padStart(2, '0')) + '<span>' + roundLabel(x) + '</span>' + (x.latest && many ? '<span class="dr-latest">Latest</span>' : '') + '</p>' +
+      (x.question ? '<p class="dr-q"><span class="quiet">You asked</span>' + esc(x.question) + '</p>' : '') +
+      (x.title && (x.latest || x.title !== r.title) ? '<p class="res-title">' + esc(x.title) + '</p>' : '') +
+      '<div class="md">' + md(x.markdown) + '</div></article>';
+    return ri.rounds.map(art).join('') + resultExtras(r, s);
+  }
+  function renderDrawer(ri) {
+    const dr = $('#drawer');
+    if (!ri) return;
+    setHTML($('#dr-title'), 'Result ' + (ri.r.run != null ? num('run ' + ri.r.run) : ''));
+    const nav = $('#dr-rounds');
+    nav.hidden = ri.rounds.length < 2;
+    setHTML(nav, ri.rounds.map((x) => '<button type="button" data-round-go="' + x.round + '">' + num(String(x.round).padStart(2, '0')) + '<span>' + roundLabel(x) + '</span></button>').join(''));
+    setHTML($('#dr-body'), drawerHtml(ri));
+    const full = $('#dr-size');
+    setHTML(full, (S.drawerFull ? ICON.shrink : ICON.expand) + '<span>' + (S.drawerFull ? 'Side view' : 'Full screen') + '</span>');
+    dr.classList.toggle('full', S.drawerFull);
+  }
+  function setDrawer(open, opts) {
+    const dr = $('#drawer');
+    if (!dr) return;
+    const was = S.drawer;
+    S.drawer = !!open;
+    dr.classList.toggle('open', S.drawer);
+    dr.setAttribute('aria-hidden', String(!S.drawer));
+    if ('inert' in dr) dr.inert = !S.drawer;
+    document.body.classList.toggle('drawer-open', S.drawer);
+    if (S.drawer && !was) {
+      showLatestRound();
+      if (opts && opts.focus) $('#dr-close').focus();
+    }
+    if (!S.drawer && was) {
+      const inside = dr.contains(document.activeElement);
+      if (!S.sidebar && resultInfo()) $('#sb-toggle').classList.add('news'); // the result card waits in the closed title block
+      if (inside || (opts && opts.focus)) { // never leave focus on a closed, inert drawer
+        const visible = (el) => el && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden';
+        const to = [$('[data-drawer="open"]'), $('#sb-toggle')].find(visible);
+        if (to) to.focus(); else if (inside) document.activeElement.blur();
+      }
+    }
+  }
+  // Render the drawer and scroll it to the newest round: a follow-up opens at its own answer.
+  function showLatestRound() {
+    const ri = resultInfo();
+    if (!ri) return;
+    renderDrawer(ri);
+    const body = $('#dr-body'), last = $('#dr-round-' + ri.rounds[ri.rounds.length - 1].round);
+    if (body) body.scrollTop = last && ri.rounds.length > 1 ? last.offsetTop - body.offsetTop : 0;
+  }
+  function resultExtras(r, s) {
     const flagLi = (f) => {
       const fl = M.flagInfo({ state: f.kind === 'error' ? 'failed' : 'flagged', flagKind: f.kind });
       return '<li>' + ICON[fl.icon] + '<span>' + (fl.needsYou || f.kind === 'error' ? esc(fl.title) + ': ' : '') + esc(f.text) + '<span class="quiet"> · ' + esc(nameOf(s, f.by)) + '</span></span></li>';
     };
     const flags = (r.flags || []).length ? '<h3>Flags</h3><ul class="flags">' + r.flags.filter(Boolean).map(flagLi).join('') + '</ul>' : '';
-    return '<h2>Result ' + (r.run != null ? num('run ' + r.run) : '') + '</h2><p class="res-title">' + esc(r.title || 'Result') + '</p><div class="md">' + md(r.markdown) + '</div>' + flags + sourcesHtml(r, s);
+    return flags || (r.sources || []).length ? '<section class="dr-extras">' + flags + sourcesHtml(r, s) + '</section>' : '';
   }
   function roleCard(id) {
     const s = struct(), task = data().task, m = s ? M.member(s, id) : id === 'lead' ? { name: 'Lead' } : null;
@@ -457,9 +532,18 @@
     const sel = e.target.closest('[data-select]');
     if (sel) { select(sel.dataset.select || null); return; }
     if (e.target.closest('#sb-toggle')) setSidebar(!S.sidebar);
+    if (e.target.closest('[data-drawer="open"]')) { if (S.selected) select(null); setDrawer(true, { focus: true }); return; }
+    if (e.target.closest('#dr-close')) { setDrawer(false, { focus: true }); return; }
+    if (e.target.closest('#dr-size')) { S.drawerFull = !S.drawerFull; renderDrawer(resultInfo()); return; }
+    const go = e.target.closest('[data-round-go]');
+    if (go) { const a = $('#dr-round-' + go.dataset.roundGo), body = $('#dr-body'); if (a && body) body.scrollTo({ top: a.offsetTop - body.offsetTop, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); return; }
     if (e.target.closest('#replay')) { S.replays = (S.replays || 0) + 1; demoStart = performance.now(); S.history = M.dict(); S.feed = []; S.timing = M.dict(); S.run = { start: 0, end: 0 }; demoTick(); }
   });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && S.selected) select(null); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (S.drawer) setDrawer(false, { focus: true });
+    else if (S.selected) select(null);
+  });
 
   /* ---------- render ---------- */
   function render() {
@@ -467,14 +551,21 @@
     renderOffice();
     if (S.index) { renderSidebar(); return; }
     const ri = resultInfo();
-    if (ri && ri.key !== S.autoRun) { // a new result: show it at the top of the title block, once per run
-      const initial = S.autoRun === undefined;
+    if (ri && ri.key !== S.autoRun) { // a new result or follow-up round: once per key
+      // it arrived while the page was open: the drawer slides out over the office (the drawing keeps its size);
+      // a result that was already there on opening only gets its card in the title block
+      // the replayed demo (?demo=1, e.g. the website) keeps its wrap party in view: card only
+      const due = !S.demo && M.drawerDue(S.autoRun, ri.key);
       S.autoRun = ri.key;
-      // on first load a narrow screen keeps the drawing visible and marks the toggle instead
-      if (!(initial && (S.userSidebar || narrow()))) { if (S.selected) select(null); setSidebar(true); const c = $('#cells'); if (c) c.scrollTop = 0; }
-      else if (!S.sidebar) $('#sb-toggle').classList.add('news');
+      if (due) {
+        if (S.selected) select(null);
+        if (S.drawer) showLatestRound(); else setDrawer(true); // already open: jump to the new round
+      } else if (!S.sidebar) $('#sb-toggle').classList.add('news');
+      const c = $('#cells'); if (c && !S.selected) c.scrollTop = 0;
     }
-    if (!ri && S.demo && S.autoRun !== undefined) S.autoRun = null;
+    // looked and saw no ready result: the next one that arrives is new. A stale result file from the previous
+    // run or round keeps its key, so it never pops up again as if it were new (e.g. a run that fails without one).
+    if (!ri && S.loadedOnce) S.autoRun = data().result ? resultKeys(data().result).key : null;
     renderSidebar();
   }
 
@@ -526,6 +617,7 @@
   /* ---------- start ---------- */
   $('#replay').hidden = !S.demo;
   $('#sb-toggle').innerHTML = ICON.panel + '<span>Title block</span>';
+  $('#dr-close').innerHTML = ICON.close;
   setSidebar(S.sidebar);
   renderTop();
   renderSidebar();

@@ -768,6 +768,8 @@
       if (allDone && lounge && lounge.party && runKey != null && party.key !== runKey) {
         if (M.partyDue(party.key, runKey, allDone, !fresh)) startParty(runKey);
         else { party = { key: runKey, active: false }; decorKey = runKey; drawDecor(false); disperse(true); }
+      } else if (allDone && lounge && lounge.party && runKey != null && party.key === runKey && decorKey !== runKey) {
+        decorKey = runKey; drawDecor(false); // a follow-up round of the same run finished: the decor comes back, no second party
       }
       if (!allDone && decorKey && (allIdle || runKey !== decorKey)) { // a new run: the room is tidied
         decorKey = null; party.active = false; clearTimeout(partyTimer);

@@ -36,6 +36,15 @@
     </div>
     <div class="title-block" id="title-block"></div>
   </aside>
+  <section class="drawer" id="drawer" role="dialog" aria-labelledby="dr-title" aria-hidden="true" inert>
+    <header class="dr-bar">
+      <h2 id="dr-title">Result</h2>
+      <nav class="dr-rounds" id="dr-rounds" aria-label="Rounds" hidden></nav>
+      <button class="dr-btn" id="dr-size" type="button">Full screen</button>
+      <button class="dr-btn dr-x" id="dr-close" type="button" aria-label="Close the result"></button>
+    </header>
+    <div class="dr-body" id="dr-body"></div>
+  </section>
 </main>
 <script src="model.js"></script>
 <script src="office.js"></script>

@@ -671,5 +671,41 @@ test('status updates and ready results cannot resize the office viewport', () =>
   assert.doesNotMatch(app, /classList\.toggle\('wide-side'/, 'a ready result does not resize the drawing');
 });
 
+test('result rounds: a run answer, then follow-ups, oldest first', () => {
+  assert.deepStrictEqual(M.resultRounds(null), []);
+  const one = M.resultRounds({ title: 'T', run: 1, markdown: 'A' });
+  assert.deepStrictEqual(one.map((x) => [x.round, x.question, x.latest]), [[1, '', true]], 'a plain result is round 1');
+  const r = { title: 'T', run: 2, round: 3, question: 'And Argos?', markdown: 'C',
+    previous: [{ round: 1, title: 'T', markdown: 'A' }, { round: 2, question: 'Warranty?', markdown: 'B' }, null, { round: 9 }, 'x'] };
+  const rounds = M.resultRounds(r);
+  assert.deepStrictEqual(rounds.map((x) => [x.round, x.question, x.markdown, x.latest]),
+    [[1, '', 'A', false], [2, 'Warranty?', 'B', false], [3, 'And Argos?', 'C', true]], 'broken entries are skipped');
+  assert.strictEqual(M.resultRounds({ markdown: 'B', previous: [{ markdown: 'A' }] })[1].round, 2, 'missing round numbers count on');
+  assert.strictEqual(M.resultRounds({ markdown: 'B', round: 1, previous: [{ round: 4, markdown: 'A' }] })[1].round, 5, 'the latest round is never behind an earlier one');
+  assert.strictEqual(M.resultRounds({ markdown: 'B', round: '2', question: 7 })[0].question, '', 'wrong types are ignored');
+  assert.deepStrictEqual(M.resultRounds({ markdown: 'C', previous: [{ markdown: 'A' }, { round: 1, markdown: 'B' }] }).map((x) => x.round), [1, 2, 3], 'duplicate numbers never share an anchor');
+});
+
+test('result drawer: slides out once per new result or round, never on opening a finished run', () => {
+  assert.strictEqual(M.drawerDue(undefined, '1#1'), false, 'opened on a finished run: card only');
+  assert.strictEqual(M.drawerDue(null, '1#1'), true, 'arrived while watching');
+  assert.strictEqual(M.drawerDue('1#1', '1#1'), false, 'once per result');
+  assert.strictEqual(M.drawerDue('1#1', '1#2'), true, 'a follow-up round is new');
+  assert.strictEqual(M.drawerDue(null, null), false);
+});
+
+test('the result drawer is an overlay: it never resizes the office', () => {
+  const css = fs.readFileSync(path.join(__dirname, '..', 'style.css'), 'utf8');
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const app = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
+  const drawer = css.match(/(?:^|\n)\.drawer\s*\{([^}]+)\}/);
+  assert.ok(drawer, 'the drawer has a rule');
+  assert.match(drawer[1], /position:\s*absolute/, 'out of the sheet grid flow');
+  assert.match(css, /\.sheet\s*\{\s*position:\s*relative;\s*overflow-x:\s*clip;/, 'anchored to the sheet, clipped while closed');
+  assert.doesNotMatch(css, /drawer-open[^{]*\.(sheet|stage|drawing-host)\b/, 'opening it does not restyle the drawing');
+  assert.match(html, /id="drawer"[^>]*aria-hidden="true"[^>]*inert/, 'closed and out of the tab order at start');
+  assert.doesNotMatch(app, /setDrawer\(true[^)]*\);[^\n]*setSidebar\(/, 'opening the drawer does not also resize the title block');
+});
+
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);
