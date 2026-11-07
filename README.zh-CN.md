@@ -4,10 +4,10 @@
 
 # MAS Office
 
-### 在一间小办公室里，实时看你的 AI agent 团队干活。
+### AI agent 团队的实时办公室。
 
-一个开放协议 + 一个动画办公室面板，适用于**任何**多智能体系统（multi-agent system）：<br>
-OpenAI Agents SDK · LangGraph · Claude Agent SDK · Claude Code · 你自己的 Python / JS 代码。
+设计一支 agent 团队，看每个角色在工位上干活，拿到一份每个来源都经过独立 checker 核对和分级的结果。<br>
+跑在你已经在用的 AI 工具里：Claude Code · Codex · Gemini CLI · OpenAI Agents SDK · LangGraph · Claude Agent SDK · 你自己的 Python / JS。
 
 [![CI](https://github.com/weixijia/mas-office/actions/workflows/ci.yml/badge.svg)](https://github.com/weixijia/mas-office/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/mas-office?color=E04E2A&label=npm)](https://www.npmjs.com/package/mas-office)
@@ -15,7 +15,7 @@ OpenAI Agents SDK · LangGraph · Claude Agent SDK · Claude Code · 你自己�
 [![Protocol v0.1](https://img.shields.io/badge/protocol-v0.1-D89A12.svg)](spec/README.md)
 [![GitHub stars](https://img.shields.io/github/stars/weixijia/mas-office?style=social)](https://github.com/weixijia/mas-office/stargazers)
 
-[**项目网站与在线示例**](https://www.xijiawei.com/mas-office/) · [**快速开始**](#-快速开始) · [**框架接入**](#-接入你的框架) · [**协议**](spec/README.md) · [**文档**](docs/) · [**路线图**](ROADMAP.md) · [**参与贡献**](CONTRIBUTING.md) · [**English**](README.md)
+[**项目网站与在线示例**](https://www.xijiawei.com/mas-office/) · [**为什么**](#-为什么用-mas-office) · [**快速开始**](#-快速开始) · [**团队 kit**](#-无代码团队-kit) · [**框架接入**](#-接入你的框架) · [**协议**](spec/README.md) · [**路线图**](#️-路线图) · [**参与贡献**](CONTRIBUTING.md) · [**English**](README.md)
 
 <img src="docs/assets/demo.gif" alt="MAS Office 演示：两个搜索 agent 并行工作，预算检查员提出问题，规划员接手，结果完成后团队开派对" width="900">
 
@@ -23,9 +23,9 @@ OpenAI Agents SDK · LangGraph · Claude Agent SDK · Claude Code · 你自己�
 
 ---
 
-多智能体系统很难"看见"：日志一路滚过，trace 嵌套十几层，团队之外的人根本看不出哪个 agent 卡住了、谁把什么交给了谁、检查员刚刚抓到了什么问题。
+大多数多 agent 工具帮你跑**更多**的 agent；MAS Office 帮你把它们跑成一支**信得过的团队**：角色由你设计并锁定，finder 并行查找，上下文干净的 checker 专门挑错，Lead 写出的答案里每条结论都链接到一张 A–D 分级的来源卡。整个过程中，每个 agent 都坐在实时办公室的工位上：谁在干活、谁把什么交给了谁、checker 刚抓到了什么，一眼就能看到。
 
-**MAS Office 给每个 agent 一张工位。** agent 工作、调用工具、交接、提出问题或失败时，画面实时变化；运行结束后，团队开个小派对，结果从右侧滑出、浮在办公室上方，每条结论都链接到来源。你的框架照常运行 agent，MAS Office 是看进这间办公室的那扇窗。
+> **现在的状态（v0.2.2）**：MAS Office 目前是一个实时办公室视图、一个带 JS 和 Python SDK 的开放事件协议，以及一个无代码团队 kit，能让 Claude Code、Codex、Gemini CLI 或 Antigravity 当你团队的 Lead。下一步，它会自己启动并引导真实的 Claude Code 和 Codex 会话，把所有需要你处理的事集中到一个收件箱。见[路线图](#️-路线图)。
 
 ```bash
 npx mas-office demo        # 30 秒，不需要 API key，不需要配置
@@ -33,14 +33,27 @@ npx mas-office demo        # 30 秒，不需要 API key，不需要配置
 
 ## ✨ 为什么用 MAS Office
 
-| | |
-|---|---|
-| 🏢 **是画面，不是日志** | 工位、交接路线、并行阶段、问题标记，还有给干完活的 agent 休息的休息区。产品经理、学生、凌晨两点的你，一眼就能看懂。 |
-| 🔌 **任何框架，三行接入** | OpenAI Agents SDK、LangGraph、Claude Agent SDK、Claude Code hooks 都有现成集成；其他一切都能用[协议](spec/README.md)直接接。 |
-| 🪶 **零依赖** | npm 和 Python 包只用标准库。不要账号、不要数据库、不要云服务。面板是纯 HTML，双击 `file://` 也能打开。 |
-| 📜 **开放、有版本的协议** | 18 种事件类型，对齐 [AG-UI](https://docs.ag-ui.com)、[OpenTelemetry GenAI](https://opentelemetry.io/docs/specs/semconv/gen-ai/) 和 [A2A](https://a2a-protocol.org)。确定性 reducer、JSON Schema，以及两套参考 SDK 都必须通过的 conformance 用例。 |
-| ⏪ **可回放的运行记录** | 每个项目一份只追加的 `events.jsonl`：可以回放、diff、提交进 git，或附在 bug 报告里。 |
-| 🤖 **无代码模式** | 把 `AGENTS.md` 交给 Claude Code、Codex、Gemini CLI 或 Antigravity：AI 助手和你一起设计团队，再把每个角色作为真正的 subagent 跑起来，办公室实时显示。拿到结果后可以继续追问，Lead 只把需要的角色派回去接着干。在 Claude Code 里首次打开时选择 “Yes, I trust this folder”，终端底部的状态行就会显示团队进度；角色还能用一个不带你任何登录状态的临时 Chrome（`mas-browser`）去读那些拦截普通抓取的网页。 |
+| | | |
+|---|---|---|
+| 🧭 **你设计并锁定的团队** | 角色、哪些并行、谁检查谁，由你确认。锁定后的团队每次按同样方式运行，下周还能原样再跑一次。 | 现在 |
+| 🔍 **每个来源都被核对和分级** | checker 用干净的上下文开工，标出问题，并给每个来源分级：**A** 能买到或能跑通 · **B** 有数据的研究 · **C** 演示或营销 · **D** 观点。 | 现在 |
+| 🔁 **追问只派回需要的角色** | 对结果提问时，Lead 只把这个问题需要的角色派回去干活，答案作为新一轮加入结果。 | 现在 |
+| 🏢 **是画面，不是日志** | 工位、交接路线、并行阶段、问题标记，还有给干完活的 agent 休息的休息区。产品经理、学生、凌晨两点的你都能看懂。 | 现在 |
+| 🔌 **任何框架，开放协议** | OpenAI Agents SDK、LangGraph、Claude Agent SDK、Claude Code hooks 都有现成集成，其他的追加 JSON 行即可。零依赖，不要账号，不要云。 | 现在 |
+| 📥 **一个收件箱装下所有需要你的事** | 所有 agent 的工具审批、决策、checker 标记和阶段关口，就地答复，还能看到每件事等了多久。 | 下一步 |
+| 🎮 **在工位上直接引导任何 agent** | 点一个员工，看它的实时记录，直接和它背后真实的 Claude Code 或 Codex 会话对话，或者接手它的终端。 | 下一步 |
+
+## 🆚 和其他工具的关系
+
+MAS Office 不替代下面这些工具，而是架在它们之上或放在旁边用。
+
+| 你可能已经在用 | 它擅长 | MAS Office 补上的 |
+|---|---|---|
+| Claude Code / Codex 的 subagent 和 workflow | 在一个会话里跑很多 agent | 你设计并锁定的、可跨厂商的团队，独立 checker 核对并分级的来源，以及看得见的办公室 |
+| 并行 agent 编排器（Orca、Conductor、Gas Town、Claude Squad） | 让很多独立任务并排跑 | 互相检查的角色，以及（下一步）一个装下所有需要你的事的收件箱 |
+| agent 办公室视图（pixel-agents 等） | 把编程会话画成小人 | 团队语义：阶段、交接、checker 标记、分级证据、追问轮次 |
+| Deep Research 产品 | 一句话出一份带引用的报告 | 你能塑造和重跑的团队，checker 去核对来源，而不只是列出来源 |
+| Tracing 平台（Langfuse、Phoenix、AgentOps） | prompt、token、延迟调试 | 给不看 trace 的人看的团队视图；每个事件都能带 trace id，两者一起用 |
 
 ## 🚀 快速开始
 
@@ -79,6 +92,24 @@ with Office(workspace="./runs") as office:
 npx mas-office serve ./runs --open     # 通过 Server-Sent Events 实时更新
 ```
 
+## 🤖 无代码团队 kit
+
+```bash
+npx mas-office init --kit my-team
+```
+
+用 Claude Code、Codex、Gemini CLI 或 Antigravity 打开 `my-team`，说一句 *"Read SETUP.md and follow it."*，你的助手就成了 **Lead**：
+
+1. **描述**：它就任务访谈你，写出可检查的需求。
+2. **设计**：它提出一支团队：谁查找、谁检查、哪些并行。用大白话就能改。
+3. **锁定**：每个角色有自己的岗位说明，办公室给它一张工位。
+4. **运行**：每个角色作为上下文干净的独立 subagent 运行，办公室实时显示每一步。结果从右侧滑出，浮在办公室上方，每条结论都链接到分级的来源卡。
+5. **追问**：对结果提问，Lead 只把需要的角色派回去，答案作为新一轮加入。
+
+在 Claude Code 里第一次打开时选 **"Yes, I trust this folder"**，只有被信任的文件夹才会应用 kit 的设置：终端状态行会显示团队（谁在干活、谁做完了、谁被标了问题，并附办公室链接）；角色还能用一个真实的浏览器（`mas-browser`：临时 profile，不带你的任何登录，只能访问公网地址），用来打开拒绝简单抓取的网页，需要安装 Google Chrome。
+
+这也是课堂版 [**awesome-mas**](https://github.com/weixijia/awesome-mas) 背后的引擎。
+
 ## 🔌 接入你的框架
 
 | 框架 | 接入方式 | 状态 |
@@ -97,50 +128,43 @@ npx mas-office serve ./runs --open     # 通过 Server-Sent Events 实时更新
 ```mermaid
 flowchart LR
   A["你的 agents<br/>(任何框架)"] -- "集成 / SDK" --> E["events.jsonl<br/>只追加日志"]
-  K["AI 编程助手<br/>+ AGENTS.md"] -- "直接写快照" --> S
+  K["AI 编程助手<br/>+ 团队 kit"] -- "直接写快照" --> S
   E --> R(["reducer<br/>确定性"]) --> S["快照<br/>structure · status · result"]
   S -- "file:// 或 mas-office serve (SSE)" --> P["🏢 办公室面板"]
 ```
 
 - **事件进，画面出**：producer 只报告"发生了什么"，reducer 算出面板"现在该显示什么"。
 - **处处结果一致**：JS 和 Python 两套 reducer 用同一批手工推算的 [conformance 用例](spec/conformance/)检验。
-- **尽力报告，不中断任务**：emission 失败会警告并丢弃。File transport 同步写文件；HTTP transport 在后台批量发送事件。
-
-## 🆚 和其他工具的区别
-
-MAS Office 不是 tracing 平台，而是投在大屏上的那个视图。和你的 tracer 一起用：每个事件都能带 `trace` id。
-
-| | **MAS Office** | Tracing 平台<br><sub>Langfuse, Phoenix, AgentOps</sub> | 框架自带工作台<br><sub>LangGraph Studio, AutoGen Studio</sub> |
-|---|:---:|:---:|:---:|
-| 团队级实时视图（谁在干活、谁在等、谁在检查） | ✅ | ➖ trace 树 | ✅ 图 |
-| 跨框架 | ✅ | ✅ | ➖ 单一框架 |
-| 无需账号、服务器或数据库 | ✅ | ➖ | ✅ |
-| 非工程师也能看懂 | ✅ | ❌ | ➖ |
-| 可以手写的开放文件协议 | ✅ | ➖ OTel | ❌ |
-| prompt / token / 延迟调试 | ❌ 请用 tracer | ✅ | ✅ |
+- **能回放的运行**：每个项目是一份只追加的 `events.jsonl`，可以回放、diff、提交，或附到 bug 报告里。
+- **下一步：双向**：协议 0.2 增加"等人处理的请求"（审批、决策、checker 标记）和"发回给 agent 的命令"（发消息、答复、派活、中断），让办公室不只显示团队，还能引导团队。
 
 ## 🗺️ 路线图
 
-下一步，MAS Office 不只把团队画出来，还要真正驱动它：一支你自己设计、看得见、会互相审查的研究团队，用的是你已经有的 AI 订阅。每个角色跑在你已登录的官方 coding agent 里（`claude -p`、`codex exec` 等），MAS Office 负责团队这一层。
+下一步，MAS Office 要**驱动**团队，而不只是显示团队。每个角色都跑在你自己登录的、未经修改的 Claude Code 或 Codex 里；MAS Office 从不索取、读取或保存你的登录信息，只负责规划、调度和检查团队。
 
-- [x] 0.1：协议、JS/Python SDK、CLI、面板、4 个框架接入、无代码 kit
-- [x] 0.2：结果抽屉、多轮追问、角色可用的真浏览器、Claude Code 状态行显示团队
-- [ ] M0：在研究类任务上对比单个 agent 和 MAS 团队；`claude -p` 与 `codex exec` 作为角色后端；对话和办公室在同一个终端界面
-- [ ] M1：`mas run`，团队自己跑起来：按角色的工具与权限、checker 打回返工、断点续跑
-- [ ] M2–M4：任意 coding agent 当 Lead（MCP）、同一窗口的终端版和桌面版
+- [x] **v0.1–v0.2**：协议、JS / Python SDK、带实时服务的 CLI、办公室面板、4 个框架接入、团队 kit、结果抽屉、追问轮次、角色浏览器、Claude Code 状态行
+- [ ] **S0**：从办公室启动并引导真实的 Claude Code 和 Codex 会话：看到一个卡住，点它，批准或回复，看它继续
+- [ ] **S1**：协议 0.2、收件箱、在工位上和任何 agent 对话、可接手的原始终端
+- [ ] **S2**：Lead 按锁定的团队设计调度，每个会话里强制执行按角色的权限
+- [ ] **S3**：逐条结论核对（结论 → 来源 → 链接检查 → checker 判定），并和同等预算的单个 agent 做评测对比
+- [ ] **S4**：一项关于监督 agent 团队的用户研究，以及桌面 app
 
 完整列表见 [ROADMAP.md](ROADMAP.md)。
 
+## ♻️ 站在开源的肩膀上
+
+能整合好的开源成果，我们就不重写。[`references/manifest.json`](references/manifest.json) 固定了我们参考的开源项目，[`docs/design/reuse-map.md`](docs/design/reuse-map.md) 记录 MAS Office 的每个部分该读哪些项目的哪些文件，以及是依赖、改编还是只借思路。改编的代码在 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) 里保留署名。
+
 ## 🤝 参与贡献
 
-MAS Office 刻意保持小而可扩展：一个新框架集成通常只是**一个文件加一个用假数据驱动的测试**。从 [`good first issue`](https://github.com/weixijia/mas-office/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) 开始，再读 [CONTRIBUTING.md](CONTRIBUTING.md)。协议变更走轻量 [RFC 流程](spec/rfcs/README.md)，提交用 DCO（`git commit -s`）。
+一个新框架集成通常只是**一个文件加一个用假数据驱动的测试**。从 [`good first issue`](https://github.com/weixijia/mas-office/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) 开始，再读 [CONTRIBUTING.md](CONTRIBUTING.md)；coding agent 从 [CLAUDE.md](CLAUDE.md) 开始。协议变更走轻量 [RFC 流程](spec/rfcs/README.md)，提交用 DCO（`git commit -s`）。
 
 如果 MAS Office 对你有帮助，**点个 ⭐ 能让更多人看到它。**
 
 ## 🙏 致谢
 
-MAS Office 源自 [awesome-mas](https://github.com/weixijia/awesome-mas)：一个教不写代码的人设计多智能体系统的课堂套件。事件模型借鉴了 AG-UI、OpenTelemetry GenAI、A2A 和 LangGraph 的事件流；"agent 是工位上的小人"这个想法受 pixel-agents 和斯坦福 Generative Agents 启发。
+MAS Office 源自 [awesome-mas](https://github.com/weixijia/awesome-mas)：一个教不写代码的人设计多智能体系统的课堂套件。事件模型借鉴了 AG-UI、OpenTelemetry GenAI、A2A 和 LangGraph 的事件流；"agent 是工位上的小人"这个想法受 pixel-agents 和斯坦福 Generative Agents 启发。下一阶段参考的更多开源项目列在[复用地图](docs/design/reuse-map.md)里。
 
 ## 📄 License
 
-[MIT](LICENSE) © Xijia Wei and MAS Office contributors.
+[MIT](LICENSE) © Xijia Wei and MAS Office contributors。产品名称和 logo 归各自所有者。
