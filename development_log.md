@@ -282,6 +282,11 @@ npm 发布：0.1.0、0.1.1、0.2.0、0.2.1 都已公开，账号 `simonwxj`。Py
 | 16 | 11-07 | 编排内核和界面用什么语言 | TypeScript / Python / Rust / Go | **TypeScript**（Python 保留给 SDK 集成和评测） | 用户："哪种语言最主流，被 Claude、Codex、pi 用得多，还得考虑后期封装成 webapp、mac app"。Claude Code、Gemini CLI、pi、OpenCode、dsh 都是 TS；网页、桌面、VS Code 扩展都顺 |
 | 17 | 11-07 | 先做什么 | **先做 P0**（浏览器 + 状态行）/ 先把方案写进仓库 / 直接做评测 | 先做 P0，再进 M0 | 马上改善实测里遇到的 403 和"忘了看网页"两个问题 |
 | 18 | 11-07 | 角色浏览器用无头还是有界面 Chrome | 无头 / 有界面 | **有界面** | 实测无头 Chrome 被日本外务省、Skiplagged 等网站拦截，有界面的能读到 |
+| 19 | 11-07 | 产品形态与差异化 | 满血 MAS / 单纯可视化 / 可审计研究团队 / 可交互的 AI 公司 | **一家看得见、管得住、会互相把关的 AI 公司**：每个员工是一个真实的 Claude Code 或 Codex 会话；像《模拟人生》加 RTS 那样点小人聊天、批准；CEO 读结构化事件流。护城河是统一的"需要你"收件箱、CEO 事件流、锁定的组织和逐角色权限、claim 级核对与证据分级、低成本引导 | 用户："像玩《模拟人生》一样点击每一个 NPC……取所有项目的最优解，做出最易用、最符合 HCI 的产品"。调研证伪了"只有我们能可视化"（pixel-agents 10k⭐、munder-difflin 9.4k⭐），见 `docs/research/positioning.zh-CN.md`、`docs/research/landscape/SYNTHESIS.md` |
+| 20 | 11-07 | Claude 订阅合规 | 风险高需另走 API key / 按条款走用户自己的登录 | **低风险，守住 7 条规则**（根目录 `CLAUDE.md` §3） | 用户追问"为什么会有合规风险，看看 pi、dsh、Orca"。条款明文允许平台运行未修改的 Claude Code、由用户自己登录；禁止的是提取 OAuth、冒充官方客户端（pi 的做法） |
+| 21 | 11-07 | 自研还是复用 | 自己实现 / 复用开源代码 | **复用优先**：参考代码放 `references/`（74 个仓库，固定 commit，`fetch.mjs` 可复现），复用地图 `docs/design/reuse-map.md` 逐组件写明读哪些文件、怎么复用、license 依据 | 用户："完全可以复用已经开源的优质项目的代码，把精力花在整合和提高竞争力上" |
+| 22 | 11-07 | 原始终端（xterm.js + node-pty）放哪 | 放进 `mas-office` / 单独的可选包 | **单独的可选包**，`mas-office` 保持零依赖 | 用户："只要学生下载下来能复用就行" |
+| 23 | 11-07 | 根目录 `CLAUDE.md` 是否会影响 kit | — | 不影响学生：`init --kit` 只复制 `kit/`。仓库内的 `.omc/kit-e2e` 会继承开发者指令，以后 kit 端到端测试改在仓库外的目录进行 | 同上 |
 
 明确放弃的方向与原因：
 - **Fork pi 当引擎**：它的 Claude 订阅登录伪装成 Claude Code，正是 Anthropic 条款明文禁止的做法；而且多 agent 要从头补。

@@ -1,0 +1,818 @@
+{
+  "description": "Third-party reference repositories for MAS Office. Pinned commits; read-only reference material. See references/README.md and docs/design/reuse-map.md.",
+  "updated": "2026-11-07",
+  "repos": [
+    {
+      "repo": "a16z-infra/ai-town",
+      "sha": "1b2f7d8b824c7bc679017a091d9d45ba3dc3029e",
+      "license": "MIT",
+      "stars": 10767,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "a2aproject/A2A",
+      "sha": "9fff3e08ab33bb7674e7d98fc7c08ae8592bb4bd",
+      "license": "Apache-2.0",
+      "stars": 26436,
+      "tier": "background",
+      "components": [
+        "C5"
+      ]
+    },
+    {
+      "repo": "ag-ui-protocol/ag-ui",
+      "sha": "37b4da90c8dfba2b7ef2182c738fda5350f0fc60",
+      "license": "MIT",
+      "stars": 17058,
+      "tier": "secondary",
+      "components": [
+        "C5"
+      ]
+    },
+    {
+      "repo": "agentclientprotocol/agent-client-protocol",
+      "sha": "7441d106a853682cce61d2dd7db54123e4b9a477",
+      "license": "Apache-2.0",
+      "stars": 4593,
+      "tier": "secondary",
+      "components": [
+        "C5"
+      ]
+    },
+    {
+      "repo": "agentclientprotocol/claude-agent-acp",
+      "sha": "47b64c04de83145c4d42033c4408c811736c9c40",
+      "license": "Apache-2.0",
+      "stars": 2734,
+      "tier": "core",
+      "components": [
+        "C1",
+        "C5"
+      ]
+    },
+    {
+      "repo": "agentclientprotocol/codex-acp",
+      "sha": "f9cb470edba4776ad34917eb3adb819441323b47",
+      "license": "Apache-2.0",
+      "stars": 556,
+      "tier": "core",
+      "components": [
+        "C2"
+      ],
+      "licenseNote": "LICENSE text is Apache-2.0 (JetBrains); GitHub reports NOASSERTION"
+    },
+    {
+      "repo": "AgentSystemLabs/agent-office",
+      "sha": "852e2ab28c4f3f31bffdf4b20353bd119c9d3270",
+      "license": "MIT",
+      "stars": 888,
+      "tier": "core",
+      "components": [
+        "C3",
+        "C6",
+        "C9",
+        "C10",
+        "C11",
+        "C16"
+      ]
+    },
+    {
+      "repo": "agno-agi/agno",
+      "sha": "f45ccee83dcd332c6a2cf46b0a0add3e7f7d3e68",
+      "license": "Apache-2.0",
+      "stars": 43092,
+      "tier": "secondary",
+      "components": [
+        "C7"
+      ]
+    },
+    {
+      "repo": "Alibaba-NLP/DeepResearch",
+      "sha": "f72f75d8c3eb842f2bbbab096a12206ff66e270f",
+      "license": "Apache-2.0",
+      "stars": 20106,
+      "tier": "core",
+      "components": [
+        "C12",
+        "C13"
+      ]
+    },
+    {
+      "repo": "anomalyco/opencode",
+      "sha": "fdce6365bcdf2af0fdac65d46dc1806a75d10b02",
+      "license": "MIT",
+      "stars": 225200,
+      "tier": "secondary",
+      "components": [
+        "C3",
+        "C5",
+        "C6"
+      ]
+    },
+    {
+      "repo": "anthropics/claude-agent-sdk-python",
+      "sha": "2209f2c134fee914c0f75733b631a5fc238ca846",
+      "license": "MIT",
+      "stars": 8454,
+      "tier": "background",
+      "components": [
+        "C1"
+      ]
+    },
+    {
+      "repo": "anthropics/claude-agent-sdk-typescript",
+      "sha": "49dd8ef10dd5cb012dc9fe10703376489850c36c",
+      "license": "LicenseRef-Anthropic-Commercial",
+      "stars": 1870,
+      "tier": "core",
+      "components": [
+        "C1",
+        "C3",
+        "C8",
+        "C11"
+      ],
+      "licenseNote": "Anthropic Commercial Terms: depend on the npm package only, never vendor source"
+    },
+    {
+      "repo": "asheshgoplani/agent-deck",
+      "sha": "fb9e67680c273aaeefd5f9912bca45037d971ee7",
+      "license": "MIT",
+      "stars": 1223,
+      "tier": "background",
+      "components": [
+        "C7"
+      ]
+    },
+    {
+      "repo": "assafelovic/gpt-researcher",
+      "sha": "3582a6841fe7dc801e2a34e34ee408641aea9bce",
+      "license": "Apache-2.0",
+      "stars": 30539,
+      "tier": "core",
+      "components": [
+        "C12",
+        "C13"
+      ]
+    },
+    {
+      "repo": "Ayanami0730/deep_research_bench",
+      "sha": "f2735b5c3636759c22f9e936c0232de8bf545b67",
+      "license": "Apache-2.0",
+      "stars": 847,
+      "tier": "core",
+      "components": [
+        "C12",
+        "C14"
+      ],
+      "licenseNote": "LICENSE file is Apache-2.0 (README badge says MIT)"
+    },
+    {
+      "repo": "bagidea/bagidea-office",
+      "sha": "68e2d0464c3095d9465086547c3d19c9aed83b27",
+      "license": "MIT",
+      "stars": 261,
+      "tier": "core",
+      "components": [
+        "C9",
+        "C10",
+        "C15"
+      ],
+      "licenseNote": "Code MIT; cat character art may not be redistributed"
+    },
+    {
+      "repo": "BloopAI/vibe-kanban",
+      "sha": "08064e043c2d78ad123b473257ed867e7ce74768",
+      "license": "Apache-2.0",
+      "stars": 28614,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "camel-ai/camel",
+      "sha": "123f0c60f6efce7b420d6de2c3e046adb1f2cacc",
+      "license": "Apache-2.0",
+      "stars": 18016,
+      "tier": "background",
+      "components": [
+        "C7"
+      ]
+    },
+    {
+      "repo": "camel-ai/owl",
+      "sha": "2df367e0bfd1d97b37e59f8997fdc8762d03b6a2",
+      "license": "NONE",
+      "stars": 20176,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "coder/agentapi",
+      "sha": "7c468d5b25ec9d3d76c41313cf4e08904ff5968d",
+      "license": "MIT",
+      "stars": 1496,
+      "tier": "background",
+      "components": [
+        "C3",
+        "C4"
+      ]
+    },
+    {
+      "repo": "crewAIInc/crewAI",
+      "sha": "73f48320dbe6e2dc7a9bc54fefc6a13637b9485c",
+      "license": "MIT",
+      "stars": 60607,
+      "tier": "background",
+      "components": [
+        "C7"
+      ]
+    },
+    {
+      "repo": "deepseek-ai/deepseek-harness",
+      "sha": "fcc0ad462172522aaf5c93a7b2e01f6b9f0b0159",
+      "license": "MIT",
+      "stars": 275552,
+      "tier": "secondary",
+      "components": [
+        "C1",
+        "C2"
+      ]
+    },
+    {
+      "repo": "Dicklesworthstone/ntm",
+      "sha": "dda19c50da52fcfaba718d996d27eb21efc54b0d",
+      "license": "LicenseRef-MIT-with-rider",
+      "stars": 462,
+      "tier": "background",
+      "components": [],
+      "licenseNote": "MIT plus a rider excluding OpenAI and Anthropic and affiliates: idea only"
+    },
+    {
+      "repo": "disler/claude-code-hooks-multi-agent-observability",
+      "sha": "8a6e5cf795df50767cea7123703751282a819697",
+      "license": "NONE",
+      "stars": 1567,
+      "tier": "background",
+      "components": [
+        "C9"
+      ]
+    },
+    {
+      "repo": "earendil-works/pi",
+      "sha": "085c84e98e7f4c950f2be606466fff4f75d8fe7c",
+      "license": "MIT",
+      "stars": 120601,
+      "tier": "background",
+      "components": [
+        "C5"
+      ]
+    },
+    {
+      "repo": "eigent-ai/eigent",
+      "sha": "4958c94bd91faf4e0bfff270a971d4d1810fb6db",
+      "license": "Apache-2.0",
+      "stars": 15761,
+      "tier": "secondary",
+      "components": [
+        "C8",
+        "C15"
+      ]
+    },
+    {
+      "repo": "FoundationAgents/MetaGPT",
+      "sha": "11cdf466d042aece04fc6cfd13b28e1a70341b1f",
+      "license": "MIT",
+      "stars": 71207,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "gastownhall/beads",
+      "sha": "087a4ec58869547d0ac361310054d7e7b9dc4095",
+      "license": "MIT",
+      "stars": 28571,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "gastownhall/gascity",
+      "sha": "06372a1b5d93054ebfb77abfaf018ef3a0e9afbc",
+      "license": "MIT",
+      "stars": 1496,
+      "tier": "core",
+      "components": [
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "C8",
+        "C9",
+        "C12"
+      ]
+    },
+    {
+      "repo": "gastownhall/gastown",
+      "sha": "466aa41c83ee73b1fa0eb79eb9d172fb1eca9476",
+      "license": "MIT",
+      "stars": 18724,
+      "tier": "background",
+      "components": [
+        "C7"
+      ]
+    },
+    {
+      "repo": "google-deepmind/long-form-factuality",
+      "sha": "9d27158d198ced0a9d8271a80147cae580614601",
+      "license": "Apache-2.0",
+      "stars": 698,
+      "tier": "core",
+      "components": [
+        "C12",
+        "C13",
+        "C14"
+      ],
+      "licenseNote": "Code Apache-2.0; factscore parts MIT; data and other material CC-BY-4.0"
+    },
+    {
+      "repo": "GreenSheep01201/claw-empire",
+      "sha": "66a24ea7df2435ef897c48c147deb7ec572c01c2",
+      "license": "Apache-2.0",
+      "stars": 1446,
+      "tier": "secondary",
+      "components": [
+        "C9"
+      ]
+    },
+    {
+      "repo": "harishkotra/agent-office",
+      "sha": "58f11f9b31770c10bcf3d7a0618325d22bd0ee9e",
+      "license": "MIT",
+      "stars": 405,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "HarnessMD/munder-difflin",
+      "sha": "80a1dbbe9c932c8c950cf2d3a3c387b78f919344",
+      "license": "MIT",
+      "stars": 9415,
+      "tier": "core",
+      "components": [
+        "C3",
+        "C7",
+        "C10",
+        "C11",
+        "C15"
+      ],
+      "licenseNote": "Tileset under the author’s purchased LimeZu license; characters depict The Office: never copy art"
+    },
+    {
+      "repo": "iamlukethedev/claw3d",
+      "sha": "51337f7f250459af61a7cf92b7b0015d59faed5c",
+      "license": "MIT",
+      "stars": 2436,
+      "tier": "background",
+      "components": [
+        "C9"
+      ]
+    },
+    {
+      "repo": "imbue-ai/sculptor",
+      "sha": "5435bd424044d37d66be43cf746448a82700843d",
+      "license": "MIT",
+      "stars": 246,
+      "tier": "background",
+      "components": [
+        "C1",
+        "C4"
+      ]
+    },
+    {
+      "repo": "Jedward23/Tmux-Orchestrator",
+      "sha": "7193530291e55b594f13196fd2ed97114f0153b8",
+      "license": "NONE",
+      "stars": 1813,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "jefferysha0627/agent-office-3d",
+      "sha": "077d302726b767f57c9da0620176b3afa6f4b2fa",
+      "license": "MIT",
+      "stars": 129,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "johannesjo/parallel-code",
+      "sha": "33e48b889964d2b75590cf7b1576ec1d5e26a8ed",
+      "license": "MIT",
+      "stars": 1082,
+      "tier": "secondary",
+      "components": [
+        "C3",
+        "C4",
+        "C16"
+      ]
+    },
+    {
+      "repo": "joonspk-research/generative_agents",
+      "sha": "fe05a71d3e4ed7d10bf68aa4eda6dd995ec070f4",
+      "license": "Apache-2.0",
+      "stars": 22357,
+      "tier": "background",
+      "components": [
+        "C10"
+      ],
+      "licenseNote": "Includes paid asset packs: never copy art"
+    },
+    {
+      "repo": "josstei/maestro-orchestrate",
+      "sha": "285aede9ab76d5e237d7ea7ac04629ca8a1099fe",
+      "license": "Apache-2.0",
+      "stars": 486,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "KbWen/agent-virtual-office",
+      "sha": "48e0e23da55cdf7b083afdee468d21f16cdd02b9",
+      "license": "MIT",
+      "stars": 68,
+      "tier": "core",
+      "components": [
+        "C9",
+        "C10"
+      ]
+    },
+    {
+      "repo": "langchain-ai/langgraph",
+      "sha": "e5e37b5d70dbfd93c7006bd90a658c6179a95946",
+      "license": "MIT",
+      "stars": 44615,
+      "tier": "background",
+      "components": [
+        "C4"
+      ]
+    },
+    {
+      "repo": "langchain-ai/langgraph-supervisor-py",
+      "sha": "88859b34017ac3569bbd4a3092c7e77593a0a960",
+      "license": "MIT",
+      "stars": 1655,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "langchain-ai/open_deep_research",
+      "sha": "1b7d2e80db9faa586165c60e09096dbbfd483a64",
+      "license": "MIT",
+      "stars": 12677,
+      "tier": "secondary",
+      "components": [
+        "C7",
+        "C12",
+        "C13",
+        "C14"
+      ]
+    },
+    {
+      "repo": "Libr-AI/OpenFactVerification",
+      "sha": "6e1ee9e5159abe544c342689093afe12b908a419",
+      "license": "MIT",
+      "stars": 1163,
+      "tier": "core",
+      "components": [
+        "C12",
+        "C14"
+      ]
+    },
+    {
+      "repo": "microsoft/agent-framework",
+      "sha": "924a6e50ec0336f3c965ee8b1151c54085888b6e",
+      "license": "MIT",
+      "stars": 14573,
+      "tier": "secondary",
+      "components": [
+        "C7",
+        "C8"
+      ]
+    },
+    {
+      "repo": "microsoft/magentic-ui",
+      "sha": "d3c9d13c39288257286a66daabf7c5b5fb72ee69",
+      "license": "MIT",
+      "stars": 10109,
+      "tier": "secondary",
+      "components": [
+        "C9",
+        "C14"
+      ]
+    },
+    {
+      "repo": "modelcontextprotocol/modelcontextprotocol",
+      "sha": "cf59bb0d8b43e711420f5f7313aa6cca3f1e1898",
+      "license": "MIT AND Apache-2.0",
+      "stars": 9635,
+      "tier": "background",
+      "components": [
+        "C5"
+      ],
+      "licenseNote": "Mixed MIT/Apache-2.0 code; documentation CC-BY-4.0"
+    },
+    {
+      "repo": "mvschwarz/openrig",
+      "sha": "a0f410e161e60b38e7d7cb6ed1346f89ba3d1aea",
+      "license": "Apache-2.0",
+      "stars": 8718,
+      "tier": "core",
+      "components": [
+        "C4",
+        "C6",
+        "C8"
+      ]
+    },
+    {
+      "repo": "open-telemetry/semantic-conventions-genai",
+      "sha": "e6658f14c9d9ea0760825f029cb82e7673f48fab",
+      "license": "Apache-2.0",
+      "stars": 525,
+      "tier": "background",
+      "components": [
+        "C5"
+      ]
+    },
+    {
+      "repo": "openai/codex",
+      "sha": "57a808a3920f05f2d4b9eab2d0493e1df136ae6b",
+      "license": "Apache-2.0",
+      "stars": 133557,
+      "tier": "core",
+      "components": [
+        "C2",
+        "C3",
+        "C5",
+        "C8",
+        "C16"
+      ]
+    },
+    {
+      "repo": "openai/openai-agents-python",
+      "sha": "27c75c5f9c5fd957d28c04fb7e9eeacaad4630a9",
+      "license": "MIT",
+      "stars": 30544,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "openai/symphony",
+      "sha": "be10a1b79df723d6d7612b5651c8522704dafb2e",
+      "license": "Apache-2.0",
+      "stars": 27964,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "OpenBMB/ChatDev",
+      "sha": "464a681ba7bda869db97a50c5fa707c9a0fb57a0",
+      "license": "Apache-2.0",
+      "stars": 34703,
+      "tier": "background",
+      "components": [
+        "C8",
+        "C10"
+      ]
+    },
+    {
+      "repo": "Orkas-AI/Orkas",
+      "sha": "7f8a980e1c23c26a3f11f4a972070d409b7a4491",
+      "license": "MIT",
+      "stars": 9081,
+      "tier": "secondary",
+      "components": [
+        "C1",
+        "C2",
+        "C4",
+        "C6",
+        "C7"
+      ]
+    },
+    {
+      "repo": "paperclipai/paperclip",
+      "sha": "b8e02fc2b418a9104612fa731f7afde7afcce6b5",
+      "license": "MIT",
+      "stars": 111918,
+      "tier": "core",
+      "components": [
+        "C4",
+        "C6",
+        "C7",
+        "C8",
+        "C9",
+        "C10",
+        "C11",
+        "C12"
+      ],
+      "licenseNote": "Contains Claude/Codex logos: do not copy assets"
+    },
+    {
+      "repo": "paulrobello/claude-office",
+      "sha": "3fe6424312813981bcd88f745e295547623e6d76",
+      "license": "MIT",
+      "stars": 602,
+      "tier": "secondary",
+      "components": [
+        "C9",
+        "C10"
+      ]
+    },
+    {
+      "repo": "pixel-agents-hq/pixel-agents",
+      "sha": "b1bafd02896d90d83457266575a1e8e5011ce997",
+      "license": "MIT",
+      "stars": 10100,
+      "tier": "core",
+      "components": [
+        "C10",
+        "C11",
+        "C15"
+      ]
+    },
+    {
+      "repo": "ringhyacinth/Star-Office-UI",
+      "sha": "f29c107e9728a72f2635f10b4e8203b29b37221d",
+      "license": "MIT (code)",
+      "stars": 7564,
+      "tier": "background",
+      "components": [
+        "C10"
+      ],
+      "licenseNote": "Art assets non-commercial only: never copy art"
+    },
+    {
+      "repo": "ruvnet/ruflo",
+      "sha": "3fe9d70ba7d08ff12233003a9342037ab80af3ce",
+      "license": "MIT",
+      "stars": 81139,
+      "tier": "background",
+      "components": [
+        "C1",
+        "C6",
+        "C7",
+        "C12",
+        "C14"
+      ],
+      "licenseNote": "Root MIT; ruflo/src/ruvocal is Apache-2.0 (Hugging Face)"
+    },
+    {
+      "repo": "simple10/agents-observe",
+      "sha": "b3a7238b3913976c10da052f75c73e29ad084c61",
+      "license": "MIT",
+      "stars": 714,
+      "tier": "core",
+      "components": [
+        "C1",
+        "C9",
+        "C11",
+        "C14"
+      ]
+    },
+    {
+      "repo": "sipyourdrink-ltd/bernstein",
+      "sha": "05268e5c6deef285d7f976b406413bee288bfadf",
+      "license": "Apache-2.0",
+      "stars": 1193,
+      "tier": "secondary",
+      "components": [
+        "C8"
+      ],
+      "licenseNote": "NOTICE does not license the project name"
+    },
+    {
+      "repo": "siteboon/claudecodeui",
+      "sha": "2053f3d7a086fd44f7fe373c913da487629b0a95",
+      "license": "AGPL-3.0",
+      "stars": 14489,
+      "tier": "background",
+      "components": [
+        "C3"
+      ]
+    },
+    {
+      "repo": "slopus/happy",
+      "sha": "490c33a60fc9265a2a606886cfec026ea25e570d",
+      "license": "MIT",
+      "stars": 24529,
+      "tier": "core",
+      "components": [
+        "C1",
+        "C2",
+        "C3",
+        "C16"
+      ]
+    },
+    {
+      "repo": "smtg-ai/claude-squad",
+      "sha": "ce1ffb4392b01f38e2c4599c7c84d2a93973b138",
+      "license": "AGPL-3.0",
+      "stars": 8744,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "stablyai/orca",
+      "sha": "e280eb0734c2ffcc7d6f1105ead23235afc3e8df",
+      "license": "MIT",
+      "stars": 118339,
+      "tier": "core",
+      "components": [
+        "C1",
+        "C2",
+        "C3",
+        "C6",
+        "C7",
+        "C9",
+        "C10",
+        "C11",
+        "C14",
+        "C15",
+        "C16"
+      ],
+      "licenseNote": "Contains Claude/Codex logos and unattributed sounds: do not copy assets"
+    },
+    {
+      "repo": "stanford-oval/storm",
+      "sha": "fb951af7744dab086e34962e9bc6fe878e145f83",
+      "license": "MIT",
+      "stars": 31819,
+      "tier": "secondary",
+      "components": [
+        "C12",
+        "C13"
+      ]
+    },
+    {
+      "repo": "stravu/crystal",
+      "sha": "1e18e0bc981225f75b5226f82a300fa741970c6f",
+      "license": "MIT",
+      "stars": 3129,
+      "tier": "background",
+      "components": [
+        "C15"
+      ]
+    },
+    {
+      "repo": "TauricResearch/TradingAgents",
+      "sha": "9fa1196fffbcfd9de5146d2dd2869df84ab99838",
+      "license": "Apache-2.0",
+      "stars": 121120,
+      "tier": "background",
+      "components": [
+        "C12"
+      ]
+    },
+    {
+      "repo": "terragon-labs/terragon-oss",
+      "sha": "83142a17f3970df3e14d1879234a603db6e4f615",
+      "license": "Apache-2.0",
+      "stars": 261,
+      "tier": "background",
+      "components": []
+    },
+    {
+      "repo": "W17ant/Claude-Office",
+      "sha": "1a9ba71251326b34c3caa90d49468e75420d0dd4",
+      "license": "MIT",
+      "stars": 345,
+      "tier": "core",
+      "components": [
+        "C1",
+        "C4",
+        "C9",
+        "C11",
+        "C15"
+      ],
+      "licenseNote": "Dunder Mifflin skin excluded from MIT"
+    },
+    {
+      "repo": "winfunc/opcode",
+      "sha": "c24004d3bbc910bd30b49d402daec254dac26ab2",
+      "license": "AGPL-3.0",
+      "stars": 22431,
+      "tier": "background",
+      "components": [
+        "C15"
+      ]
+    },
+    {
+      "repo": "Yeachan-Heo/oh-my-claudecode",
+      "sha": "0564555b63dfedd158669c6799d53743abd7d6bf",
+      "license": "MIT",
+      "stars": 40660,
+      "tier": "background",
+      "components": [
+        "C6"
+      ]
+    }
+  ]
+}
