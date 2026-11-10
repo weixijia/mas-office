@@ -3,7 +3,7 @@ Third-party icon notices
 
 The per-file sources and versions are recorded in icons-credits.json.
 Brand names and marks remain the property of their respective owners.
-The gilbarbara/logos and Simple Icons assets are distributed under CC0-1.0.
+The gilbarbara/logos asset (python.svg) is distributed under CC0-1.0.
 
 vscode-icons (html.svg and json.svg)
 https://github.com/vscode-icons/vscode-icons

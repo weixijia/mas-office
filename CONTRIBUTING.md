@@ -13,25 +13,34 @@ By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 | Path | What | Language / tests |
 |---|---|---|
 | `spec/` | The protocol (`README.md`), JSON Schemas, conformance cases, RFCs | Markdown + JSON |
-| `packages/node/` | `mas-office` on npm — SDK (`src/sdk/`: reducer, file + HTTP transports) and CLI (`src/cli/`: `serve`, `validate`, `init`, `reduce`, `export`, `hook`, `demo`) | Node ≥ 18, `node:test` |
+| `packages/node/` | `mas-office` on npm, zero dependencies — SDK (`src/sdk/`: reducer, file + HTTP transports), team design v2 and its compiler (`src/team/`), delegated approvals (`src/policy/`), verification (`src/verify/`), CLI and server (`src/cli/`: `demo`, `up`, `serve`, `init`, `team`, `verify`, `validate`, `reduce`, `export`, `hook`) | Node ≥ 18, `node:test` |
+| `packages/runtime/` | `mas-office-runtime` on npm — Claude Code and Codex adapters (`src/backends/`) and the engine behind `mas-office up` (`src/engine/`) | Node ≥ 18.14, `node:test` |
 | `packages/python/` | `mas-office` on PyPI — reducer, transports, framework integrations | Python ≥ 3.10, `pytest` |
-| `panel/` | The office panel (vanilla JS, no build) | `node panel/tests/model.test.js` |
+| `panel/` | The office panel (vanilla JS, no build): office, inbox, agent drawer, result | `node panel/tests/model.test.js`, `node panel/tests/inbox.test.js` |
 | `kit/` | No-code mode: `AGENTS.md` + `harness/` for AI coding assistants | Markdown |
 | `examples/` | Finished example workspaces (must pass `mas-office validate`) | data |
+| `eval/` | Evaluation harness: tasks, locked team designs, metrics from the event log | Python ≥ 3.10, `pytest` |
 | `docs/` | Architecture, integration guides, research notes | Markdown |
 
 ## Development setup
 
 ```bash
 git clone https://github.com/weixijia/mas-office && cd mas-office
-npm install                                   # links the npm workspace; no runtime dependencies
-npm test                                      # SDK + CLI + panel tests
+npm install                                   # links mas-office and mas-office-runtime
 node packages/node/bin/mas-office.js demo     # see it working
-
-cd packages/python
-python3 -m venv .venv && . .venv/bin/activate
-pip install -e '.[dev]' && pytest
 ```
+
+Before you open a pull request, run the checks from the repository root:
+
+```bash
+npm test                                                             # SDK, CLI, runtime, panel
+PYTHONPATH=packages/python/src python -m pytest packages/python -q   # Python SDK
+node packages/node/bin/mas-office.js validate examples               # example workspaces
+git diff --check                                                     # whitespace
+PYTHONPATH=packages/python/src:eval python -m pytest eval -q         # evaluation harness, if you touched eval/
+```
+
+The tests never start real Claude Code or Codex sessions. The adapters' smoke tests against the real programs (`packages/runtime/scripts/smoke-*.mjs`) are run by hand in a temporary folder outside the repository, with your own sign-in.
 
 ## Lanes
 
@@ -74,7 +83,7 @@ Use the "New framework integration" issue template to claim one so two people do
 ## Pull requests
 
 - One topic per pull request; keep it small enough to review in one sitting.
-- Tests for changed behaviour; `npm test` and `pytest` green.
+- Tests for changed behaviour; the checks above green.
 - Update `CHANGELOG.md` under **Unreleased** for anything a user would notice.
 - Code, comments, docs and commit messages in English. Commit messages: a short imperative subject (≤ 72 characters), then a body explaining *why*.
 

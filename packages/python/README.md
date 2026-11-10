@@ -1,8 +1,13 @@
 # mas-office (Python)
 
-Show any multi-agent system's team live in the **MAS Office** panel — an animated office
-where every agent has a desk. This package emits [MAS Office protocol](../../spec/README.md)
-events, runs the reference reducer and writes the snapshots the panel reads.
+Show any multi-agent system's team live in the **MAS Office** panel: an office where every
+agent has a desk, with a "Needs you" inbox and claims checked one by one. This package emits
+[MAS Office protocol](../../spec/README.md) 0.2 events, runs the reference reducer and writes
+the snapshots the panel reads.
+
+Running a team of real Claude Code and Codex sessions (`mas-office up`) is done by the Node
+packages; see the [main README](../../README.md#run-a-team). This package is for reporting a
+team that your own Python code runs.
 
 - Python ≥ 3.10, **zero runtime dependencies**
 - Two transports: files (works with the `file://` panel) or HTTP (`mas-office serve`)
@@ -20,10 +25,11 @@ pip install -e mas-office/packages/python
 #                      (or [langgraph], [claude-agent-sdk])
 ```
 
-PyPI package: coming with the first release.
+Not on PyPI yet. Without a clone: `pip install "mas-office @ git+https://github.com/weixijia/mas-office#subdirectory=packages/python"`.
 
-The viewer needs Node.js 18+: `npx mas-office serve …` runs it from npm. From your `mas-office`
-clone, `node packages/node/bin/mas-office.js serve …` (run from the root of the clone) does the same.
+The viewer needs Node.js 18+. From your `mas-office` clone, `node packages/node/bin/mas-office.js serve …`
+(run from the root of the clone) serves the 0.3.0 panel with the inbox. `npx mas-office serve …` runs
+the version on npm, which is 0.2.2 (no inbox) until 0.3.0 is published.
 
 ## Example
 
@@ -45,14 +51,42 @@ with Office(workspace="./runs") as office:
     run.finish()
 ```
 
-Then view it with the Node CLI: `npx mas-office serve ./runs --open`.
+Then view it with the Node CLI: `node packages/node/bin/mas-office.js serve ./runs --open` from your clone.
+
+### Requests, claims and verdicts (protocol 0.2)
+
+```python
+with Office(workspace="./runs") as office:
+    run = office.project("headphone-deals", title="Headphone deals").run()
+    finder = run.agent("finder", name="Retail finder", emoji="🔎")
+    checker = run.agent("checker", name="Checker", emoji="✅")
+    finder.source("currys-xm6", title="Sony XM6 at Currys", url="https://www.currys.co.uk/", evidence="A")
+
+    # Something that needs a person: it waits in the inbox until it is resolved.
+    ask = finder.request("Include refurbished offers?", kind="decision",
+                         options=[{"optionId": "new", "name": "New only"},
+                                  {"optionId": "any", "name": "Refurbished is fine"}])
+    finder.resolve(ask, option_id="new")                   # when your app has the answer
+    finder.done("Found one offer")
+
+    c1 = run.claim("Currys sells the XM6 for £279 with free delivery.", sources=["currys-xm6"])
+    checker.evidence("currys-xm6", url="https://www.currys.co.uk/", url_health="live", grade="A")
+    checker.verdict(c1, "supported", source_id="currys-xm6")
+    checker.usage(input_tokens=1200, output_tokens=300)
+    checker.done()
+
+    run.result(markdown="## Shortlist\n- Currys: £279, free delivery")
+    run.follow_up("Is the Currys offer new stock?")    # the next result is round 2
+    run.result(markdown="Yes: the Currys listing says new.")
+    run.finish()
+```
 
 Try it without writing any code — a simulated 5-agent team over about 30 seconds:
 
 ```bash
 cd mas-office
 python -m mas_office demo --workspace ./runs     # or: mas-office-py demo
-npx mas-office serve ./runs --open
+node packages/node/bin/mas-office.js serve ./runs --open
 ```
 
 ## API
@@ -71,9 +105,16 @@ npx mas-office serve ./runs --open
 | `a.source(id, title=, url=, evidence=, **extra)` | `artifact` (kind `source`) |
 | `a.handoff(to, say=, reason=)` | `handoff` |
 | `a.flag(text, kind="concern")`, `a.resolve()` | `flag.raised`, `flag.resolved` |
+| `a.request(title, kind="question", options=, description=, blocking=, route_to=, resolver=, urgency=, …)` | `request.opened`; returns the request id |
+| `a.resolve(request_id, option_id=, outcome=, payload=, note=, by=)` | `request.resolved` |
+| `a.stopped(reason, scope=)`, `a.usage(input_tokens=, output_tokens=, cost_usd=, turns=)` | `agent.stopped`, `usage` |
+| `a.claim(text, sources=, claim_id=)`, `run.claim(text, ...)` | `claim.added`; returns the claim id |
+| `a.evidence(source_id, url=, url_health=, grade=, quote=, note=)` | `evidence.checked` |
+| `a.verdict(claim_id, status, source_id=, note=)` | `verdict.recorded` |
 | `a.done(say)`, `a.fail(reason)` | `agent.finished`, `agent.failed` |
 | `a.emit(type, data, raw=, trace=)` | any type, e.g. `custom.my-thing` |
 | `run.result(markdown, title=, sources=, flags=, work=)`, `run.finish(say)`, `run.fail(reason)` | `result`, `run.finished`, `run.failed` |
+| `run.follow_up(question)` | `round.started`: the next `result` is a new round |
 | `office.flush()`, `office.close()` | deliver queued events |
 
 Agent ids match `^[a-z0-9][a-z0-9-]{0,63}$`; `mas_office.slugify("Retail Finder")` gives `retail-finder`.
@@ -89,15 +130,15 @@ for you) or not JSON-serialisable (e.g. a `datetime`, `NaN`) is dropped with one
 elsewhere.
 
 The reducer is available on its own: `mas_office.reduce(lines)` returns
-`{"structure", "statuses", "state", "result"}`; `mas_office.write_snapshots(project_dir, snapshot)`
+`{"structure", "statuses", "state", "result", "inbox", "board", "verification"}`; `mas_office.write_snapshots(project_dir, snapshot)`
 writes them. From the shell: `mas-office-py reduce runs/headphone-deals`.
 
 ## Transports
 
 **Files** (`Office(workspace="./runs")`). Each event is appended to
 `<workspace>/<project>/mas/events.jsonl`; the reducer runs in-process and rewrites the changed
-snapshots (`mas/structure`, `mas/status/<id>`, `mas/state`, `outputs/result`, each as `.json`
-plus a `.js` twin) and the project's entry in `home/projects`. Files are replaced atomically.
+snapshots (`mas/structure`, `mas/status/<id>`, `mas/state`, `mas/inbox`, `mas/board`,
+`outputs/result`, `outputs/verification`, each as `.json` plus a `.js` twin) and the project's entry in `home/projects`. Files are replaced atomically.
 Re-opening a project continues the log from its last `seq`.
 
 **HTTP** (`Office(url="http://127.0.0.1:4747")`). Events are serialised when you emit them and

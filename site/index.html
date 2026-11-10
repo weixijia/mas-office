@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MAS Office: a live office for AI agent teams</title>
-<meta name="description" content="Design a team of AI agents, watch every role work in a live office, and read results whose sources independent checkers have graded. Open protocol, MIT licence.">
+<title>MAS Office: an AI team you design, watch, steer and check</title>
+<meta name="description" content="An AI team you design, can watch, can steer, and that checks its own work. Every worker is a real Claude Code or Codex session signed in with your own account. Open source, MIT licence.">
 <meta name="site-kind" content="software">
 <meta name="page-type" content="software">
 <meta name="theme-color" content="#F3F4F1">
 <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
-<meta property="og:title" content="MAS Office: a live office for AI agent teams">
-<meta property="og:description" content="Design a team of AI agents, watch it work in a live office, and read results with checked, graded sources. Try it with npx mas-office demo.">
+<meta property="og:title" content="MAS Office: an AI team you design, watch, steer and check">
+<meta property="og:description" content="Every worker is a real Claude Code or Codex session signed in with your own account. One inbox for what needs you; answers whose claims are checked one by one. Try the demo with npx mas-office demo.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://www.xijiawei.com/mas-office/">
 <meta property="og:url" content="https://www.xijiawei.com/mas-office/">
@@ -62,24 +62,23 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
 </style>
 <link rel="stylesheet" href="assets/ui/base.css">
 <link rel="stylesheet" href="assets/ui/code/fragment.css">
-<link rel="stylesheet" href="assets/ui/window/fragment.css">
-<link rel="stylesheet" href="assets/ui/chat/fragment.css">
-<link rel="stylesheet" href="assets/ui/checklist/fragment.css">
 <link rel="stylesheet" href="assets/diagrams/diagram.css">
 <script src="assets/backgrounds/backgrounds.js"></script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="assets/moments/moments.js">
 <link rel="modulepreload" href="assets/moments/lib.js">
 <link rel="modulepreload" href="assets/moments/marquee-row/moment.js">
-<!-- page CSS: inside the visuals (the live panel frames, the code window, the table), one --p-h for
-     the card group, and the brand's drawing-sheet details (the ruled header, numbered tags, square
-     corners, the title block in the legal row) -->
+<!-- page CSS: inside the visuals (the live panel frames, the panel screenshots, the code window, the
+     terminal, the run-flow drawing, the roadmap sheet) and the brand's drawing-sheet details (the ruled
+     header, numbered tags, square corners, the title block in the legal row) -->
 <style>
   /* the drawing sheet: the header ruled in ink like the panel's top rule; square pills */
   .nav { border-bottom-color: var(--ink); }
-  @media (min-width: 1024px) and (max-width: 1199px) {
+  @media (min-width: 1024px) and (max-width: 1379px) {
     .nav__actions > .nav__link { display: none; }
     .nav__bar { gap: 16px; }
+    .nav__links { gap: 4px; }
+    .nav__links .nav__link { padding-inline: 5px; }
     .nav__actions .btn { padding-inline: 12px; font-size: 13px; }
     .nav--centre .nav__links { position: static; transform: none; margin-left: auto; flex: 0 1 auto; }
   }
@@ -90,21 +89,127 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
   }
   .pill { border-radius: var(--r-sm); }
   code, kbd, .mono { font-family: var(--font-mono); }
+  p code, li code, dd code { font-size: .92em; padding: 0 3px; background: color-mix(in oklab, var(--ink) 6%, transparent); }
 
   /* the copy button: the command in the panel's mono, a glyph that swaps to a check */
-  .btn-copy code { font: 500 1em/1 var(--font-mono); letter-spacing: 0; }
+  .btn-copy code { font: 500 1em/1 var(--font-mono); letter-spacing: 0; padding: 0; background: none; }
   .btn-copy .ic-copy, .btn-copy .ic-done { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; }
   .btn-copy .ic-done { display: none; }
   .btn-copy.is-copied .ic-copy { display: none; }
   .btn-copy.is-copied .ic-done { display: block; }
 
   /* hero: the live panel rising out of the lit frame (layout.css 10), at its true size */
-  .hero--centred .hero__c { gap: var(--s-3); }
-  .hero--centred h1 { max-width: 24ch; font-size: clamp(32px, 3.4vw, 52px); }
-  .hero--centred .hero__window { min-height: 260px; margin-top: var(--s-5); mask-image: none; -webkit-mask-image: none; }
+  .hero--centred .hero__c { gap: var(--s-3); max-width: 1000px; }
+  .hero--centred h1 { max-width: 30ch; font-size: clamp(30px, 3.3vw, 50px); text-wrap: balance; }
+  .hero--centred .hero__lead { max-width: 60ch; }
+  .hero__start { margin: 0; font-size: var(--t-small); color: var(--muted); display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: var(--s-1) var(--s-4); }
+  .hero__start .link { font-size: var(--t-small); }
+  .hero--centred .hero__window { min-height: 240px; margin-top: var(--s-5); mask-image: none; -webkit-mask-image: none; }
   .hero--centred .hero__window > .ly-piece.office-win { top: 0; width: 100%; height: 100%; background: var(--p-bg); border: 1px solid var(--ink); }
   .office-win > iframe, .app-live iframe { display: block; width: 100%; height: 100%; border: 0; background: var(--p-bg); }
-  @media (max-width: 639px) { .hero--centred .hero__window > .ly-piece.office-win { left: 0; } }
+  @media (max-width: 639px) {
+    .hero--centred .hero__window > .ly-piece.office-win { left: 0; }
+    .hero--centred h1 { font-size: 27px; }
+    .hero__start > span { flex-basis: 100%; }
+  }
+
+  /* panel screenshots: the real panel (docs/assets, 1440x900) cropped by an ink frame to the part
+     each section is about; --sw is the picture's width against its frame */
+  .shot { position: relative; overflow: hidden; border: 1px solid var(--ink); background: var(--p-bg); }
+  .shot > img { position: absolute; display: block; max-width: none; width: var(--sw, 100%); height: auto; }
+  .shot--tl > img { left: 0; top: 0; }
+  .shot--tr > img { right: 0; top: 0; }
+  .shot--br > img { right: 0; bottom: 0; }
+  #inbox .shot { margin-top: var(--s-7); }
+  @media (max-width: 1023px) { #inbox .shot { --sw: 313%; } #inbox .shot > img { left: auto; right: 0; } }
+  #claims .shot { --sw: 161%; height: 100%; min-height: 420px; }
+  #steer .panel { --p-h: 400px; background: var(--p-bg); border: 1px solid var(--ink); border-radius: 0; }
+  #steer .panel.shot--br { --sw: 161%; }
+  #steer .panel.shot--tr { --sw: 200%; }
+  @media (max-width: 639px) {
+    #claims .shot { --sw: 250%; min-height: 360px; }
+    #steer .panel { --p-h: 320px; }
+    #steer .panel.shot--br { --sw: 250%; }
+    #steer .panel.shot--tr { --sw: 313%; }
+  }
+  .note { font-size: var(--t-small); color: var(--muted); }
+
+  /* the rows beside a visual: an icon, the line, a 1px rule closing each row */
+  .ic-rows > li { display: flex; align-items: center; gap: var(--s-3); padding-block: var(--s-3); border-bottom: 1px solid var(--line); }
+  .ic-rows > li > img { width: 24px; height: 24px; flex: none; object-fit: contain; }
+  .ic-rows > li > span:first-of-type { flex: 1; }
+  .tag { font: 500 13px/20px var(--font-mono); padding: 0 6px; border: 1px solid var(--ink); white-space: nowrap; }
+  .tag--exp { background: color-mix(in oklab, var(--ochre) 30%, var(--p-surface)); }
+  .tag--ok { background: color-mix(in oklab, var(--sage) 28%, var(--p-surface)); }
+  .tag--you { background: color-mix(in oklab, var(--p-accent) 22%, var(--p-surface)); }
+  .grades { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); font-size: var(--t-small); }
+  .grades b { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 6px; border: 1px solid var(--ink); font: 500 13px/1 var(--font-mono); }
+
+  /* the Lead's diagram: the lit frame plain */
+  #lead .frame { --ratio: 80%; }
+
+  /* the code window: the steps beside the snippet, two panes in one window */
+  .code-win { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: var(--s-7); border: 1px solid var(--ink); background: var(--p-surface); }
+  .code-win > * { min-width: 0; }
+  .code-win__steps { padding: var(--s-6); border-right: 1px solid var(--line); display: grid; align-content: start; gap: var(--s-5); }
+  .code-win__steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: var(--s-1) var(--s-3); align-items: start; }
+  .code-win__steps li > :not(.step-num) { grid-column: 2; }
+  .code-win__steps h3 { font: 500 var(--t-lead)/1.4 var(--font-text); letter-spacing: 0; }
+  .code-win__code { display: flex; flex-direction: column; min-height: 0; }
+  .code-win__code .tabs { padding: var(--s-4) var(--s-5) 0; }
+  .code-win__code [role="tabpanel"] { flex: 1; min-height: 0; }
+  .code-win .ui-code { width: 100%; border: 0; border-radius: 0; box-shadow: none; background: transparent; }
+  .code-win .ui-code__pre { color: var(--ink); }
+  .code-win .ui-code__ln { white-space: pre-wrap; overflow-wrap: anywhere; padding-left: calc(48px + 4ch); text-indent: -4ch; }
+  @media (max-width: 1023px) {
+    .code-win { grid-template-columns: minmax(0, 1fr); }
+    .code-win__steps { border-right: 0; border-bottom: 1px solid var(--line); }
+  }
+  /* the panel's numbered tags: an ink square, the number in mono */
+  .step-num { display: inline-grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 0; background: var(--ink); color: var(--bg); font: 500 13px/1 var(--font-mono); }
+
+  /* the terminal: the real output of a run started from a clone */
+  .term { display: flex; flex-direction: column; border: 1px solid var(--ink); background: var(--p-surface); min-height: 0; }
+  .term__bar { display: flex; align-items: center; gap: var(--s-3); height: 40px; padding: 0 var(--s-4); border-bottom: 1px solid var(--ink); font: 500 13px/1 var(--font-mono); color: var(--muted); }
+  .term__bar i { width: 10px; height: 10px; border: 1px solid var(--ink); }
+  .term pre { margin: 0; padding: var(--s-4) var(--s-5); overflow: hidden; font: 400 13px/1.6 var(--font-mono); color: var(--ink); white-space: pre-wrap; overflow-wrap: break-word; }
+  .term .l { display: block; padding-left: 4ch; text-indent: -4ch; }
+  .term .c { color: var(--muted); }
+  .term .p { color: var(--muted); user-select: none; }
+  .term .ok { color: color-mix(in oklab, var(--sage) 70%, var(--ink)); }
+  /* the questions: three columns of answers under the head row, each row closed by its rule */
+  #faq .grid.head + .faq { margin-top: var(--s-7); row-gap: 0; }
+  #faq .faq > .faq__item:first-child { padding-top: var(--s-5); }
+  #faq .faq__item { align-content: start; }
+  #faq .faq__item h3 { font-size: 18px; }
+  @media (max-width: 639px) { #faq .faq > .faq__item { grid-column: 1 / -1; } }
+
+  /* the run-flow drawing: eight numbered stations on two ruled tracks; who acts at each, in tags */
+  .flow-legend { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin-top: var(--s-6); font-size: var(--t-small); color: var(--muted); }
+  .flow-legend span { display: inline-flex; align-items: center; gap: var(--s-2); }
+  .flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-7) var(--gutter); margin-top: var(--s-5); counter-reset: none; }
+  .flow > li { position: relative; display: grid; align-content: start; gap: var(--s-2); padding-top: var(--s-5); border-top: 2px solid var(--ink); }
+  .flow > li::after { content: ""; position: absolute; top: -7px; right: calc(-1 * var(--gutter) + 2px); width: 12px; height: 12px; border-top: 2px solid var(--ink); border-right: 2px solid var(--ink); transform: rotate(45deg); }
+  .flow > li:nth-child(4)::after, .flow > li:last-child::after { content: none; }
+  .flow .step-num { position: absolute; top: -15px; left: 0; }
+  .flow h3 { font: 500 var(--t-lead)/1.3 var(--font-text); letter-spacing: 0; margin-top: var(--s-2); }
+  .flow p { font-size: 15px; line-height: 1.5; max-width: 34ch; }
+  .flow__who { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .flow__back { display: block; margin-top: var(--s-1); padding-left: var(--s-3); border-left: 2px dashed var(--p-accent); font: 400 13px/1.5 var(--font-mono); color: var(--verm-ink); }
+  @media (max-width: 1023px) {
+    .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--s-6); }
+    .flow > li:nth-child(4)::after { content: ""; }
+    .flow > li:nth-child(2n)::after { content: none; }
+  }
+  @media (max-width: 639px) {
+    .flow { grid-template-columns: minmax(0, 1fr); row-gap: var(--s-5); }
+    .flow > li { padding: 0 0 0 44px; border-top: 0; border-left: 2px solid var(--ink); margin-left: 13px; }
+    .flow > li::after { content: none !important; }
+    .flow .step-num { top: 0; left: -15px; }
+    .flow h3 { margin-top: 0; }
+    .flow p { font-size: 14px; }
+    #flow { --hm: 2; }
+  }
 
   /* the examples: one live panel across the .wrap, the panel's own ruled header as its chrome */
   #examples .head { align-items: start; }
@@ -112,92 +217,53 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
   .app-live { position: relative; margin-top: var(--s-7); border: 1px solid var(--ink); background: var(--p-bg); overflow: hidden; }
   .app-live > [role="tabpanel"] { position: absolute; inset: 0; }
 
-  /* how it works: one panel height for the group; the office drawing cropped to its floor plan */
-  #how .panel { --p-h: 336px; }
-  #how .panel > .frame__img { object-position: 50% 40%; }
-  /* the panel's numbered tags: an ink square, the number in mono */
-  .step-num { width: 28px; height: 28px; border: 0; border-radius: 0; background: var(--ink); color: var(--bg); font: 500 13px/1 var(--font-mono); }
-  #how .card > .step-num { margin-bottom: var(--s-3); }
-
-  /* the protocol table (comparison-table): four columns on the grid, a 1px rule closing each row */
-  .spec { margin-top: var(--s-7); }
-  .spec__row { padding-block: var(--s-3); border-bottom: 1px solid var(--line); align-items: baseline; }
-  .spec__row--head { border-bottom-color: var(--ink); padding-top: 0; }
-  .spec__row--head > * { font-size: var(--t-label); font-weight: 500; color: var(--muted); }
-  .spec__row code { font-size: 14px; }
-  .spec__row > :first-child code { font-weight: 500; color: var(--ink); }
+  /* the protocol cards: each with its file's real icon and its one command */
   #protocol.bg-band { display: block; padding-block: var(--padt) calc(var(--padb) + var(--bar)); }
   #protocol > .wrap { min-width: 0; }
-  #protocol .spec { font-variant-numeric: tabular-nums; }
-  #protocol [data-moment] { margin-top: var(--s-8); }
+  #protocol .grid.head + .grid { margin-top: var(--s-7); }
+  #protocol .card { gap: var(--s-3); }
+  #protocol .card > p { margin: 0; }
+  #protocol .card img { width: 32px; height: 32px; }
+  #protocol .card pre { margin: auto 0 0; padding: var(--s-3) var(--s-4); background: var(--p-bg); border: 1px solid var(--line); font: 400 14px/1.5 var(--font-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+  #protocol [data-moment] { margin-top: var(--s-7); }
   #protocol .mo-mq__track li { font: 500 15px/1 var(--font-mono); }
-  @media (min-width: 640px) and (max-width: 1279px) {
-    #how { height: 200svh; min-height: 200svh; align-content: start; }
-  }
-  @media (max-width: 1023px) {
-    .spec__row--head { display: none; }
-    .spec__row > * { grid-column: 1 / -1; }
-    .spec__row > :not(:first-child)::before { content: attr(data-k) " "; color: var(--muted); font-size: var(--t-label); }
-  }
 
-  /* integrations: the status rows with real icons */
-  .ic-rows > li { display: flex; align-items: center; gap: var(--s-3); padding-block: var(--s-3); border-bottom: 1px solid var(--line); }
-  .ic-rows > li > img { width: 24px; height: 24px; flex: none; object-fit: contain; }
-  .ic-rows > li > span:first-of-type { flex: 1; font-weight: 500; }
-  .tag { font: 500 13px/20px var(--font-mono); padding: 0 6px; border: 1px solid var(--ink); white-space: nowrap; }
-  .tag--exp { background: color-mix(in oklab, var(--ochre) 30%, var(--p-surface)); }
-  .tag--ok { background: color-mix(in oklab, var(--sage) 28%, var(--p-surface)); }
-  #integrations .frame { --ratio: 80%; }
+  /* the roadmap as a drawing sheet: stage rows, a square status box, the stage in mono */
+  .sheet { border: 1px solid var(--ink); border-top-width: 2px; background: var(--p-surface); }
+  .sheet__head { display: flex; justify-content: space-between; padding: var(--s-3) var(--s-5); border-bottom: 1px solid var(--ink); font: 500 13px/1.4 var(--font-mono); color: var(--muted); }
+  .sheet ul { padding: 0 var(--s-5); }
+  .sheet li { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: var(--s-3); align-items: baseline; padding-block: var(--s-3); border-bottom: 1px solid var(--line); }
+  .sheet li:last-child { border-bottom: 0; }
+  .sheet li::before { content: ""; width: 12px; height: 12px; border: 1.5px solid var(--ink); transform: translateY(1px); }
+  .sheet li.is-done::before { background: var(--ink); }
+  .sheet li .tag { font-size: 12px; }
+  #roadmap .split-col h3 { font: 500 var(--t-lead)/1.4 var(--font-text); letter-spacing: 0; }
+  .plain-rows > li { padding-block: var(--s-3); border-bottom: 1px solid var(--line); }
+  @media (max-width: 639px) { #roadmap, #protocol { --hm: 2; } }
 
-  /* the code window: the steps beside the snippet, two panes in one window */
-  .code-win { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: var(--s-7); border: 1px solid var(--ink); background: var(--p-surface); }
-  .code-win > * { min-width: 0; }
-  .code-win__steps { padding: var(--s-6); border-right: 1px solid var(--line); display: grid; align-content: start; gap: var(--s-5); }
-  .code-win__steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: var(--s-1) var(--s-3); align-items: start; }
-  .code-win__steps li > p { grid-column: 2; }
-  .code-win__steps pre { grid-column: 2; margin: 0; padding: var(--s-3) var(--s-4); background: var(--p-bg); border: 1px solid var(--line); font: 400 14px/1.5 var(--font-mono); white-space: pre-wrap; overflow-wrap: anywhere; }
-  .code-win__code { display: flex; flex-direction: column; min-height: 0; }
-  .code-win__code .tabs { padding: var(--s-4) var(--s-5) 0; }
-  .code-win__code [role="tabpanel"] { flex: 1; min-height: 0; }
-  .code-win .ui-code { width: 100%; border: 0; border-radius: 0; box-shadow: none; background: transparent; }
-  .code-win .ui-code__pre { color: var(--ink); }
-  .code-win .ui-code__ln { white-space: pre-wrap; overflow-wrap: anywhere; padding-left: calc(48px + 8ch); text-indent: -8ch; }
-  .code-win .ui-code__tabs { display: none; }
-  @media (max-width: 1023px) {
-    .code-win { grid-template-columns: minmax(0, 1fr); }
-    .code-win__steps { border-right: 0; border-bottom: 1px solid var(--line); }
-  }
-
-  /* steps card 1: the event log, cut by its right edge */
-  #how .ui-code { width: 640px; }
-  #how .ui-code__tabs .ui-code__lang { font-family: var(--font-mono); }
-
-  /* no-code: the panel's result view, cut by the frame's right and bottom edges */
-  #nocode .frame { --ratio: 80%; background: var(--p-bg); }
-  #nocode .shot { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center; }
-  #nocode pre { margin-bottom: 0; padding: var(--s-3) var(--s-4); background: var(--p-surface); border: 1px solid var(--line); font: 400 15px/1.5 var(--font-mono); white-space: pre-wrap; }
   @media (max-width: 639px) {
-    #protocol { --hm: 2; }
-    #how, #code, #integrations, #contribute { --hm: 2; }
+    #team, #claims, #steer, #signin { --hm: 2; }
+    #lead .frame { --ratio: 55%; }
+    #faq { --hm: 2; }
     .ic-rows > li { flex-wrap: wrap; }
-    .ic-rows > li > span:first-of-type { flex-basis: calc(100% - 48px); }
-    .ic-rows .tag { margin-left: 36px; }
   }
-
-  /* features: the four rows share the integrations' row look; the window is the inbox */
-  #features .panel { --p-h: 480px; }
-  #features .ui-win .ui-brand { width: 16px; height: 14px; }
-  /* roadmap: two open cards like #how, the stage in a wider ink tag */
-  #roadmap .panel { --p-h: 336px; }
-  #roadmap .grid.head + .grid { margin-top: var(--s-7); }
-  #roadmap .step-num { width: auto; padding-inline: 6px; }
-  #roadmap .card > .step-num { margin-bottom: var(--s-3); align-self: start; }
-
-  /* contribute: four lanes, each with its file's real icon */
-  #contribute .card { gap: var(--s-3); }
-  #contribute .card img { width: 32px; height: 32px; }
-  .help-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-5); margin-top: var(--s-8); padding-top: var(--s-5); border-top: 1px solid var(--ink); }
-  .help-row > p { margin-right: auto; }
+  /* the grounds (backgrounds.css) set their own min-height; the screen count wins here as everywhere */
+  @media (min-width: 640px) and (max-width: 1279px) {
+    main > :is(#flow, #protocol) { min-height: calc(var(--h, 1) * 100vh); min-height: calc(var(--h, 1) * 100svh); align-content: start; }
+  }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    #protocol .grid > .card { grid-column: span 4; --c-pad: 20px; }
+    #protocol .card > p { font-size: 15px; line-height: 22px; }
+    #protocol .card pre { font-size: 13px; padding: var(--s-2) var(--s-3); }
+    #protocol .grid.head + .grid { margin-top: var(--s-6); }
+    #protocol [data-moment] { margin-top: var(--s-5); }
+    #lead .frame { --ratio: 50%; }
+    .flow { row-gap: var(--s-5); }
+    .flow > li { padding-top: var(--s-4); }
+    .flow h3 { margin-top: 0; }
+    .sheet li { padding-block: var(--s-2); }
+    #faq .faq > .faq__item { grid-column: span 6; }
+  }
 
   /* the legal row as the drawing's title block (panel: .title-block) */
   .title-block { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: var(--s-7); border: 1px solid var(--ink); border-top-width: 2px; }
@@ -209,46 +275,28 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
 </style>
 </head>
 <body>
-<!-- type: software (a developer tool: an open protocol and an animated office panel for multi-agent systems)
-     deal: hero centred (dealt again: triptych's use, a product with many outputs in a collage of pieces, does not fit one live window),
-           palette brand (the panel's own tokens), type archivo (forced, the panel's Archivo; Red Hat Mono in place of Martian Mono, self-hosted),
-           radius sharp (square, as the panel), nav nav-centre, close close-type, footer footer-columns, rhythm space, buttons solid,
-           mark: the client's logo, lit ground sage, grounds how bg-halo + protocol bg-band,
-           effect grain-gradient in the hero frame (held still: the centred hero's motion is the window's own story),
-           card grounds: none fit (pick: no effects in the grain family besides grain-gradient), so the panels take the lit ground plain
+<!-- type: software (a developer tool: a runtime that runs a team of real Claude Code and Codex sessions,
+     with an open protocol and an animated office panel)
+     deal (kept from v0.2, the page's established system): hero centred, palette brand (the panel's own
+           tokens), type archivo (forced, the panel's Archivo; Red Hat Mono, self-hosted), radius sharp,
+           nav nav-centre, close close-type, footer footer-columns, rhythm space, buttons solid,
+           mark: the client's logo, lit ground sage, grounds flow bg-halo + protocol bg-band,
+           effect grain-gradient in the hero frame (held still: the live panel is the hero's motion)
      moment: marquee-row (#protocol, the event names)
-     plan, one screen each at 1440x900: hero, features (four cards, today/next tags), examples (app-frame), nocode (split + panel capture),
-     how (steps), protocol (table + marquee), integrations (split + fanin diagram), code (code window), roadmap (stage table),
-     contribute (lanes), faq, footer.closing -->
+     plan, one screen each at 1440x900: hero (live panel), inbox (head + panel screenshot), lead (split +
+     fanin diagram), team (head + code window), claims (split + screenshot), steer (two open cards with
+     screenshots), flow (drawing), examples (live app-frame), signin (split + terminal), protocol (three
+     cards + marquee), roadmap (split + stage sheet), faq, footer.closing -->
 <header class="nav nav--centre">
   <div class="wrap nav__bar">
     <a class="nav__logo" href="#top"><img src="assets/img/logo.svg" alt="" width="27" height="24">MAS Office</a>
     <nav class="nav__links" aria-label="Main">
-      <div class="nav__item"><a class="nav__link" href="#features">Features</a></div>
+      <div class="nav__item"><a class="nav__link" href="#inbox">Features</a></div>
+      <div class="nav__item"><a class="nav__link" href="#flow">How it runs</a></div>
       <div class="nav__item"><a class="nav__link" href="#examples">Examples</a></div>
-      <div class="nav__item"><a class="nav__link" href="#protocol">Protocol</a></div>
-      <div class="nav__item">
-        <a class="nav__link" href="#integrations">Integrations <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-        <div class="nav__menu">
-          <div class="wrap grid">
-            <div class="menu-col span-3">
-              <p class="t-label">Frameworks</p>
-              <a href="#integrations">OpenAI Agents SDK<span>A tracing processor</span></a>
-              <a href="#integrations">LangGraph<span>Wraps your stream</span></a>
-              <a href="#integrations">Claude Agent SDK<span>Hooks for subagents</span></a>
-              <a href="#integrations">Claude Code<span>Hook command, no code</span></a>
-            </div>
-            <div class="menu-col span-3">
-              <p class="t-label">Your own code</p>
-              <a href="#code">Python SDK<span>Standard library only</span></a>
-              <a href="#code">JavaScript SDK<span>In the npm package</span></a>
-              <a href="#nocode">AGENTS.md kit<span>For AI coding assistants</span></a>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="nav__item"><a class="nav__link" href="#signin">Quick start</a></div>
       <div class="nav__item"><a class="nav__link" href="#roadmap">Roadmap</a></div>
-      <div class="nav__item"><a class="nav__link" href="#contribute">Contribute</a></div>
+      <div class="nav__item"><a class="nav__link" href="#faq">FAQ</a></div>
     </nav>
     <div class="nav__actions">
       <a class="nav__link" href="https://github.com/weixijia/mas-office">GitHub</a>
@@ -264,17 +312,18 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
   <section class="hero hero--centred" aria-labelledby="hero-h">
     <div class="wrap"><div class="hero-text">
       <div class="hero__c">
-        <a class="pill" href="#roadmap"><span>v0.2.2</span><span class="muted">open source, MIT licence</span></a>
-        <h1 id="hero-h">A live office for AI agent teams</h1>
-        <p class="hero__lead">Design a team of agents, watch every role work at its desk, and read a result whose sources independent checkers have graded. Runs in the AI tools you already use.</p>
+        <a class="pill" href="#roadmap"><span>v0.3.0</span><span class="muted">open source, MIT licence</span></a>
+        <h1 id="hero-h">An AI team you design, can watch, can steer, and that checks its own work</h1>
+        <p class="hero__lead">Every worker is a real Claude Code or Codex session on your computer, signed in with your own account. You answer what needs you from one inbox.</p>
         <div class="btn-row">
           <button class="btn btn--primary btn-copy" type="button" data-copy="npx mas-office demo"><span class="sr-only">Copy </span><code>npx mas-office demo</code><svg class="ic-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.25" y="5.25" width="8" height="8"/><path d="M10.75 3V2.75h-8v8H3"/></svg><svg class="ic-done" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></button>
           <a class="btn btn--secondary" href="https://github.com/weixijia/mas-office">View on GitHub</a>
         </div>
+        <p class="hero__start"><span>Run your own team from a clone: <code>npm install</code>, then <code>mas-office up</code>.</span><a class="link" href="#signin">See the quick start</a><a class="link" href="https://github.com/weixijia/mas-office/tree/main/docs">Read the docs</a></p>
       </div>
       <div class="hero__window" data-fx="grain-gradient" data-fx-seed="4" data-fx-params='{"speed":0,"grainMotion":0,"calm":0}'>
         <div class="ly-piece office-win" data-office-live>
-          <iframe data-src-live="office/index.html?static=1&amp;root=../examples/price-compare/&amp;demo=1" data-src-still="office/index.html?static=1&amp;root=../examples/price-compare/" title="MAS Office panel running the headphone deals example: two finders search in parallel, two checkers check the offers, the lead writes the shortlist"></iframe>
+          <iframe data-src-live="office/index.html?static=1&amp;root=../examples/price-compare/&amp;demo=1" data-src-still="office/index.html?static=1&amp;root=../examples/price-compare/" title="MAS Office panel replaying the headphone deals example: two finders search in parallel, a checker reviews their offers, the Lead writes the shortlist"></iframe>
           <script>/* a phone and reduced motion get the finished run: the hero's own motion rests there */
             (function () { var f = document.currentScript.previousElementSibling; f.src = f.getAttribute(matchMedia('(max-width: 639px), (prefers-reduced-motion: reduce)').matches ? 'data-src-still' : 'data-src-live'); })();</script>
         </div>
@@ -282,53 +331,149 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
     </div></div>
   </section>
 
-  <section class="section" id="features" aria-labelledby="features-h">
+  <section class="section" id="inbox" aria-labelledby="inbox-h">
+    <div class="wrap">
+      <div class="grid head">
+        <h2 class="span-5" id="inbox-h">One inbox for everything that needs you</h2>
+        <div class="span-6 start-7 stack-4">
+          <p class="t-lead">Tool approvals, questions, decisions, checker flags and stage checkpoints from every session land in one list. Each shows how long it has waited and what it holds up, and you answer it in place.</p>
+          <p class="note">Press <kbd>N</kbd> to jump to the next agent that needs you.</p>
+        </div>
+      </div>
+      <div class="shot shot--tl fill">
+        <img src="assets/img/inbox.webp" width="1440" height="900" loading="lazy" decoding="async" alt="The panel with the Needs you inbox open: the Market finder asks to search the web for &quot;sony xm6 ebay&quot;, with Allow once, Deny and a reply box; the inbox says it holds up the Catch checker and the Lead. The office drawing shows the same finder with a raised hand.">
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="lead" aria-labelledby="lead-h">
     <div class="wrap">
       <div class="grid grid--top">
         <div class="span-5 stack-5">
-          <h2 id="features-h">A team that checks its own work</h2>
-          <p class="t-lead">Many tools run agents side by side. MAS Office runs them as a team you design, and shows the evidence behind every answer.</p>
+          <h2 id="lead-h">A Lead that escalates only the exceptions</h2>
+          <p class="t-lead">The Lead is a real session that plans the run. Plain code follows every worker through structured events, not terminal output, and wakes the Lead only for a decision.</p>
           <ul class="ic-rows">
-            <li><img loading="lazy" decoding="async" data-icon="ui:users" src="assets/icons/ui-users.svg" alt="" width="24" height="24"><span>Locks the team you design</span><span class="tag tag--ok">today</span></li>
-            <li><img loading="lazy" decoding="async" data-icon="ui:file-check" src="assets/icons/ui-file-check.svg" alt="" width="24" height="24"><span>Grades every source from A to D</span><span class="tag tag--ok">today</span></li>
-            <li><img loading="lazy" decoding="async" data-icon="ui:git-merge" src="assets/icons/ui-git-merge.svg" alt="" width="24" height="24"><span>Re-runs only the roles a follow-up needs</span><span class="tag tag--ok">today</span></li>
-            <li><img loading="lazy" decoding="async" data-icon="ui:activity" src="assets/icons/ui-activity.svg" alt="" width="24" height="24"><span>Collects what needs you in one inbox</span><span class="tag tag--exp">next</span></li>
+            <li><img loading="lazy" decoding="async" src="assets/icons/ui-file-check.svg" alt="" width="24" height="24"><span>Approves only what your allow-list delegates, and logs who decided</span></li>
+            <li><img loading="lazy" decoding="async" src="assets/icons/ui-activity.svg" alt="" width="24" height="24"><span>Picks a recovery when a role stays quiet after a nudge, then asks you</span></li>
+            <li><img loading="lazy" decoding="async" src="assets/icons/ui-users.svg" alt="" width="24" height="24"><span>Gates, checker flags and questions marked for you always reach you</span></li>
           </ul>
         </div>
-        <div class="panel span-6 start-7">
-          <div class="stage stage--fade-br"><div class="at-corner to-edge" style="--ax:56px;--ay:56px">
-            <div class="ui ui-panel ui-win" data-ui="window" data-ui-loop data-open="Waiting" data-work="Answering" data-done="Answered">
-              <div class="ui-win__bar">
-                <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                <span class="ui-win__crumb"><img class="ui-brand" src="assets/img/logo.svg" alt="" width="16" height="14">lisbon-trip <i>/</i> <b>Needs you</b></span>
-                <span class="ui-spacer"></span>
-                <span class="ui-win__search" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg><span class="ui-win__ph">Search</span><span class="ui-kbd">N</span></span>
-              </div>
-              <div class="ui-win__body">
-                <nav class="ui-win__side" aria-hidden="true">
-                  <span class="ui-win__nav is-on"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M2.5 9h3l1 1.5h3l1-1.5h3"/><path d="M2.5 9 4 3.5h8L13.5 9v3.5h-11z"/></svg>Needs you<em>4</em></span>
-                  <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3l2 1.5"/></svg>Working<em>2</em></span>
-                  <span class="ui-win__nav"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg>Done<em>7</em></span>
-                  <span class="ui-win__label">Groups</span>
-                  <span class="ui-win__nav"><span class="ui-win__hash">A</span>Finders</span>
-                  <span class="ui-win__nav"><span class="ui-win__hash">C</span>Checkers</span>
-                </nav>
-                <div class="ui-win__main">
-                  <div class="ui-win__cols" aria-hidden="true"><span>Agent</span><span>Request</span><span>Status</span><span>Waiting</span></div>
-                  <ul class="ui-win__rows">
-                    <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">TF</span><span class="ui-win__who">Travel finder</span><span class="ui-win__sub">Open ryanair.com in the browser</span><span class="ui-win__st" data-st>Waiting</span><span class="ui-win__age">1m</span></li>
-                    <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">SF</span><span class="ui-win__who">Sights finder</span><span class="ui-win__sub">Save 4 museum source cards</span><span class="ui-win__st" data-st>Waiting</span><span class="ui-win__age">3m</span></li>
-                    <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">DP</span><span class="ui-win__who">Day planner</span><span class="ui-win__sub">Approve the day-by-day draft</span><span class="ui-win__st" data-st>Waiting</span><span class="ui-win__age">5m</span></li>
-                    <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">BC</span><span class="ui-win__who">Budget checker</span><span class="ui-win__sub">Fado show ends after the last metro</span><span class="ui-win__st is-you" data-st>Needs you</span><span class="ui-win__age">7m</span></li>
-                    <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">SF</span><span class="ui-win__who">Sights finder</span><span class="ui-win__sub">Source graded C, marketing page</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">12m</span></li>
-                    <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">LD</span><span class="ui-win__who">Lead</span><span class="ui-win__sub">Plan v1 ready for your review</span><span class="ui-win__st is-done" data-st>Answered</span><span class="ui-win__age">20m</span></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div></div>
+        <div class="frame frame--split span-6 start-7">
+          <div class="dg" data-diagram><script type="application/json">{"layout":"fanin","alt":"Events from the workers and the link check go to the scheduler, which is plain code. It wakes the Lead only for a decision, and the Lead escalates to the Needs you inbox only what your allow-list does not cover.","sources":[{"label":"Retail finder","icon":"ui:activity","sub":"agent.status"},{"label":"Market finder","icon":"ui:activity","sub":"request.opened"},{"label":"Catch checker","icon":"ui:file-check","sub":"review.verdict"},{"label":"Link check","icon":"ui:git-merge","sub":"evidence.checked"}],"target":{"label":"Scheduler","icon":"ui:git-merge","sub":"plain code"},"then":[{"label":"Lead","icon":"ui:users","meta":"allow-list"},{"label":"Needs you","icon":"ui:building-2","meta":"the rest"}]}</script></div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="section" id="team" aria-labelledby="team-h">
+    <div class="wrap">
+      <div class="grid head">
+        <h2 class="span-5" id="team-h">A team design you lock before it runs</h2>
+        <p class="span-6 start-7 t-lead">You agree the roles, the stages, who reviews whom and the tools each role may use. The lock signs the design, and a run refuses a design that changed afterwards.</p>
+      </div>
+      <div class="code-win fill">
+        <ol class="code-win__steps">
+          <li><span class="step-num">1</span><h3>Design the team</h3><p>A backend per role, tools as allow, ask or deny, review rounds, gates and the approvals the Lead may give.</p></li>
+          <li><span class="step-num">2</span><h3>Check and lock it</h3><p><code>mas-office team lock</code> lists every problem, then signs the design.</p></li>
+          <li><span class="step-num">3</span><h3>Run it as designed</h3><p>Each role's tools go into its own session's options, and every tool call passes one decision point.</p></li>
+        </ol>
+        <div class="code-win__code">
+          <div class="tabs" role="tablist" aria-label="Team design">
+            <button class="tab" role="tab" type="button" id="tab-design" aria-controls="code-design" aria-selected="true">structure.json</button>
+            <button class="tab" role="tab" type="button" id="tab-lock" aria-controls="code-lock" aria-selected="false">team lock</button>
+          </div>
+          <div role="tabpanel" id="code-design" aria-labelledby="tab-design">
+            <div class="ui ui-panel ui-code" data-ui-still>
+              <pre class="ui-code__pre"><code><span class="ui-code__ln" data-n="1">"lead": { "backend": "claude-code",</span>
+<span class="ui-code__ln" data-n="2">  "delegate": <span>[</span>{ "effect": "allow", "kind": "approval", "tools": <span>[</span>"web search"] }] },</span>
+<span class="ui-code__ln" data-n="3">"roles": <span>[</span> …,</span>
+<span class="ui-code__ln is-mark" data-n="4">  { "id": "catch-checker", "backend": "codex", "tools": <span>[</span>"web search"],</span>
+<span class="ui-code__ln" data-n="5">    "reviewerOf": <span>[</span>"sony-deal-finder", "similar-model-finder"],</span>
+<span class="ui-code__ln" data-n="6">    "cleanContext": true, "review": { "maxRounds": 2, "onExceed": "ask-human" } } ],</span>
+<span class="ui-code__ln" data-n="7">"gates": <span>[</span>{ "after": "A", "kind": "stage", "blocking": true,</span>
+<span class="ui-code__ln" data-n="8">  "title": "Look at the offers before they are checked" }],</span>
+<span class="ui-code__ln" data-n="9">"verify": { "claims": true, "urlHealth": true }</span></code></pre>
+            </div>
+          </div>
+          <div role="tabpanel" id="code-lock" aria-labelledby="tab-lock" hidden>
+            <div class="ui ui-panel ui-code" data-ui-still>
+              <pre class="ui-code__pre"><code><span class="ui-code__ln" data-n="$">mas-office team lock office/deals</span>
+<span class="ui-code__ln" data-n=" ">✓ Locked office/deals: sha256:f4a5b427a67a…</span>
+<span class="ui-code__ln" data-n="$">mas-office team show office/deals</span>
+<span class="ui-code__ln is-mark" data-n=" ">## 🛡️ Catch checker</span>
+<span class="ui-code__ln" data-n=" ">- backend: codex</span>
+<span class="ui-code__ln" data-n=" ">- tools: web search</span>
+<span class="ui-code__ln" data-n=" ">- reviewer of: Sony deal finder and Similar-model finder</span>
+<span class="ui-code__ln" data-n=" ">- clean context: yes (sees only work files and source cards)</span>
+<span class="ui-code__ln" data-n=" ">- review: up to 2 rounds, then ask me</span>
+<span class="ui-code__ln" data-n=" ">## Gates</span>
+<span class="ui-code__ln" data-n=" ">- after A: Look at the offers before they are checked</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="claims" aria-labelledby="claims-h">
+    <div class="wrap">
+      <div class="grid grid--top fill">
+        <div class="span-5 stack-5">
+          <h2 id="claims-h">Answers checked claim by claim</h2>
+          <p class="t-lead">The answer tags each claim with its sources. Plain code checks every link, and checkers with a clean context, from the same or another vendor, judge each claim against its source.</p>
+          <p>Verdicts are supported, partial, contradicted or unknown. Supported means a checker judged that the cited page supports the claim, not that the claim is true.</p>
+          <p class="grades"><span><b>A</b>can be bought or run</span><span><b>B</b>study with data</span><span><b>C</b>demo or marketing</span><span><b>D</b>opinion</span></p>
+          <p class="note">The screenshots on this page come from a demo run with made-up shops and prices.</p>
+        </div>
+        <div class="shot shot--tr span-6 start-7">
+          <img src="assets/img/claims.webp" width="1440" height="900" loading="lazy" decoding="async" alt="The result drawer of a demo run: a checked-claims bar reads 2 claims, 1 supported, 1 partial. In the shortlist table the eBay line is underlined as partial; its popover says the Catch checker found the price matches but the word sealed is not stated. Two sources are graded A.">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="steer" aria-labelledby="steer-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="steer-h">Steer any worker from its desk</h2>
+        <p>Click a worker to read its live transcript and outputs and to talk to its real session. Taking over its raw terminal comes later.</p>
+      </div>
+      <div class="grid">
+        <article class="card card--row card--open span-6">
+          <h3>Message a running session</h3>
+          <p>Steer it at the next break, queue a message for after the turn, or interrupt. A receipt shows what the session did.</p>
+          <div class="panel shot--br">
+            <img src="assets/img/agent-drawer.webp" width="1440" height="900" loading="lazy" decoding="async" alt="The agent drawer for the Retail finder, a Claude Code session: its task from the Lead, a web search in the transcript, a steer message marked Applied, delivered at the next break, and a message box with Steer, Queue, Interrupt, Stop and Send.">
+          </div>
+        </article>
+        <article class="card card--row card--open span-6">
+          <h3>Hold the run at your checkpoints</h3>
+          <p>A gate stops the run after a stage until you continue, send the stage back with a note, or stop the run.</p>
+          <div class="panel shot--tr">
+            <img src="assets/img/gate.webp" width="1440" height="900" loading="lazy" decoding="async" alt="A stage gate in the inbox: Look at the offers before checking, with the two finders' work files, the note that the next stage does not start until you answer, and the buttons Looks good, continue, Stop the run and Send back.">
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-halo" id="flow" aria-labelledby="flow-h">
+    <div class="wrap">
+      <div class="grid head">
+        <h2 class="span-5" id="flow-h">How a run flows, from plan to follow-up</h2>
+        <p class="span-6 start-7 t-lead">Plain code runs the schedule and checks what the Lead returns. The sessions do the work, and you answer where the design says.</p>
+      </div>
+      <p class="flow-legend" aria-hidden="true"><span><span class="tag">session</span>a Claude Code or Codex session</span><span><span class="tag tag--ok">code</span>plain code, no model</span><span><span class="tag tag--you">you</span>waits for you</span></p>
+      <ol class="flow" aria-label="The steps of a run">
+        <li><span class="step-num">1</span><h3>Plan</h3><p>The Lead reads the task and the team and writes each role's brief.</p><span class="flow__who"><span class="tag">session</span><span class="tag tag--ok">code</span></span></li>
+        <li><span class="step-num">2</span><h3>Stages in parallel</h3><p>Roles in a stage run side by side, three sessions at once by default.</p><span class="flow__who"><span class="tag">session</span></span></li>
+        <li><span class="step-num">3</span><h3>Review</h3><p>A reviewer with a clean context accepts the work or sends it back.</p><span class="flow__who"><span class="tag">session</span><span class="tag tag--you">you</span></span><span class="flow__back">back to the role, for the designed rounds; then you decide</span></li>
+        <li><span class="step-num">4</span><h3>Checkpoints</h3><p>A gate holds the run until you continue, send back or stop.</p><span class="flow__who"><span class="tag tag--you">you</span></span></li>
+        <li><span class="step-num">5</span><h3>Answer</h3><p>The Lead writes the answer and tags each claim with its sources.</p><span class="flow__who"><span class="tag">session</span></span></li>
+        <li><span class="step-num">6</span><h3>Checks</h3><p>Every link is checked, and checkers judge each claim.</p><span class="flow__who"><span class="tag tag--ok">code</span><span class="tag">session</span></span></li>
+        <li><span class="step-num">7</span><h3>Result</h3><p>Claims show their verdicts; a flag opens past your thresholds.</p><span class="flow__who"><span class="tag tag--ok">code</span><span class="tag tag--you">you</span></span></li>
+        <li><span class="step-num">8</span><h3>Follow-up</h3><p>Ask a question; only the roles it needs work again.</p><span class="flow__who"><span class="tag tag--you">you</span><span class="tag">session</span></span><span class="flow__back">only the roles needed run again, as a new round</span></li>
+      </ol>
     </div>
   </section>
 
@@ -337,7 +482,7 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
       <div class="grid head">
         <h2 class="span-5" id="examples-h">Three example runs, live in the panel</h2>
         <div class="span-6 start-7">
-          <p class="t-lead">Each example is a real workspace folder. Click a desk or a role to follow its thread; open the result to read it in a drawer over the drawing, with its sources.</p>
+          <p class="t-lead">Finished example runs, opened read-only in the real panel. Click a desk to follow a role; open the result to read it with its sources.</p>
           <div class="tabs" role="tablist" aria-label="Example runs">
             <button class="tab" role="tab" type="button" id="tab-headphones" aria-controls="ex-headphones" aria-selected="true">Compare headphone deals</button>
             <button class="tab" role="tab" type="button" id="tab-lisbon" aria-controls="ex-lisbon" aria-selected="false">Plan a Lisbon weekend</button>
@@ -359,69 +504,23 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
     </div>
   </section>
 
-  <section class="section" id="nocode" aria-labelledby="nocode-h">
+  <section class="section" id="signin" aria-labelledby="signin-h">
     <div class="wrap">
       <div class="grid grid--top">
         <div class="span-5 stack-5">
-          <h2 id="nocode-h">A team kit for AI coding assistants</h2>
-          <p class="t-lead">Open the kit in Claude Code, Codex, Gemini CLI or Antigravity. Your assistant becomes the Lead: it designs a team with you, locks it, and runs each role as its own subagent.</p>
-          <p>In Claude Code the team also shows in the status line, and roles get a sandboxed browser for pages that block simple fetches.</p>
-          <pre>npx mas-office init --kit my-team</pre>
-          <a class="link" href="https://github.com/weixijia/awesome-mas">See awesome-mas, the classroom edition</a>
+          <h2 id="signin-h">Runs on your own sign-in</h2>
+          <p class="t-lead">MAS Office starts the unmodified <code>claude</code> and <code>codex</code> programs you installed. You sign in to them yourself.</p>
+          <ul class="plain-rows">
+            <li>It only asks whether you are signed in. It never reads, stores or forwards credentials or tokens.</li>
+            <li>Runs use your plan: three sessions at once by default, with the usage each program reports.</li>
+            <li>The server listens on <code>127.0.0.1</code>. Only the browser opened from the printed link can answer or message agents.</li>
+          </ul>
+          <p class="note">Version 0.3.0 is not on npm yet, so run it from a clone, with the workspace outside the clone. There, <code>mas-office</code> is <code>node packages/node/bin/mas-office.js</code>.</p>
         </div>
-        <div class="frame frame--split span-6 start-7">
-          <img class="shot" src="assets/img/result.webp" alt="The office panel after a run: the result drawer open over the office, with a short answer and a shortlist table" width="1440" height="900" loading="lazy" decoding="async" data-source="client" data-subject="the MAS Office panel with a result">
+        <div class="term span-6 start-7" role="group" aria-label="Quick start from a clone, with the output of mas-office up">
+          <div class="term__bar"><i aria-hidden="true"></i>Quick start from a clone · Node 18.14 or later</div>
+          <pre><span class="l"><span class="p">$ </span>git clone https://github.com/weixijia/mas-office &amp;&amp; cd mas-office</span><span class="l"><span class="p">$ </span>npm install</span><span class="l"><span class="p">$ </span>claude auth login     <span class="c"># you sign in yourself</span></span><span class="l"><span class="p">$ </span>codex login           <span class="c"># the example's checker runs on Codex</span></span><span class="l"><span class="p">$ </span>mkdir -p ~/mas-work/deals/mas    <span class="c"># outside the clone</span></span><span class="l"><span class="p">$ </span>cp examples/price-compare/mas/structure.js ~/mas-work/deals/mas/</span><span class="l"><span class="p">$ </span>node packages/node/bin/mas-office.js up ~/mas-work \</span><span class="l">    --project deals --open \</span><span class="l">    --task "Find the best UK price for Sony WH-1000XM6 headphones"</span><span class="l">MAS Office is running the team in ~/mas-work</span><span class="l">  Claude Code 2.1.322: <span class="ok">ready</span> (your own sign-in; MAS Office never sees it)</span><span class="l">  Codex 0.167.0: <span class="ok">ready</span> (your own sign-in; MAS Office never sees it)</span><span class="l">  At most 3 roles work at once (plus the Lead). Each session uses your own plan's limits.</span><span class="l">  Panel: http://127.0.0.1:4747/office/?token=…</span></pre>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section bg-halo" id="how" aria-labelledby="how-h">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="how-h">Events become an office in three steps</h2>
-        <p>Your framework still runs the agents. MAS Office reads what they report.</p>
-      </div>
-      <div class="grid">
-        <article class="card card--row card--open span-4">
-          <span class="step-num">1</span>
-          <h3>Producers append events</h3>
-          <p>Integrations and SDKs write one JSON line per event to an append-only log.</p>
-          <div class="panel">
-            <div class="stage stage--fade-r"><div class="at-corner" style="--ax:24px;--ay:40px">
-              <div class="ui ui-panel ui-code" data-ui="code" data-ui-still>
-                <div class="ui-code__tabs">
-                  <span class="ui-code__tab is-on"><i class="ui-code__lang">{}</i>mas/events.jsonl</span>
-                  <span class="ui-spacer"></span>
-                </div>
-                <pre class="ui-code__pre"><code><span class="ui-code__ln" data-n="1">{"v":"0.1","seq":1,"type":"run.started","ts":"2026-11-06T10:00:00Z"}</span>
-<span class="ui-code__ln" data-n="2">{"v":"0.1","seq":2,"ts":"2026-11-06T10:00:01Z","type":"agent.status","agentId":"finder","data":{"state":"working"}}</span>
-<span class="ui-code__ln" data-n="3">{"v":"0.1","seq":3,"ts":"2026-11-06T10:00:02Z","type":"tool.started","agentId":"finder","data":{"name":"web search"}}</span>
-<span class="ui-code__ln is-mark" data-n="4">{"v":"0.1","seq":4,"ts":"2026-11-06T10:00:03Z","type":"handoff","agentId":"finder","data":{"to":"lead"}}</span>
-<span class="ui-code__ln" data-n="5">{"v":"0.1","seq":5,"ts":"2026-11-06T10:00:04Z","type":"agent.finished","agentId":"finder"}</span>
-<span class="ui-code__ln" data-n="6">{"v":"0.1","seq":6,"ts":"2026-11-06T10:00:05Z","type":"result","data":{"markdown":"## Shortlist"}}</span>
-<span class="ui-code__ln" data-n="7">{"v":"0.1","seq":7,"ts":"2026-11-06T10:00:06Z","type":"run.finished"}</span></code></pre>
-                <div class="ui-code__hint" data-code-hint><span class="ui-dot"></span><span data-code-text>Line 4 draws a handoff path to the lead.</span></div>
-              </div>
-            </div></div>
-          </div>
-        </article>
-        <article class="card card--row card--open span-4">
-          <span class="step-num">2</span>
-          <h3>The reducer builds snapshots</h3>
-          <p>The same deterministic reducer in JS and Python turns the log into snapshot files.</p>
-          <div class="panel">
-            <div class="dg" data-diagram><script type="application/json">{"layout":"lanes","alt":"The event log goes into the reducer, which writes the team structure, one status per agent and the result.","input":{"label":"events.jsonl","icon":"ui:file-json","sub":"append-only"},"core":{"label":"Reducer","icon":"ui:git-merge"},"lanes":[{"label":"structure","icon":"ui:users","done":true,"sub":"the team"},{"label":"status","icon":"ui:activity","done":true,"sub":"one per agent"},{"label":"result","icon":"ui:file-check","done":true,"sub":"with sources"}]}</script></div>
-          </div>
-        </article>
-        <article class="card card--row card--open span-4">
-          <span class="step-num">3</span>
-          <h3>The panel draws the office</h3>
-          <p>Desks, handoff paths and flags, from a file:// page or live over Server-Sent Events.</p>
-          <div class="panel">
-            <img class="frame__img" src="assets/img/office-plan.webp" alt="The office drawing: five agents at their desks in coloured work zones, the budget checker raising a flag" width="820" height="672" loading="lazy" decoding="async" data-source="client" data-subject="the MAS Office panel">
-          </div>
-        </article>
       </div>
     </div>
   </section>
@@ -429,231 +528,85 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
   <section class="section bg-band" id="protocol" aria-labelledby="protocol-h">
     <div class="wrap">
       <div class="grid head">
-        <h2 class="span-5" id="protocol-h">An open protocol with 18 event types</h2>
+        <h2 class="span-5" id="protocol-h">An open protocol to show any framework's team</h2>
         <div class="span-6 start-7 stack-4">
-          <p class="t-lead">JSON Schemas, a deterministic reducer and conformance cases that both reference SDKs must pass. Every event maps to AG-UI, OpenTelemetry GenAI and A2A.</p>
+          <p class="t-lead">Not using the runtime? Your framework appends events to one log and the same panel draws the office. JSON Schemas, and one reducer in JS and Python that agree on 16 conformance cases.</p>
           <a class="link" href="https://github.com/weixijia/mas-office/blob/main/spec/README.md">Read the protocol</a>
         </div>
       </div>
-      <div class="spec" role="table" aria-label="How MAS Office events map to AG-UI, OpenTelemetry GenAI and A2A">
-        <div class="grid spec__row spec__row--head" role="row"><span class="span-3" role="columnheader">MAS Office event</span><span class="span-3" role="columnheader">AG-UI</span><span class="span-3" role="columnheader">OpenTelemetry GenAI</span><span class="span-3" role="columnheader">A2A</span></div>
-        <div class="grid spec__row" role="row"><span class="span-3" role="cell"><code>agent.status</code></span><span class="span-3" role="cell" data-k="AG-UI"><code>ACTIVITY_SNAPSHOT</code></span><span class="span-3" role="cell" data-k="OTel">span attributes</span><span class="span-3" role="cell" data-k="A2A"><code>TaskStatusUpdateEvent</code></span></div>
-        <div class="grid spec__row" role="row"><span class="span-3" role="cell"><code>handoff</code></span><span class="span-3" role="cell" data-k="AG-UI"><code>CUSTOM</code></span><span class="span-3" role="cell" data-k="OTel">span link</span><span class="span-3" role="cell" data-k="A2A"><code>referenceTaskIds</code></span></div>
-        <div class="grid spec__row" role="row"><span class="span-3" role="cell"><code>tool.started</code></span><span class="span-3" role="cell" data-k="AG-UI"><code>TOOL_CALL_START</code></span><span class="span-3" role="cell" data-k="OTel"><code>execute_tool</code> span start</span><span class="span-3" role="cell" data-k="A2A">none</span></div>
-        <div class="grid spec__row" role="row"><span class="span-3" role="cell"><code>flag.raised</code></span><span class="span-3" role="cell" data-k="AG-UI">interrupt</span><span class="span-3" role="cell" data-k="OTel">none</span><span class="span-3" role="cell" data-k="A2A"><code>INPUT_REQUIRED</code></span></div>
-        <div class="grid spec__row" role="row"><span class="span-3" role="cell"><code>agent.failed</code></span><span class="span-3" role="cell" data-k="AG-UI"><code>SUBAGENT_ERROR</code></span><span class="span-3" role="cell" data-k="OTel">span end with <code>error.type</code></span><span class="span-3" role="cell" data-k="A2A"><code>FAILED</code></span></div>
+      <div class="grid">
+        <article class="card span-4">
+          <img loading="lazy" decoding="async" src="assets/icons/python.svg" alt="" width="32" height="32">
+          <h3>Report a run from Python or JS</h3>
+          <p>Standard library only: no account, no database, no cloud. Python installs from the repository until the PyPI release.</p>
+          <pre>npm install mas-office</pre>
+        </article>
+        <article class="card span-4">
+          <img loading="lazy" decoding="async" src="assets/icons/json.svg" alt="" width="32" height="32">
+          <h3>Plug in an agent framework</h3>
+          <p>Experimental integrations for the OpenAI Agents SDK, LangGraph, the Claude Agent SDK and Claude Code hooks.</p>
+          <pre>npx mas-office serve ./runs --open</pre>
+        </article>
+        <article class="card span-4">
+          <img loading="lazy" decoding="async" src="assets/icons/html.svg" alt="" width="32" height="32">
+          <h3>Let your coding assistant lead</h3>
+          <p>The no-code AGENTS.md kit runs each role as a subagent in Claude Code, Codex, Gemini CLI or Antigravity.</p>
+          <pre>npx mas-office init --kit my-team</pre>
+        </article>
       </div>
       <div data-moment="marquee-row" data-moment-opts='{"speed": 32}'>
-        <ul class="mo-mq__track"><li>run.started</li><li>agent.registered</li><li>agent.status</li><li>tool.started</li><li>tool.finished</li><li>message</li><li>handoff</li><li>flag.raised</li><li>flag.resolved</li><li>artifact</li><li>agent.finished</li><li>result</li><li>run.finished</li><li>run.failed</li></ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="integrations" aria-labelledby="integrations-h">
-    <div class="wrap">
-      <div class="grid grid--top">
-        <div class="span-5 stack-5">
-          <h2 id="integrations-h">Works with four agent frameworks</h2>
-          <p class="t-lead">Agents, tool calls and handoffs become desks, tool uses and handoff paths. Your framework's own traces keep working.</p>
-          <ul class="ic-rows">
-            <li><img loading="lazy" decoding="async" data-icon="openai" src="assets/icons/openai.svg" alt="" width="24" height="24"><span>OpenAI Agents SDK</span><span class="tag tag--exp">experimental</span></li>
-            <li><img loading="lazy" decoding="async" data-icon="si:langgraph" src="assets/icons/langgraph.svg" alt="" width="24" height="24"><span>LangGraph</span><span class="tag tag--exp">experimental</span></li>
-            <li><img loading="lazy" decoding="async" data-icon="claude" src="assets/icons/claude.svg" alt="" width="24" height="24"><span>Claude Agent SDK</span><span class="tag tag--exp">experimental</span></li>
-            <li><img loading="lazy" decoding="async" data-icon="claude-code" src="assets/icons/claude-code.svg" alt="" width="24" height="24"><span>Claude Code hooks</span><span class="tag tag--exp">experimental</span></li>
-          </ul>
-          <a class="link" href="https://github.com/weixijia/mas-office/blob/main/docs/integrations.md">Read the integration guides</a>
-        </div>
-        <div class="frame frame--split span-6 start-7">
-          <div class="dg" data-diagram><script type="application/json">{"layout":"fanin","alt":"The OpenAI Agents SDK, LangGraph, the Claude Agent SDK, Claude Code and your own code all write to one events.jsonl log, which the office panel draws.","sources":[{"label":"OpenAI Agents SDK","icon":"openai","sub":"TracingProcessor"},{"label":"LangGraph","icon":"si:langgraph","sub":"stream_to_office"},{"label":"Claude Agent SDK","icon":"claude","sub":"office_hooks"},{"label":"Claude Code","icon":"claude-code","sub":"hook command"},{"label":"Your code","icon":"python","sub":"Python or JS SDK"}],"target":{"label":"events.jsonl","icon":"ui:file-json"},"then":{"label":"Office panel","icon":"ui:building-2","meta":"live"}}</script></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="code" aria-labelledby="code-h">
-    <div class="wrap">
-      <div class="grid head">
-        <h2 class="span-5" id="code-h">Report a run from Python or JavaScript</h2>
-        <p class="span-6 start-7 t-lead">The packages use only the standard library: no account, no database, no cloud. Emission failures are warned and dropped; HTTP transport batches events in the background.</p>
-      </div>
-      <div class="code-win">
-        <ol class="code-win__steps">
-          <li><span class="step-num">1</span><p>Install the Python SDK (3.10 or later; PyPI release coming soon)</p><pre>pip install "mas-office @ git+https://github.com/weixijia/mas-office#subdirectory=packages/python"</pre></li>
-          <li><span class="step-num">2</span><p>Or the JavaScript one</p><pre>npm install mas-office</pre></li>
-          <li><span class="step-num">3</span><p>Open the office, live over Server-Sent Events</p><pre>npx mas-office serve ./runs --open</pre></li>
-        </ol>
-        <div class="code-win__code">
-          <div class="tabs" role="tablist" aria-label="Language">
-            <button class="tab" role="tab" type="button" id="tab-py" aria-controls="code-py" aria-selected="true">Python</button>
-            <button class="tab" role="tab" type="button" id="tab-js" aria-controls="code-js" aria-selected="false">JavaScript</button>
-          </div>
-          <div role="tabpanel" id="code-py" aria-labelledby="tab-py" data-ui-loop>
-            <div class="ui ui-panel ui-code" data-ui="code">
-              <div class="ui-code__tabs"><span class="ui-code__tab is-on"><i class="ui-code__lang">PY</i>Python</span><span class="ui-spacer"></span></div>
-              <pre class="ui-code__pre"><code><span class="ui-code__ln" data-n="1"><span class="k">from</span> mas_office <span class="k">import</span> Office</span>
-<span class="ui-code__ln" data-n="2"> </span>
-<span class="ui-code__ln" data-n="3"><span class="k">with</span> <span class="f">Office</span>(workspace="./runs") <span class="k">as</span> office:</span>
-<span class="ui-code__ln" data-n="4">    run = office.<span class="f">project</span>("headphone-deals", title="Headphone deals").<span class="f">run</span>()</span>
-<span class="ui-code__ln" data-n="5">    finder = run.<span class="f">agent</span>("finder", name="Retail finder", emoji="🔎")</span>
-<span class="ui-code__ln is-mark" data-n="6">    finder.<span class="f">working</span>("Searching Currys", progress=<span class="n">30</span>)</span>
-<span class="ui-code__ln" data-n="7">    finder.<span class="f">source</span>(id="currys", title="Sony XM6 — Currys", url="https://www.currys.co.uk/", evidence="A")</span>
-<span class="ui-code__ln" data-n="8" data-note="The handoff path runs from the finder's desk to the lead.">    finder.<span class="f">handoff</span>("lead")</span>
-<span class="ui-code__ln" data-n="9">    finder.<span class="f">done</span>()</span>
-<span class="ui-code__ln" data-n="10" data-note="The result slides out over the office, its source linked.">    run.<span class="f">result</span>(markdown="## Shortlist\n- Currys — £279")</span>
-<span class="ui-code__ln" data-n="11">    run.<span class="f">finish</span>()</span></code></pre>
-              <div class="ui-code__hint" data-code-hint><span class="ui-dot"></span><span data-code-text>The finder's desk reads “Searching Currys” at 30%.</span></div>
-            </div>
-          </div>
-          <div role="tabpanel" id="code-js" aria-labelledby="tab-js" hidden>
-            <div class="ui ui-panel ui-code" data-ui="code" data-ui-still>
-              <div class="ui-code__tabs"><span class="ui-code__tab is-on"><i class="ui-code__lang">JS</i>JavaScript</span><span class="ui-spacer"></span></div>
-              <pre class="ui-code__pre"><code><span class="ui-code__ln" data-n="1"><span class="k">import</span> { Office } <span class="k">from</span> 'mas-office';</span>
-<span class="ui-code__ln" data-n="2"> </span>
-<span class="ui-code__ln" data-n="3"><span class="k">const</span> office = <span class="k">new</span> <span class="f">Office</span>({ workspace: './runs' });</span>
-<span class="ui-code__ln" data-n="4"><span class="k">const</span> run = office.<span class="f">project</span>('headphone-deals', { title: 'Headphone deals' }).<span class="f">run</span>();</span>
-<span class="ui-code__ln" data-n="5"><span class="k">const</span> finder = run.<span class="f">agent</span>('finder', { name: 'Retail finder', emoji: '🔎' });</span>
-<span class="ui-code__ln is-mark" data-n="6">finder.<span class="f">working</span>('Searching Currys', { progress: <span class="n">30</span> });</span>
-<span class="ui-code__ln" data-n="7">finder.<span class="f">done</span>();</span>
-<span class="ui-code__ln" data-n="8" data-note="The result slides out over the office.">run.<span class="f">result</span>({ markdown: '## Shortlist\n- Currys — £279' });</span>
-<span class="ui-code__ln" data-n="9">run.<span class="f">finish</span>();</span>
-<span class="ui-code__ln" data-n="10"><span class="k">await</span> office.<span class="f">close</span>();</span></code></pre>
-              <div class="ui-code__hint" data-code-hint><span class="ui-dot"></span><span data-code-text>The finder's desk reads “Searching Currys” at 30%.</span></div>
-            </div>
-          </div>
-        </div>
+        <ul class="mo-mq__track"><li>run.started</li><li>agent.status</li><li>request.opened</li><li>request.resolved</li><li>command.message</li><li>command.ack</li><li>handoff</li><li>review.verdict</li><li>lead.ledger</li><li>claim.added</li><li>evidence.checked</li><li>verdict.recorded</li><li>round.started</li><li>usage</li><li>result</li><li>run.finished</li></ul>
       </div>
     </div>
   </section>
 
   <section class="section" id="roadmap" aria-labelledby="roadmap-h">
     <div class="wrap">
-      <div class="grid head">
-        <h2 class="span-5" id="roadmap-h">Roadmap to a team that runs itself</h2>
-        <div class="span-6 start-7 stack-4">
-          <p class="t-lead">Next, each role runs in the unmodified Claude Code or Codex you sign in to yourself, on top of today's office, protocol and team kit.</p>
-          <a class="link" href="https://github.com/weixijia/mas-office/blob/main/ROADMAP.md">Read the full roadmap</a>
+      <div class="grid grid--top">
+        <div class="span-5 split-col">
+          <h2 id="roadmap-h">Limits today and the roadmap</h2>
+          <p class="t-lead">Version 0.3.0 runs real teams. These parts are not done or not measured yet.</p>
+          <ul class="plain-rows">
+            <li>No raw terminal tab yet, so you cannot take over a session's terminal.</li>
+            <li>A Codex role's reads are not limited to the project folder with Codex 0.167.0.</li>
+            <li>Codex reports tokens but no cost, so cost totals are a lower bound.</li>
+            <li>No evaluation runs yet: we have not measured whether a team answers better than one agent.</li>
+          </ul>
+          <a class="link split-col__end" href="https://github.com/weixijia/mas-office/blob/main/ROADMAP.md">Read the full roadmap</a>
         </div>
-      </div>
-      <div class="grid">
-        <article class="card card--row card--open span-6">
-          <span class="step-num">S0</span>
-          <h3>Steers real Claude Code and Codex sessions</h3>
-          <p>Each role starts as a real session; you answer what blocks it and message any agent from its desk.</p>
-          <div class="panel">
-            <div class="stage stage--fade-b"><div class="at-rise to-edge fit" style="--fit-max:400px;--ay:40px">
-                <div class="ui ui-panel ui-chat" data-ui="chat" data-ui-loop>
-                  <div class="ui-head">
-                    <span class="ui-agent" aria-hidden="true"></span>
-                    <div class="ui-title">Catch checker</div>
-                    <span class="ui-chat__online">Working</span>
-                    <span class="ui-spacer"></span>
-                    <span class="ui-chat__tool" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M3 8h10M8 3v10" transform="rotate(45 8 8)"/></svg></span>
-                  </div>
-                  <div class="ui-chat__body">
-                    <div class="ui-chat__day">headphone-deals, run 4</div>
-                    <div class="ui-msg ui-msg--me" data-chat-q>
-                      <span class="ui-msg__text">Can the Dealmonday XM6 arrive within 3 days?</span>
-                    </div>
-                    <div class="ui-msg ui-msg--bot" data-chat-a>
-                      <span class="ui-agent ui-msg__av" aria-hidden="true"></span>
-                      <span class="ui-msg__col">
-                        <span class="ui-chat__answer">Not at <b>£269.99</b>. Free delivery takes 4 to 6 working days, and the 2 to 4 day option costs £60, over budget.</span>
-                        <span class="ui-chat__srcs">
-                          <span class="ui-chat__src"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Dealmonday delivery tab</span>
-                          <span class="ui-chat__src"><svg class="ui-icon" viewBox="0 0 16 16"><path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/></svg>Budget check</span>
-                        </span>
-                      </span>
-                    </div>
-                    <div class="ui-msg ui-msg--me">
-                      <span class="ui-msg__text">Thanks. Keep the John Lewis three.</span>
-                    </div>
-                  </div>
-                  <div class="ui-chat__input">
-                    <span class="ui-chat__ph">Message the Catch checker</span>
-                    <span class="ui-chat__send" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 13V3.5M3.8 7.5 8 3.3l4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                  </div>
-                </div>
-            </div></div>
-          </div>
-        </article>
-        <article class="card card--row card--open span-6">
-          <span class="step-num">S3</span>
-          <h3>Checks every claim against its source</h3>
-          <p>Checkers reopen each source and return a verdict per claim, measured against a single agent.</p>
-          <div class="panel">
-            <div class="stage"><div class="at-rise fit" style="--fit-max:340px;--ay:40px">
-              <div class="ui ui-panel ui-checks" data-ui="checklist">
-                <div class="ui-checks__head">
-                  <div class="ui-title">Claim checks, Momentum 4</div>
-                  <span class="ui-spacer"></span>
-                  <div class="ui-meta" data-checks-count>2 of 5</div>
-                </div>
-                <div class="ui-checks__bar"><i data-checks-bar style="--k:0.4"></i></div>
-                <ul class="ui-checks__list">
-                  <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Total £177.94, under the £280 budget</span></li>
-                  <li class="ui-check is-done"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Seller is John Lewis, a UK shop</span></li>
-                  <li class="ui-check"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">No refurbished or outlet wording</span></li>
-                  <li class="ui-check"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Named Day delivery within 3 days</span></li>
-                  <li class="ui-check"><span class="ui-check__box"><svg viewBox="0 0 16 16"><path d="m4.5 8.2 2.3 2.3 4.7-5"/></svg></span><span class="ui-check__label">Price re-opened live on 5 November</span></li>
-                </ul>
-              </div>
-            </div></div>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="contribute" aria-labelledby="contribute-h">
-    <div class="wrap">
-      <div class="section-head">
-        <h2 id="contribute-h">Four lanes for contributors</h2>
-        <p>A new framework integration is usually one file and a test with fake payloads. We use the DCO, not a CLA.</p>
-      </div>
-      <div class="grid">
-        <a class="card span-3" href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md#1-protocol-changes-spec">
-          <img loading="lazy" decoding="async" data-icon="file:json" src="assets/icons/json.svg" alt="" width="32" height="32">
-          <h3>Change the protocol</h3>
-          <p>Spec changes go through a lightweight RFC, with schemas and conformance cases.</p>
-        </a>
-        <a class="card span-3" href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md#2-framework-integrations">
-          <img loading="lazy" decoding="async" data-icon="python" src="assets/icons/python.svg" alt="" width="32" height="32">
-          <h3>Add an integration</h3>
-          <p>One file that maps a framework's events, and a test with fake payloads.</p>
-        </a>
-        <a class="card span-3" href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md#3-panel">
-          <img loading="lazy" decoding="async" data-icon="file:html" src="assets/icons/html.svg" alt="" width="32" height="32">
-          <h3>Improve the panel</h3>
-          <p>Plain HTML, CSS and JS with no build step, opened straight from file://.</p>
-        </a>
-        <a class="card span-3" href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md#4-sdks-and-cli">
-          <img loading="lazy" decoding="async" data-icon="npm" src="assets/icons/npm.svg" alt="" width="32" height="32">
-          <h3>Extend the SDKs</h3>
-          <p>The JS and Python SDKs and the CLI, both checked against one set of cases.</p>
-        </a>
-      </div>
-      <div class="help-row">
-        <p>Help wanted: Claude Code and Codex session adapters, the inbox, CrewAI and AG-UI ingest.</p>
-        <a class="link" href="https://github.com/weixijia/mas-office/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">Find a good first issue</a>
+        <div class="sheet span-6 start-7">
+          <div class="sheet__head"><span>Roadmap</span><span>■ done · □ open</span></div>
+          <ul>
+            <li class="is-done"><span>Real Claude Code and Codex sessions, the inbox, the agent drawer, claim checks</span><span class="tag tag--ok">v0.3.0</span></li>
+            <li class="is-done"><span>The evaluation harness: 9 tasks, three locked designs, metrics from the log</span><span class="tag tag--ok">v0.3.0</span></li>
+            <li><span>A raw terminal tab you can take over</span><span class="tag">next</span></li>
+            <li><span>The official Codex terminal app attached to a role</span><span class="tag">next</span></li>
+            <li><span>The team kit on the same engine</span><span class="tag">next</span></li>
+            <li><span>First evaluation runs against one agent with the same budget</span><span class="tag">next</span></li>
+            <li><span>A user study of supervising agent teams</span><span class="tag">S4</span></li>
+            <li><span>A desktop app around the panel</span><span class="tag">S4</span></li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
   <section class="section" id="faq" aria-labelledby="faq-h">
     <div class="wrap">
-      <div class="grid grid--top">
-        <div class="span-5 stack-4">
-          <h2 id="faq-h">Questions</h2>
+      <div class="grid head">
+        <h2 class="span-5" id="faq-h">Questions</h2>
+        <div class="span-6 start-7 stack-4">
           <p class="t-lead">Something else? Ask in the project's discussions.</p>
           <a class="link" href="https://github.com/weixijia/mas-office/discussions">Start a discussion</a>
         </div>
-        <div class="faq span-6 start-7">
-          <div class="faq__item"><h3>Is MAS Office a tracing platform?</h3><p>No. It is the view you put on the big screen. Use it beside your tracer: every event can carry trace ids.</p></div>
-          <div class="faq__item"><h3>Do I need an account, a server or a database?</h3><p>No. A project is a folder of files, and the panel is plain HTML that even opens from file://.</p></div>
-          <div class="faq__item"><h3>Are the framework integrations stable?</h3><p>Not yet. The four integrations are experimental; the AGENTS.md kit for coding assistants is stable.</p></div>
-          <div class="faq__item"><h3>Will it use my Claude or ChatGPT plan?</h3><p>Only through the official tools you sign in to yourself. Each role runs in the unmodified Claude Code or Codex under your account; MAS Office never asks for, reads or stores your login.</p></div>
-          <div class="faq__item"><h3>How is it different from other agent office views?</h3><p>Most show coding sessions as characters. MAS Office models the team: designed roles, independent checkers, graded sources and follow-up rounds.</p></div>
-                  </div>
+      </div>
+      <div class="faq grid">
+        <div class="faq__item span-4"><h3>What runs where?</h3><p>Everything runs on your computer: the panel server on <code>127.0.0.1</code>, and each role as the <code>claude</code> or <code>codex</code> program you installed. This website only replays recorded examples.</p></div>
+        <div class="faq__item span-4"><h3>Does it need an API key?</h3><p>No. Each role uses the sign-in of your own Claude Code or Codex. MAS Office has no key, no login and no account of its own.</p></div>
+        <div class="faq__item span-4"><h3>What does it cost?</h3><p>MAS Office is free under the MIT licence. Runs count against your own plan's limits, three sessions at once by default, and the panel shows the usage each program reports.</p></div>
+        <div class="faq__item span-4"><h3>How is it different from orchestrators and office views?</h3><p>Parallel orchestrators run many separate tasks side by side; office views draw sessions as characters. MAS Office runs one team you designed, whose roles review each other.</p></div>
+        <div class="faq__item span-4"><h3>Is it safe to let agents browse?</h3><p>Each role gets only the tools your locked design lists, and every tool call is allowed, denied or sent to you. Link checks never fetch private addresses. A page can still be wrong or hostile.</p></div>
+        <div class="faq__item span-4"><h3>What is checked, and what is not?</h3><p>Every source link, and each tagged claim against its cited source. Whether a source itself is right is not checked, and untagged statements are pointed out, not judged.</p></div>
       </div>
     </div>
   </section>
@@ -663,8 +616,8 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
   <div class="wrap">
     <div class="closing__cta close--type">
       <div class="section-head">
-        <h2 id="close-h">See a five-agent team in 30 seconds</h2>
-        <p class="t-small muted">Node 18 or later. No API key, nothing to set up.</p>
+        <h2 id="close-h">Watch a simulated five-agent team</h2>
+        <p class="t-small muted">Node 18 or later, no sign-in. This runs the published 0.2.2 viewer; from a clone, <code>node packages/node/bin/mas-office.js demo</code> plays the same team in the 0.3.0 panel.</p>
       </div>
       <button class="btn btn--primary btn--xl btn--wide btn-copy" type="button" data-copy="npx mas-office demo"><span class="sr-only">Copy </span><code>npx mas-office demo</code><svg class="ic-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.25" y="5.25" width="8" height="8"/><path d="M10.75 3V2.75h-8v8H3"/></svg><svg class="ic-done" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></button>
     </div>
@@ -672,18 +625,18 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
       <div class="grid">
         <div class="span-4 stack-4">
           <a class="nav__logo" href="#top"><img loading="lazy" decoding="async" src="assets/img/logo.svg" alt="" width="27" height="24">MAS Office</a>
-          <p class="footer__lede">A team of AI agents you can see and check.</p>
+          <p class="footer__lede">An AI team you design, can watch, can steer, and that checks its own work.</p>
         </div>
-        <div class="span-2 footer__col"><h4>Product</h4><ul><li><a href="#features">Features</a></li><li><a href="#examples">Examples</a></li><li><a href="#nocode">Team kit</a></li><li><a href="#roadmap">Roadmap</a></li></ul></div>
-        <div class="span-2 footer__col"><h4>Protocol</h4><ul><li><a href="#protocol">Event types</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/spec/README.md">Specification</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/docs/architecture.md">Architecture</a></li></ul></div>
-        <div class="span-2 footer__col"><h4>Integrations</h4><ul><li><a href="#integrations">Frameworks</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/docs/integrations.md">Guides</a></li><li><a href="https://github.com/weixijia/awesome-mas">awesome-mas</a></li></ul></div>
-        <div class="span-2 footer__col"><h4>Contribute</h4><ul><li><a href="https://github.com/weixijia/mas-office">GitHub</a></li><li><a href="#code">Code</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md">Contributing</a></li></ul></div>
+        <div class="span-2 footer__col"><h4>Product</h4><ul><li><a href="#inbox">Features</a></li><li><a href="#flow">How it runs</a></li><li><a href="#examples">Examples</a></li><li><a href="#roadmap">Roadmap</a></li></ul></div>
+        <div class="span-2 footer__col"><h4>Docs</h4><ul><li><a href="https://github.com/weixijia/mas-office/blob/main/packages/runtime/README.md">Runtime</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/eval/README.md">Evaluation</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/docs/integrations.md">Integrations</a></li></ul></div>
+        <div class="span-2 footer__col"><h4>Protocol</h4><ul><li><a href="#protocol">Overview</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/spec/README.md">Specification</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/docs/architecture.md">Architecture</a></li></ul></div>
+        <div class="span-2 footer__col"><h4>Contribute</h4><ul><li><a href="https://github.com/weixijia/mas-office">GitHub</a></li><li><a href="https://github.com/weixijia/mas-office/blob/main/CONTRIBUTING.md">Contributing</a></li><li><a href="https://github.com/weixijia/awesome-mas">awesome-mas</a></li></ul></div>
       </div>
       <dl class="title-block">
-        <div><dt>Project</dt><dd>MAS Office</dd></div>
+        <div><dt>Project</dt><dd>MAS Office 0.3.0</dd></div>
         <div><dt>Licence</dt><dd><a href="https://github.com/weixijia/mas-office/blob/main/LICENSE">MIT</a> &copy; 2026 Xijia Wei and contributors</dd></div>
         <div><dt>Fonts</dt><dd>Archivo and Red Hat Mono, SIL Open Font License</dd></div>
-        <div><dt>Marks</dt><dd>Product names and logos are trademarks of their owners</dd></div>
+        <div><dt>Marks</dt><dd>Product names are trademarks of their owners; MAS Office is an independent project</dd></div>
       </dl>
     </div>
   </div>
