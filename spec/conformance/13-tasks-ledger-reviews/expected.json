@@ -1,0 +1,273 @@
+{
+  "structure": {
+    "title": "Headphone deals",
+    "lead": {
+      "id": "lead",
+      "name": "Lead"
+    },
+    "groups": [
+      {
+        "id": "A",
+        "label": "Search",
+        "after": null
+      },
+      {
+        "id": "B",
+        "label": "Check",
+        "after": "A"
+      },
+      {
+        "id": "dyn",
+        "label": "Spawned at runtime",
+        "after": "B"
+      }
+    ],
+    "roles": [
+      {
+        "id": "finder-a",
+        "name": "Retail finder",
+        "group": "A",
+        "handsTo": "checker"
+      },
+      {
+        "id": "finder-b",
+        "name": "Marketplace finder",
+        "group": "A",
+        "handsTo": "checker"
+      },
+      {
+        "id": "checker",
+        "name": "Checker",
+        "group": "B",
+        "handsTo": "lead"
+      },
+      {
+        "id": "codex-1",
+        "name": "Codex helper",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      }
+    ],
+    "version": 1,
+    "locked": true,
+    "topology": "staged"
+  },
+  "statuses": {
+    "lead": {
+      "state": "working",
+      "say": "Planning the run",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:01Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "finder-a": {
+      "state": "working",
+      "say": "Searching Argos",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:10Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "finder-b": {
+      "state": "working",
+      "say": "Unknown task, status only",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:11Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "checker": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:01Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "codex-1": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:04Z",
+      "waitingOn": [],
+      "stopReason": null
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "running",
+    "locked": true,
+    "version": 1,
+    "run": 1,
+    "runId": "r1",
+    "updated": "2026-11-07T09:00:27Z",
+    "next": "Watch the office panel — the team is working."
+  },
+  "result": null,
+  "inbox": {
+    "pending": [],
+    "recent": [],
+    "commands": []
+  },
+  "board": {
+    "tasks": [
+      {
+        "taskId": "t1",
+        "agentId": "finder-a",
+        "title": "Search retailers",
+        "brief": "UK only",
+        "from": "lead",
+        "round": 1,
+        "attempt": 1,
+        "state": "done",
+        "say": "Searching Argos",
+        "outcome": "success",
+        "summary": "3 offers",
+        "assignedAt": "2026-11-07T09:00:06Z",
+        "finishedAt": "2026-11-07T09:00:13Z"
+      },
+      {
+        "taskId": "t2",
+        "agentId": "finder-b",
+        "title": "Search marketplaces again",
+        "brief": null,
+        "from": "checker",
+        "round": 1,
+        "attempt": 3,
+        "state": "assigned",
+        "say": null,
+        "outcome": null,
+        "summary": null,
+        "assignedAt": "2026-11-07T09:00:07Z",
+        "finishedAt": null
+      },
+      {
+        "taskId": "__proto__",
+        "agentId": "checker",
+        "title": "Check offers",
+        "brief": null,
+        "from": "lead",
+        "round": 1.5,
+        "attempt": 1,
+        "state": "assigned",
+        "say": null,
+        "outcome": null,
+        "summary": null,
+        "assignedAt": "2026-11-07T09:00:08Z",
+        "finishedAt": null
+      }
+    ],
+    "ledger": {
+      "satisfied": false,
+      "looping": null,
+      "progressing": true,
+      "next": "checker",
+      "instruction": null,
+      "reason": "Offers found",
+      "plan": [
+        "search",
+        "check",
+        "write"
+      ],
+      "stalls": 1,
+      "updated": "2026-11-07T09:00:19Z"
+    },
+    "reviews": [
+      {
+        "reviewer": "checker",
+        "target": "finder-a",
+        "verdict": "revise",
+        "round": 1,
+        "note": "Add delivery costs",
+        "at": "2026-11-07T09:00:20Z"
+      },
+      {
+        "reviewer": "checker",
+        "target": "finder-a",
+        "verdict": "accept",
+        "round": 2,
+        "note": null,
+        "at": "2026-11-07T09:00:21Z"
+      }
+    ],
+    "recoveries": [
+      {
+        "by": "lead",
+        "strategy": "retry",
+        "target": "finder-b",
+        "note": "Rate limited",
+        "at": "2026-11-07T09:00:23Z"
+      }
+    ],
+    "usage": {
+      "finder-a": {
+        "inputTokens": 2500,
+        "outputTokens": 300,
+        "costUsd": 0.05,
+        "turns": 1,
+        "limit": {
+          "status": "allowed_warning",
+          "kind": "five_hour"
+        },
+        "updated": "2026-11-07T09:00:26Z"
+      },
+      "lead": {
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costUsd": 0,
+        "turns": 0,
+        "limit": null,
+        "updated": "2026-11-07T09:00:27Z"
+      }
+    },
+    "agents": {
+      "finder-a": {
+        "backend": "claude-code",
+        "model": "opus",
+        "session": {
+          "backend": "claude-code",
+          "id": "s-1",
+          "resumable": true
+        },
+        "accepts": [
+          "message",
+          "interrupt"
+        ],
+        "reviewerOf": []
+      },
+      "codex-1": {
+        "backend": "codex",
+        "model": "gpt-x",
+        "session": null,
+        "accepts": [],
+        "reviewerOf": [
+          "finder-a"
+        ]
+      }
+    }
+  },
+  "verification": null
+}

@@ -36,7 +36,7 @@ test('HTTP transport batches events per project and flushes on close', async () 
     assert.ok(srv.requests.every((r) => r.type === 'application/json' && Array.isArray(r.body)));
     assert.ok(srv.requests.length < events.length, 'events are batched');
     assert.deepEqual(events.map((e) => e.type), ['run.started', 'agent.registered', 'agent.status', 'agent.finished', 'run.finished']);
-    assert.ok(events.every((e) => e.v === '0.1' && typeof e.ts === 'string' && e.seq === undefined), 'the server assigns seq');
+    assert.ok(events.every((e) => e.v === '0.2' && typeof e.ts === 'string' && e.seq === undefined), 'the server assigns seq');
     assert.equal(events[1].agentName, 'Worker 1');
     assert.equal(events[1].data.emoji, '🤖');
   } finally {

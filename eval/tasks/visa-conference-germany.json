@@ -1,0 +1,43 @@
+{
+  "id": "visa-conference-germany",
+  "title": "Visa check: conference in Germany",
+  "category": "policy",
+  "task": "A PhD student who holds an Indian passport and a valid UK Student visa wants to attend a four-day academic conference in Germany about two months from now. What visa or permission do they need, where and how do they apply from the UK, which documents are required, what does it cost, and how long does processing take? Say what changes if their UK visa expires within three months of the trip.",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "Which visa or permission applies to this traveller (Indian national, resident in the UK on a Student visa) for a short conference trip to Germany."
+    },
+    {
+      "id": "R2",
+      "text": "Where and how to apply from the UK, the document list, the fee and the processing time."
+    },
+    {
+      "id": "R3",
+      "text": "What changes if the UK visa expires within three months of the trip."
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "kind": "must-cite",
+      "text": "Every rule, fee and processing time links to an official source (German mission, EU, or the official appointment provider), not only a blog or agency."
+    },
+    {
+      "id": "C2",
+      "kind": "must-state-uncertainty",
+      "text": "The answer states which nationality and residence status the rules apply to, and that the traveller should confirm with the official source before booking."
+    },
+    {
+      "id": "C3",
+      "kind": "freshness",
+      "text": "Fees and processing times carry the date they were checked."
+    },
+    {
+      "id": "C4",
+      "kind": "must-state-uncertainty",
+      "text": "Where official sources leave room for the consulate's discretion (e.g. residence-permit validity requirements), the answer says so instead of giving a single fixed rule."
+    }
+  ],
+  "notes": "Do not score the rule itself (it changes); score sourcing, scoping to the stated nationality and residence, and stated uncertainty."
+}

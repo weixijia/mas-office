@@ -1,0 +1,300 @@
+{
+  "structure": {
+    "title": "Headphone deals",
+    "lead": {
+      "id": "lead",
+      "name": "Lead"
+    },
+    "groups": [
+      {
+        "id": "A",
+        "label": "Search",
+        "after": null
+      },
+      {
+        "id": "B",
+        "label": "Check",
+        "after": "A"
+      }
+    ],
+    "roles": [
+      {
+        "id": "finder-a",
+        "name": "Retail finder",
+        "group": "A",
+        "handsTo": "checker"
+      },
+      {
+        "id": "finder-b",
+        "name": "Marketplace finder",
+        "group": "A",
+        "handsTo": "checker"
+      },
+      {
+        "id": "checker",
+        "name": "Checker",
+        "group": "B",
+        "handsTo": "lead"
+      }
+    ],
+    "version": 1,
+    "locked": true,
+    "topology": "staged"
+  },
+  "statuses": {
+    "lead": {
+      "state": "flagged",
+      "say": "Planning the run",
+      "to": null,
+      "flag": "eBay offer may be refurbished",
+      "flagKind": "needs_input",
+      "progress": 0,
+      "t": "2026-11-07T09:00:14Z",
+      "waitingOn": [
+        "req-5"
+      ],
+      "stopReason": null
+    },
+    "finder-a": {
+      "state": "working",
+      "say": "Still waiting on two answers",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 10,
+      "t": "2026-11-07T09:00:11Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "finder-b": {
+      "state": "failed",
+      "say": "Rate limited",
+      "to": null,
+      "flag": "Rate limited",
+      "flagKind": "error",
+      "progress": 0,
+      "t": "2026-11-07T09:00:16Z",
+      "waitingOn": [
+        "req-6"
+      ],
+      "stopReason": null
+    },
+    "checker": {
+      "state": "done",
+      "say": "Checked",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 100,
+      "t": "2026-11-07T09:00:13Z",
+      "waitingOn": [
+        "req-4"
+      ],
+      "stopReason": null
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "running",
+    "locked": true,
+    "version": 1,
+    "run": 1,
+    "runId": "r1",
+    "updated": "2026-11-07T09:00:16Z",
+    "next": "2 things need you — open the inbox."
+  },
+  "result": null,
+  "inbox": {
+    "pending": [
+      {
+        "requestId": "req-5",
+        "agentId": "lead",
+        "kind": "flag",
+        "title": "eBay offer may be refurbished",
+        "description": null,
+        "subject": {
+          "type": "claim",
+          "claimId": "c2"
+        },
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": true,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "high",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:14Z",
+        "seq": 14,
+        "run": 1
+      },
+      {
+        "requestId": "req-4",
+        "agentId": "checker",
+        "kind": "gate",
+        "title": "Approve the shortlist?",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": true,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "normal",
+        "expiresAt": "2026-11-07T10:00:00Z",
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:13Z",
+        "seq": 13,
+        "run": 1
+      },
+      {
+        "requestId": "req-6",
+        "agentId": "finder-b",
+        "kind": "decision",
+        "title": "Retry with a delay?",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": true,
+        "routeTo": "lead",
+        "resolver": "anyone",
+        "urgency": "normal",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:16Z",
+        "seq": 16,
+        "run": 1
+      },
+      {
+        "requestId": "req-3",
+        "agentId": "finder-b",
+        "kind": "decision",
+        "title": "Budget: stop at 10 searches?",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": false,
+        "routeTo": "lead",
+        "resolver": "not_creator",
+        "urgency": "low",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:05Z",
+        "seq": 5,
+        "run": 1
+      }
+    ],
+    "recent": [
+      {
+        "requestId": "req-1",
+        "agentId": "finder-a",
+        "kind": "approval",
+        "title": "Open currys.co.uk in the browser?",
+        "description": "The agent wants to use the browser tool.",
+        "subject": {
+          "type": "tool_call",
+          "tool": "browser",
+          "input": {
+            "url": "https://www.currys.co.uk"
+          }
+        },
+        "toolCallId": "toolu_01",
+        "options": [
+          {
+            "optionId": "allow-once",
+            "name": "Allow once",
+            "kind": "allow_once"
+          },
+          {
+            "optionId": "reject-once",
+            "name": "Reject",
+            "kind": "reject_once"
+          }
+        ],
+        "responseSchema": null,
+        "blocking": true,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "high",
+        "expiresAt": null,
+        "onExpire": "The search skips Currys.",
+        "source": {
+          "backend": "claude-code",
+          "hook": "PermissionRequest"
+        },
+        "openedAt": "2026-11-07T09:00:03Z",
+        "seq": 3,
+        "run": 1,
+        "outcome": "selected",
+        "optionId": "allow-once",
+        "payload": null,
+        "note": null,
+        "by": {
+          "kind": "human"
+        },
+        "cmdId": "cmd-8",
+        "resolvedAt": "2026-11-07T09:00:11Z"
+      },
+      {
+        "requestId": "req-2",
+        "agentId": "finder-a",
+        "kind": "question",
+        "title": "Include refurbished units?",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": {
+          "type": "object",
+          "properties": {
+            "answer": {
+              "type": "string"
+            }
+          }
+        },
+        "blocking": true,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "normal",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:04Z",
+        "seq": 4,
+        "run": 1,
+        "outcome": "submitted",
+        "optionId": null,
+        "payload": {
+          "answer": "no"
+        },
+        "note": "New only",
+        "by": {
+          "kind": "human"
+        },
+        "cmdId": "cmd-7",
+        "resolvedAt": "2026-11-07T09:00:10Z"
+      }
+    ],
+    "commands": []
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
+}

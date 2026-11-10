@@ -4,13 +4,14 @@
   "description": "MAS Office: a framework-agnostic protocol and animated office panel for multi-agent systems.",
   "license": "MIT",
   "workspaces": [
-    "packages/node"
+    "packages/node",
+    "packages/runtime"
   ],
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "test": "npm test --workspace mas-office && node panel/tests/model.test.js",
+    "test": "npm test --workspace mas-office && npm test --workspace mas-office-runtime && node panel/tests/model.test.js && node panel/tests/inbox.test.js",
     "demo": "node packages/node/bin/mas-office.js demo",
     "validate": "node packages/node/bin/mas-office.js validate examples"
   }

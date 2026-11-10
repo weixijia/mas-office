@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MAS Office evaluation task",
+  "type": "object",
+  "required": ["id", "title", "task", "requirements", "checks", "notes"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,39}$"},
+    "title": {"type": "string", "minLength": 1},
+    "category": {"enum": ["price-comparison", "planning", "literature", "feasibility", "product-selection", "policy"]},
+    "task": {"type": "string", "minLength": 40},
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^R[0-9]+$"},
+          "text": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^C[0-9]+$"},
+          "kind": {"enum": ["must-cite", "must-state-uncertainty", "must-compare", "freshness"]},
+          "text": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "notes": {"type": "string"}
+  }
+}

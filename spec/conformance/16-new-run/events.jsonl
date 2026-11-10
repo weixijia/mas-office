@@ -1,0 +1,21 @@
+{"v": "0.2", "seq": 1, "ts": "2026-11-07T09:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Two runs", "structure": {"roles": [{"id": "a", "name": "A", "group": "G"}, {"id": "b", "name": "B", "group": "G"}]}}}
+{"v": "0.2", "seq": 2, "ts": "2026-11-07T09:00:02Z", "runId": "r1", "type": "agent.registered", "agentId": "a", "data": {"backend": "claude-code", "accepts": ["message", "respond"]}}
+{"v": "0.2", "seq": 3, "ts": "2026-11-07T09:00:03Z", "runId": "r1", "type": "usage", "agentId": "a", "data": {"inputTokens": 10, "outputTokens": 5, "costUsd": 0.01, "turns": 1}}
+{"v": "0.2", "seq": 4, "ts": "2026-11-07T09:00:04Z", "runId": "r1", "type": "request.opened", "agentId": "a", "data": {"requestId": "r1", "kind": "approval", "title": "Use the browser?"}}
+{"v": "0.2", "seq": 5, "ts": "2026-11-07T09:00:05Z", "runId": "r1", "type": "request.opened", "agentId": "lead", "data": {"requestId": "gate-1", "kind": "gate", "title": "Approve the final answer?"}}
+{"v": "0.2", "seq": 6, "ts": "2026-11-07T09:00:06Z", "runId": "r1", "type": "command.message", "agentId": "a", "data": {"cmdId": "cmd-1", "text": "Go on", "origin": {"kind": "human"}}}
+{"v": "0.2", "seq": 7, "ts": "2026-11-07T09:00:07Z", "runId": "r1", "type": "command.ack", "agentId": "a", "data": {"cmdId": "cmd-1", "status": "accepted"}}
+{"v": "0.2", "seq": 8, "ts": "2026-11-07T09:00:08Z", "runId": "r1", "type": "task.assigned", "agentId": "a", "data": {"taskId": "t1", "title": "Search"}}
+{"v": "0.2", "seq": 9, "ts": "2026-11-07T09:00:09Z", "runId": "r1", "type": "lead.ledger", "agentId": "lead", "data": {"satisfied": true}}
+{"v": "0.2", "seq": 10, "ts": "2026-11-07T09:00:10Z", "runId": "r1", "type": "review.verdict", "agentId": "b", "data": {"target": "a", "verdict": "accept"}}
+{"v": "0.2", "seq": 11, "ts": "2026-11-07T09:00:11Z", "runId": "r1", "type": "recovery.chosen", "agentId": "lead", "data": {"strategy": "replan"}}
+{"v": "0.2", "seq": 12, "ts": "2026-11-07T09:00:12Z", "runId": "r1", "type": "claim.added", "agentId": "lead", "data": {"claimId": "c1", "text": "A claim"}}
+{"v": "0.2", "seq": 13, "ts": "2026-11-07T09:00:13Z", "runId": "r1", "type": "evidence.checked", "agentId": "b", "data": {"sourceId": "s1", "urlHealth": "live"}}
+{"v": "0.2", "seq": 14, "ts": "2026-11-07T09:00:14Z", "runId": "r1", "type": "agent.status", "agentId": "b", "data": {"state": "idle", "stopReason": "max_turns"}}
+{"v": "0.2", "seq": 15, "ts": "2026-11-07T09:00:15Z", "runId": "r1", "type": "result", "agentId": "lead", "data": {"markdown": "Run 1", "question": "First question"}}
+{"v": "0.2", "seq": 16, "ts": "2026-11-07T09:00:16Z", "runId": "r1", "type": "run.finished", "agentId": "lead", "data": {"say": "Waiting for the gate"}}
+{"v": "0.2", "seq": 17, "ts": "2026-11-07T09:00:17Z", "runId": "r2", "type": "run.started", "agentId": "lead", "data": {"title": "Second"}}
+{"v": "0.2", "seq": 18, "ts": "2026-11-07T09:00:18Z", "runId": "r2", "type": "request.opened", "agentId": "a", "data": {"requestId": "r1", "kind": "approval", "title": "Same id as last run"}}
+{"v": "0.2", "seq": 19, "ts": "2026-11-07T09:00:19Z", "runId": "r2", "type": "request.opened", "agentId": "lead", "data": {"requestId": "r2", "kind": "decision", "title": "Pick a plan", "blocking": false}}
+{"v": "0.2", "seq": 20, "ts": "2026-11-07T09:00:20Z", "runId": "r2", "type": "command.ack", "agentId": "a", "data": {"cmdId": "cmd-1", "status": "applied"}}
+{"v": "0.2", "seq": 21, "ts": "2026-11-07T09:00:21Z", "runId": "r2", "type": "result", "agentId": "lead", "data": {"markdown": "Run 2", "round": 0}}

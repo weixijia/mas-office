@@ -136,6 +136,21 @@ export class Run {
     return this;
   }
 
+  /**
+   * Start a follow-up round on this run's result (`round.started`). The next `result()` is that round.
+   * @param {string} [question] the follow-up being answered
+   * @param {{round?: number}} [options]
+   */
+  followUp(question, { round } = {}) {
+    this.emit('lead', 'round.started', { round, question });
+    return this;
+  }
+
+  /** The lead records a checkable claim (`claim.added`); see `Agent.claim`. Returns the claimId. */
+  claim(text, options) {
+    return this.lead.claim(text, options);
+  }
+
   /** @internal */
   emit(agentId, type, data = {}, extra = {}) {
     this.project.emit({ runId: this.id, type, agentId, ...extra, data });
@@ -227,8 +242,73 @@ export class Agent {
     return this.#emit('flag.raised', { text, kind });
   }
 
-  resolve() {
-    return this.#emit('flag.resolved', {});
+  /**
+   * Without a request id: clear this agent's flag (`flag.resolved`).
+   * With one: close that request (`request.resolved`). `outcome` defaults to `selected` when
+   * `optionId` is given, otherwise `submitted`.
+   * @param {string} [requestId]
+   * @param {{outcome?: string, optionId?: string, payload?: any, note?: string, by?: {kind: string, id?: string}, cmdId?: string}} [answer]
+   */
+  resolve(requestId, { outcome, optionId, payload, note, by, cmdId } = {}) {
+    if (requestId === undefined) return this.#emit('flag.resolved', {});
+    outcome ??= optionId === undefined ? 'submitted' : 'selected';
+    return this.#emit('request.resolved', { requestId, outcome, optionId, payload, note, by, cmdId });
+  }
+
+  /**
+   * Ask for something that needs an answer (`request.opened`). A blocking request (the default)
+   * shows the agent as flagged until it is resolved.
+   * @param {string} title what is asked, in one plain line
+   * @param {{kind?: 'approval'|'question'|'decision'|'flag'|'gate', requestId?: string, description?: string,
+   *   options?: {optionId: string, name: string, kind?: string}[], blocking?: boolean, routeTo?: string,
+   *   resolver?: string, urgency?: 'low'|'normal'|'high', toolCallId?: string, subject?: object,
+   *   responseSchema?: object, expiresAt?: string, onExpire?: string, source?: object}} [request] `kind` defaults to `question`
+   * @returns {string} the requestId (generated when not given)
+   */
+  request(title, { kind = 'question', requestId = `req-${randomUUID().slice(0, 8)}`, ...fields } = {}) {
+    this.#emit('request.opened', { ...fields, requestId, kind, title });
+    return requestId;
+  }
+
+  /** The agent's session stopped (`agent.stopped`): `scope` `turn` (default) or `agent`. */
+  stopped(reason, { scope, by } = {}) {
+    return this.#emit('agent.stopped', { reason, scope, by });
+  }
+
+  /** Usage totals so far for this agent (`usage`). */
+  usage({ inputTokens, outputTokens, costUsd, turns, limit } = {}) {
+    return this.#emit('usage', { inputTokens, outputTokens, costUsd, turns, limit });
+  }
+
+  /**
+   * Record a checkable claim (`claim.added`), authored by this agent.
+   * @param {string} text
+   * @param {{claimId?: string, sources?: string[], serves?: string, checkworthy?: boolean}} [options]
+   * @returns {string} the claimId (generated when not given)
+   */
+  claim(text, { claimId = `claim-${randomUUID().slice(0, 8)}`, sources, serves, checkworthy } = {}) {
+    this.#emit('claim.added', { claimId, text, sources, serves, checkworthy });
+    return claimId;
+  }
+
+  /**
+   * Record what this agent found about a source (`evidence.checked`).
+   * @param {string} sourceId
+   * @param {{url?: string, urlHealth?: 'live'|'stale'|'hallucinated'|'blocked'|'unknown', httpStatus?: number,
+   *   archivedUrl?: string, grade?: 'A'|'B'|'C'|'D', quote?: string, note?: string}} [found]
+   */
+  evidence(sourceId, { url, urlHealth, httpStatus, archivedUrl, grade, quote, note } = {}) {
+    return this.#emit('evidence.checked', { sourceId, url, urlHealth, httpStatus, archivedUrl, grade, quote, note });
+  }
+
+  /**
+   * Record this agent's verdict on a claim (`verdict.recorded`).
+   * @param {string} claimId
+   * @param {'supported'|'partial'|'contradicted'|'unknown'|'not-checkworthy'} status
+   * @param {{sourceId?: string, relationship?: 'supports'|'refutes'|'irrelevant', method?: string, note?: string, backend?: string}} [details]
+   */
+  verdict(claimId, status, { sourceId, relationship, method, note, backend } = {}) {
+    return this.#emit('verdict.recorded', { claimId, status, sourceId, relationship, method, note, backend });
   }
 
   done(say) {

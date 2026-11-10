@@ -1,0 +1,12 @@
+{"v": "0.2", "seq": 1, "ts": "2026-11-07T09:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Rounds"}}
+{"v": "0.2", "seq": 2, "ts": "2026-11-07T09:00:02Z", "runId": "r1", "type": "result", "agentId": "lead", "data": {"markdown": "## Shortlist\n- Currys £279"}}
+{"v": "0.2", "seq": 3, "ts": "2026-11-07T09:00:03Z", "runId": "r1", "type": "result", "agentId": "lead", "data": {"markdown": "Argos has no stock.", "question": "What about Argos?"}}
+{"v": "0.2", "seq": 4, "ts": "2026-11-07T09:00:04Z", "runId": "r1", "type": "result", "agentId": "lead", "data": {"title": "Follow-up", "markdown": "Same price.", "round": 2}}
+{"v": "0.2", "seq": 5, "ts": "2026-11-07T09:00:05Z", "runId": "r1", "type": "result", "agentId": "lead", "data": {"markdown": "Jumped ahead.", "round": 7, "question": null}}
+{"v": "0.2", "seq": 6, "ts": "2026-11-07T09:00:06Z", "runId": "r1", "type": "result", "agentId": "lead", "data": {"markdown": "Not an integer.", "round": 7.5, "question": "Half a round?"}}
+{"v": "0.2", "seq": 7, "ts": "2026-11-07T09:00:07Z", "runId": "r1", "type": "result", "agentId": "lead", "data": {"markdown": "Wrong type.", "round": "9"}}
+{"v": "0.2", "seq": 8, "ts": "2026-11-07T09:00:08Z", "runId": "r1", "type": "agent.status", "agentId": "checker", "data": {"state": "flagged", "flag": "Check the open-box price", "flagKind": "concern"}}
+{"v": "0.2", "seq": 9, "ts": "2026-11-07T09:00:09Z", "runId": "r1", "type": "agent.status", "agentId": "lead", "data": {"state": "idle", "stopReason": "end_turn"}}
+{"v": "0.2", "seq": 10, "ts": "2026-11-07T09:00:10Z", "runId": "r1", "type": "run.finished", "agentId": "lead", "data": {"say": "Result ready"}}
+{"v": "0.2", "seq": 11, "ts": "2026-11-07T09:00:11Z", "runId": "r1", "type": "round.started", "agentId": "lead", "data": {"round": 10, "question": "Any open-box units?"}}
+{"v": "0.2", "seq": 12, "ts": "2026-11-07T09:00:12Z", "runId": "r1", "type": "result", "agentId": "lead", "data": {"markdown": "One open-box unit at £249.", "round": 10, "question": "Any open-box units?"}}

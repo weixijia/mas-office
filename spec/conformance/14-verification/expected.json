@@ -1,0 +1,394 @@
+{
+  "structure": {
+    "title": "Verification",
+    "version": 1,
+    "locked": true,
+    "topology": "dynamic",
+    "lead": {
+      "id": "lead",
+      "name": "Lead",
+      "emoji": "🧭",
+      "job": "",
+      "serves": []
+    },
+    "groups": [
+      {
+        "id": "dyn",
+        "label": "Spawned at runtime",
+        "after": null
+      }
+    ],
+    "roles": [
+      {
+        "id": "writer",
+        "name": "writer",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      },
+      {
+        "id": "checker",
+        "name": "checker",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      },
+      {
+        "id": "checker-2",
+        "name": "checker-2",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      }
+    ]
+  },
+  "statuses": {
+    "lead": {
+      "state": "working",
+      "say": "Planning the run",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:01Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "writer": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:08Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "checker": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:10Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "checker-2": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:12Z",
+      "waitingOn": [],
+      "stopReason": null
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "running",
+    "locked": true,
+    "version": 1,
+    "run": 1,
+    "runId": "r1",
+    "updated": "2026-11-07T09:00:28Z",
+    "next": "Watch the office panel — the team is working."
+  },
+  "result": null,
+  "inbox": {
+    "pending": [],
+    "recent": [],
+    "commands": []
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": {
+    "claims": [
+      {
+        "claimId": "c1",
+        "text": "Currys sells the XM6 for £279",
+        "sources": [
+          "currys-xm6",
+          "ebay-xm6"
+        ],
+        "serves": "R1",
+        "checkworthy": true,
+        "author": "lead",
+        "status": "supported",
+        "verdicts": [
+          {
+            "by": "checker",
+            "status": "supported",
+            "sourceId": "currys-xm6",
+            "relationship": "supports",
+            "method": "page-read",
+            "note": null,
+            "backend": "claude-code",
+            "at": "2026-11-07T09:00:15Z"
+          }
+        ]
+      },
+      {
+        "claimId": "c2",
+        "text": "eBay has it for £240 (refurbished)",
+        "sources": [
+          "ebay-xm6"
+        ],
+        "serves": null,
+        "checkworthy": true,
+        "author": "lead",
+        "status": "partial",
+        "verdicts": [
+          {
+            "by": "checker",
+            "status": "partial",
+            "sourceId": null,
+            "relationship": null,
+            "method": null,
+            "note": null,
+            "backend": null,
+            "at": "2026-11-07T09:00:16Z"
+          },
+          {
+            "by": "checker-2",
+            "status": "partial",
+            "sourceId": null,
+            "relationship": null,
+            "method": null,
+            "note": "Refurbished unit",
+            "backend": null,
+            "at": "2026-11-07T09:00:17Z"
+          }
+        ]
+      },
+      {
+        "claimId": "c3",
+        "text": "Sony is a good brand",
+        "sources": [],
+        "serves": null,
+        "checkworthy": false,
+        "author": "lead",
+        "status": "not-checkworthy",
+        "verdicts": [
+          {
+            "by": "checker",
+            "status": "contradicted",
+            "sourceId": null,
+            "relationship": null,
+            "method": null,
+            "note": null,
+            "backend": null,
+            "at": "2026-11-07T09:00:24Z"
+          }
+        ]
+      },
+      {
+        "claimId": "c4",
+        "text": "Argos has stock",
+        "sources": [],
+        "serves": null,
+        "checkworthy": true,
+        "author": "lead",
+        "status": "supported",
+        "verdicts": [
+          {
+            "by": "checker",
+            "status": "contradicted",
+            "sourceId": null,
+            "relationship": null,
+            "method": null,
+            "note": null,
+            "backend": null,
+            "at": "2026-11-07T09:00:22Z"
+          },
+          {
+            "by": "checker",
+            "status": "supported",
+            "sourceId": null,
+            "relationship": null,
+            "method": null,
+            "note": "Rechecked: in stock",
+            "backend": null,
+            "at": "2026-11-07T09:00:23Z"
+          }
+        ]
+      },
+      {
+        "claimId": "c5",
+        "text": "The XM6 launched in 2025",
+        "sources": [],
+        "serves": null,
+        "checkworthy": true,
+        "author": "lead",
+        "status": "contradicted",
+        "verdicts": [
+          {
+            "by": "checker",
+            "status": "supported",
+            "sourceId": null,
+            "relationship": null,
+            "method": null,
+            "note": null,
+            "backend": null,
+            "at": "2026-11-07T09:00:18Z"
+          },
+          {
+            "by": "checker-2",
+            "status": "contradicted",
+            "sourceId": null,
+            "relationship": "refutes",
+            "method": null,
+            "note": null,
+            "backend": null,
+            "at": "2026-11-07T09:00:19Z"
+          }
+        ]
+      },
+      {
+        "claimId": "c6",
+        "text": "Battery lasts 30 hours",
+        "sources": [],
+        "serves": null,
+        "checkworthy": true,
+        "author": "lead",
+        "status": "unknown",
+        "verdicts": [
+          {
+            "by": "checker",
+            "status": "supported",
+            "sourceId": null,
+            "relationship": null,
+            "method": null,
+            "note": null,
+            "backend": null,
+            "at": "2026-11-07T09:00:20Z"
+          },
+          {
+            "by": "checker-2",
+            "status": "partial",
+            "sourceId": null,
+            "relationship": null,
+            "method": null,
+            "note": null,
+            "backend": null,
+            "at": "2026-11-07T09:00:21Z"
+          }
+        ]
+      },
+      {
+        "claimId": "__proto__",
+        "text": "Proto claim",
+        "sources": [
+          "proto-src"
+        ],
+        "serves": null,
+        "checkworthy": true,
+        "author": "writer",
+        "status": "unknown",
+        "verdicts": [
+          {
+            "by": "checker",
+            "status": "unknown",
+            "sourceId": null,
+            "relationship": null,
+            "method": null,
+            "note": null,
+            "backend": null,
+            "at": "2026-11-07T09:00:28Z"
+          }
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "sourceId": "currys-xm6",
+        "url": "https://www.currys.co.uk/xm6",
+        "urlHealth": "live",
+        "httpStatus": 200,
+        "archivedUrl": null,
+        "grade": "A",
+        "quote": "£279",
+        "note": null,
+        "checkedBy": "checker",
+        "at": "2026-11-07T09:00:10Z"
+      },
+      {
+        "sourceId": "ebay-xm6",
+        "url": "https://www.ebay.co.uk/itm/1",
+        "urlHealth": "hallucinated",
+        "httpStatus": 404,
+        "archivedUrl": null,
+        "grade": null,
+        "quote": null,
+        "note": "No such item",
+        "checkedBy": "checker-2",
+        "at": "2026-11-07T09:00:12Z"
+      },
+      {
+        "sourceId": "orphan",
+        "url": null,
+        "urlHealth": "stale",
+        "httpStatus": null,
+        "archivedUrl": "https://web.archive.org/x",
+        "grade": "C",
+        "quote": null,
+        "note": null,
+        "checkedBy": "checker",
+        "at": "2026-11-07T09:00:13Z"
+      },
+      {
+        "sourceId": "__proto__",
+        "url": null,
+        "urlHealth": "blocked",
+        "httpStatus": null,
+        "archivedUrl": null,
+        "grade": null,
+        "quote": null,
+        "note": null,
+        "checkedBy": "checker",
+        "at": "2026-11-07T09:00:14Z"
+      }
+    ],
+    "summary": {
+      "claims": 7,
+      "checkworthy": 6,
+      "supported": 2,
+      "partial": 1,
+      "contradicted": 1,
+      "unknown": 2,
+      "unchecked": 0,
+      "sources": 4,
+      "live": 1,
+      "stale": 1,
+      "hallucinated": 1,
+      "blocked": 1,
+      "uncited": 2
+    }
+  }
+}

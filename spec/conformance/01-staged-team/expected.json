@@ -78,7 +78,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 100,
-      "t": "2026-11-06T10:00:14Z"
+      "t": "2026-11-06T10:00:14Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "finder-a": {
       "state": "done",
@@ -87,7 +89,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 100,
-      "t": "2026-11-06T10:00:06Z"
+      "t": "2026-11-06T10:00:06Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "finder-b": {
       "state": "done",
@@ -96,7 +100,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 100,
-      "t": "2026-11-06T10:00:08Z"
+      "t": "2026-11-06T10:00:08Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "checker": {
       "state": "done",
@@ -105,7 +111,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 100,
-      "t": "2026-11-06T10:00:12Z"
+      "t": "2026-11-06T10:00:12Z",
+      "waitingOn": [],
+      "stopReason": null
     }
   },
   "state": {
@@ -146,5 +154,19 @@
         "summary": "Checked 2 offers."
       }
     ]
-  }
+  },
+  "inbox": {
+    "pending": [],
+    "recent": [],
+    "commands": []
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
 }

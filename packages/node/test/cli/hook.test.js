@@ -122,3 +122,32 @@ test('hook command: prints nothing and exits 0, even on bad input; errors go to 
     fs.rmSync(ws, { recursive: true, force: true });
   }
 });
+
+test('a permission prompt in a session the person opened shows in the inbox and closes when the session moves on', () => {
+  const ask = { ...base, hook_event_name: 'PermissionRequest', tool_name: 'Bash', tool_input: { command: 'rm -rf build --secret=abc' }, tool_use_id: 'toolu_9' };
+  const opened = mapHook(ask, RUNNING);
+  assert.deepEqual(types(opened), ['request.opened@lead']);
+  const { data } = opened[0];
+  assert.equal(data.kind, 'approval');
+  assert.equal(data.title, 'Run rm?', 'the title never carries arguments');
+  assert.deepEqual(data.options, [], 'it is answered in its own terminal, not from the panel');
+  assert.equal(data.toolCallId, 'toolu_9');
+  assert.equal(JSON.stringify(opened).includes('secret'), false);
+
+  const waiting = reduce([
+    { v: '0.2', seq: 1, ts: 't', type: 'run.started', runId: SESSION, data: {} },
+    { v: '0.2', seq: 2, ts: 't', ...opened[0] },
+  ]);
+  assert.equal(waiting.inbox.pending.length, 1);
+  assert.equal(waiting.statuses.lead.state, 'flagged');
+  assert.deepEqual(mapHook(ask, waiting), [], 'the same prompt is not opened twice');
+  assert.deepEqual(mapHook({ ...base, hook_event_name: 'Notification', notification_type: 'permission_prompt', message: 'x' }, waiting), []);
+
+  const moved = mapHook({ ...base, hook_event_name: 'PostToolUse', tool_name: 'Bash', tool_use_id: 'toolu_9' }, waiting);
+  assert.deepEqual(types(moved), ['request.resolved@lead', 'tool.finished@lead']);
+  assert.equal(moved[0].data.outcome, 'superseded');
+  assert.deepEqual(moved[0].data.by, { kind: 'terminal' });
+  for (const name of ['PermissionDenied', 'UserPromptSubmit', 'Stop']) {
+    assert.equal(mapHook({ ...base, hook_event_name: name }, waiting)[0].type, 'request.resolved', name);
+  }
+});

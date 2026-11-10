@@ -22,7 +22,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 100,
-      "t": "2026-11-06T10:00:01Z"
+      "t": "2026-11-06T10:00:01Z",
+      "waitingOn": [],
+      "stopReason": null
     }
   },
   "state": {
@@ -36,5 +38,19 @@
     "updated": "2026-11-06T10:00:01Z",
     "next": "Run finished — open the result."
   },
-  "result": null
+  "result": null,
+  "inbox": {
+    "pending": [],
+    "recent": [],
+    "commands": []
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
 }

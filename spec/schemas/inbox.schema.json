@@ -1,0 +1,419 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/weixijia/mas-office/main/spec/schemas/inbox.schema.json",
+  "title": "MAS Office inbox (mas/inbox)",
+  "type": "object",
+  "required": [
+    "pending",
+    "recent",
+    "commands"
+  ],
+  "properties": {
+    "pending": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "requestId",
+          "agentId",
+          "kind",
+          "title"
+        ],
+        "properties": {
+          "requestId": {
+            "type": "string"
+          },
+          "agentId": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "subject": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "toolCallId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "optionId"
+              ],
+              "properties": {
+                "optionId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "allow_once",
+                    "allow_always",
+                    "reject_once",
+                    "reject_always",
+                    "choice"
+                  ]
+                }
+              }
+            }
+          },
+          "responseSchema": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "routeTo": {
+            "type": "string"
+          },
+          "resolver": {
+            "type": "string"
+          },
+          "urgency": {
+            "enum": [
+              "low",
+              "normal",
+              "high"
+            ]
+          },
+          "expiresAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "onExpire": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "openedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "run": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "recent": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "requestId",
+          "agentId",
+          "kind",
+          "title",
+          "outcome"
+        ],
+        "properties": {
+          "requestId": {
+            "type": "string"
+          },
+          "agentId": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "subject": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "toolCallId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "optionId"
+              ],
+              "properties": {
+                "optionId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "allow_once",
+                    "allow_always",
+                    "reject_once",
+                    "reject_always",
+                    "choice"
+                  ]
+                }
+              }
+            }
+          },
+          "responseSchema": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "routeTo": {
+            "type": "string"
+          },
+          "resolver": {
+            "type": "string"
+          },
+          "urgency": {
+            "enum": [
+              "low",
+              "normal",
+              "high"
+            ]
+          },
+          "expiresAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "onExpire": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "openedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "run": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "outcome": {
+            "enum": [
+              "selected",
+              "submitted",
+              "declined",
+              "cancelled",
+              "expired",
+              "superseded",
+              "stale"
+            ]
+          },
+          "optionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payload": {},
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "by": {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "human",
+                  "agent",
+                  "policy",
+                  "terminal",
+                  "system"
+                ]
+              },
+              "id": {
+                "type": "string"
+              },
+              "rule": {
+                "type": "string"
+              }
+            }
+          },
+          "cmdId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "resolvedAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "cmdId",
+          "type",
+          "agentId",
+          "status"
+        ],
+        "properties": {
+          "cmdId": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "command.message",
+              "command.respond",
+              "command.assign",
+              "command.interrupt"
+            ]
+          },
+          "agentId": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "human",
+                  "agent",
+                  "policy"
+                ]
+              },
+              "id": {
+                "type": "string"
+              }
+            }
+          },
+          "text": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "delivery": {
+            "enum": [
+              "steer",
+              "queue",
+              "interrupt",
+              null
+            ]
+          },
+          "requestId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "sent",
+              "accepted",
+              "applied",
+              "rejected",
+              "unsupported",
+              "expired"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sentAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ackAt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    }
+  }
+}

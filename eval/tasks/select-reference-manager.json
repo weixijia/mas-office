@@ -1,0 +1,43 @@
+{
+  "id": "select-reference-manager",
+  "title": "Choose a reference manager for a research group",
+  "category": "product-selection",
+  "task": "Recommend a reference manager for a five-person machine learning research group that writes papers in LaTeX on Overleaf and in Google Docs, uses macOS, Windows and Linux, and wants a shared group library. Compare at least Zotero, Mendeley and Paperpile, and add another option if it fits better. For each give the price for five people per year, platform support, LaTeX/BibTeX and Overleaf integration, Google Docs integration, shared-library limits, and data export. Recommend one, and say what would make you pick a different one.",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "Zotero, Mendeley and Paperpile compared, plus any better-fitting option."
+    },
+    {
+      "id": "R2",
+      "text": "For each: yearly price for five people, platforms, BibTeX/Overleaf and Google Docs integration, shared-library limits, export."
+    },
+    {
+      "id": "R3",
+      "text": "One recommendation with the conditions under which another option would be better."
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "kind": "must-cite",
+      "text": "Prices and storage or group limits link to the vendor's own pricing or documentation page."
+    },
+    {
+      "id": "C2",
+      "kind": "must-compare",
+      "text": "All options are compared on the same criteria in one table."
+    },
+    {
+      "id": "C3",
+      "kind": "freshness",
+      "text": "Prices carry the date they were checked and the currency."
+    },
+    {
+      "id": "C4",
+      "kind": "must-state-uncertainty",
+      "text": "Features that could not be confirmed from vendor documentation (e.g. Linux support, Overleaf sync behaviour) are marked as unconfirmed rather than asserted."
+    }
+  ],
+  "notes": "Vendor pricing changes; the rubric only checks that each figure is sourced and dated."
+}

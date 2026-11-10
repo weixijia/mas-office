@@ -1,0 +1,22 @@
+{"v": "0.2", "seq": 1, "ts": "2026-11-07T09:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Commands", "structure": {"roles": [{"id": "w", "name": "Worker", "group": "A"}]}}}
+{"v": "0.2", "seq": 2, "ts": "2026-11-07T09:00:02Z", "runId": "r1", "type": "agent.status", "agentId": "w", "data": {"state": "working", "say": "Reading", "progress": 30}}
+{"v": "0.2", "seq": 3, "ts": "2026-11-07T09:00:03Z", "runId": "r1", "type": "command.message", "agentId": "w", "data": {"cmdId": "cmd-1", "text": "Also check Argos", "delivery": "queue", "origin": {"kind": "human"}}}
+{"v": "0.2", "seq": 4, "ts": "2026-11-07T09:00:04Z", "runId": "r1", "type": "command.message", "agentId": "w", "data": {"cmdId": "cmd-2", "text": "Hurry up", "delivery": "shout"}}
+{"v": "0.2", "seq": 5, "ts": "2026-11-07T09:00:05Z", "runId": "r1", "type": "command.respond", "agentId": "w", "data": {"cmdId": "cmd-3", "requestId": "req-9", "outcome": "selected", "optionId": "allow-once", "origin": {"kind": "human"}}}
+{"v": "0.2", "seq": 6, "ts": "2026-11-07T09:00:06Z", "runId": "r1", "type": "command.assign", "agentId": "w", "data": {"cmdId": "cmd-4", "title": "Check eBay", "brief": "UK sellers only", "taskId": "t1", "origin": {"kind": "agent", "id": "lead"}}}
+{"v": "0.2", "seq": 7, "ts": "2026-11-07T09:00:07Z", "runId": "r1", "type": "command.interrupt", "agentId": "w", "data": {"cmdId": "cmd-5", "scope": "agent", "reason": "Wrong direction", "origin": {"kind": "human"}}}
+{"v": "0.2", "seq": 8, "ts": "2026-11-07T09:00:08Z", "runId": "r1", "type": "command.message", "agentId": "w", "data": {"cmdId": "cmd-1", "text": "Duplicate id, ignored"}}
+{"v": "0.2", "seq": 9, "ts": "2026-11-07T09:00:09Z", "type": "command.message", "agentId": "w", "data": {"cmdId": "cmd-6"}}
+{"v": "0.2", "seq": 10, "ts": "2026-11-07T09:00:10Z", "type": "command.interrupt", "agentId": "w", "data": {"cmdId": 6}}
+{"v": "0.2", "seq": 11, "ts": "2026-11-07T09:00:11Z", "type": "command.respond", "agentId": "w", "data": {"cmdId": "cmd-7", "requestId": "req-9"}}
+{"v": "0.2", "seq": 12, "ts": "2026-11-07T09:00:12Z", "runId": "r1", "type": "command.ack", "agentId": "w", "data": {"cmdId": "cmd-1", "status": "accepted"}}
+{"v": "0.2", "seq": 13, "ts": "2026-11-07T09:00:13Z", "runId": "r1", "type": "command.ack", "agentId": "w", "data": {"cmdId": "cmd-1", "status": "applied", "reason": "delivered after the turn"}}
+{"v": "0.2", "seq": 14, "ts": "2026-11-07T09:00:14Z", "runId": "r1", "type": "command.ack", "agentId": "w", "data": {"cmdId": "cmd-1", "status": "rejected", "reason": "too late"}}
+{"v": "0.2", "seq": 15, "ts": "2026-11-07T09:00:15Z", "type": "command.ack", "agentId": "w", "data": {"cmdId": "cmd-2", "status": "done"}}
+{"v": "0.2", "seq": 16, "ts": "2026-11-07T09:00:16Z", "runId": "r1", "type": "command.ack", "agentId": "w", "data": {"cmdId": "cmd-unknown", "status": "applied"}}
+{"v": "0.2", "seq": 17, "ts": "2026-11-07T09:00:17Z", "runId": "r1", "type": "command.ack", "agentId": "w", "data": {"cmdId": "cmd-3", "status": "rejected", "reason": "already_resolved"}}
+{"v": "0.2", "seq": 18, "ts": "2026-11-07T09:00:18Z", "runId": "r1", "type": "command.ack", "agentId": "w", "data": {"cmdId": "cmd-5", "status": "accepted", "reason": 42}}
+{"v": "0.2", "seq": 19, "ts": "2026-11-07T09:00:19Z", "runId": "r1", "type": "command.ack", "agentId": "w", "data": {"cmdId": "cmd-4", "status": "unsupported", "reason": "no_session"}}
+{"v": "0.2", "seq": 20, "ts": "2026-11-07T09:00:20Z", "runId": "r1", "type": "command.ack", "agentId": "w", "data": {"cmdId": "cmd-4", "status": "applied"}}
+{"v": "0.2", "seq": 21, "ts": "2026-11-07T09:00:21Z", "runId": "r1", "type": "command.message", "agentId": "ghost", "data": {"cmdId": "__proto__", "text": "Are you there?", "origin": "human"}}
+{"v": "0.2", "seq": 22, "ts": "2026-11-07T09:00:22Z", "runId": "r1", "type": "command.ack", "agentId": "ghost", "data": {"cmdId": "__proto__", "status": "expired"}}

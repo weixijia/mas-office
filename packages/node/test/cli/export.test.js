@@ -38,6 +38,32 @@ test('maps every event type with timestamp and rawEvent', () => {
   assert.ok(out.every((e) => typeof e.timestamp === 'number' && e.rawEvent));
 });
 
+test('0.2: requests become AG-UI Interrupt / ResumeEntry values, tasks become TASK activity snapshots', () => {
+  const out = toAgUi([
+    ev(1, 'request.opened', { agentId: 'w', data: { requestId: 'r1', kind: 'approval', title: 'Run it?', toolCallId: 'call-1', options: [{ optionId: 'ok', name: 'OK' }] } }),
+    ev(2, 'request.opened', { agentId: 'w', data: { requestId: 'r2', kind: 'gate', title: 'Ship?', expiresAt: 'soon' } }),
+    ev(3, 'request.resolved', { agentId: 'w', data: { requestId: 'r1', outcome: 'selected', optionId: 'ok', by: { kind: 'human' } } }),
+    ev(4, 'request.resolved', { data: { requestId: 'r2', outcome: 'expired' } }),
+    ev(5, 'task.assigned', { agentId: 'w', data: { taskId: 't1', title: 'Search' } }),
+    ev(6, 'task.updated', { agentId: 'w', data: { taskId: 't1', state: 'working', say: 'Go' } }),
+    ev(7, 'task.finished', { agentId: 'w', data: { taskId: 't1', summary: 'Done' } }),
+    ev(8, 'command.message', { agentId: 'w', data: { cmdId: 'c1', text: 'Hi' } }),
+  ]);
+  assert.deepEqual(out.map((e) => [e.type, e.name ?? e.activityType]), [
+    ['CUSTOM', 'interrupt'], ['CUSTOM', 'interrupt'], ['CUSTOM', 'resume'], ['CUSTOM', 'resume'],
+    ['ACTIVITY_SNAPSHOT', 'TASK'], ['ACTIVITY_SNAPSHOT', 'TASK'], ['ACTIVITY_SNAPSHOT', 'TASK'], ['CUSTOM', 'command.message'],
+  ]);
+  assert.deepEqual(out[0].value, {
+    id: 'r1', reason: 'tool_call', message: 'Run it?', toolCallId: 'call-1',
+    metadata: { agentId: 'w', kind: 'approval', options: [{ optionId: 'ok', name: 'OK' }] },
+  });
+  assert.deepEqual([out[1].value.reason, out[1].value.expiresAt], ['mas:gate', 'soon']);
+  assert.deepEqual(out[2].value, { interruptId: 'r1', status: 'resolved', payload: { optionId: 'ok' }, metadata: { outcome: 'selected', by: { kind: 'human' } } });
+  assert.deepEqual(out[3].value, { interruptId: 'r2', status: 'cancelled', metadata: { outcome: 'expired' } });
+  assert.equal(out[4].messageId, 'task-t1');
+  assert.deepEqual(out[6].content, { taskId: 't1', title: 'Search', state: 'done', say: 'Go', summary: 'Done', agentId: 'w' });
+});
+
 test('types named like Object.prototype members are unknown types (CUSTOM)', () => {
   const out = toAgUi([ev(1, 'constructor'), ev(2, 'toString'), ev(3, '__proto__')]);
   assert.deepEqual(out.map((e) => e.type), ['CUSTOM', 'CUSTOM', 'CUSTOM']);

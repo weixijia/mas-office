@@ -20,6 +20,9 @@ GLOBALS: Dict[str, str] = {
     "mas/structure": "MAS_STRUCTURE",
     "mas/state": "MAS_STATE",
     "outputs/result": "MAS_RESULT",
+    "mas/inbox": "MAS_INBOX",
+    "mas/board": "MAS_BOARD",
+    "outputs/verification": "MAS_VERIFICATION",
 }
 
 # Status files are only written for ids that are safe as file names (role ids, plus "lead").
@@ -81,21 +84,25 @@ def write_status(project_dir: PathLike, agent_id: str, status: Dict[str, Any]) -
 
 
 def write_snapshots(project_dir: PathLike, snapshot: Dict[str, Any], previous: Optional[Dict[str, Any]] = None) -> None:
-    """Write a reducer snapshot as ``mas/structure``, ``mas/status/*``, ``mas/state`` and ``outputs/result``.
+    """Write a reducer snapshot as ``mas/structure``, ``mas/status/*``, ``mas/state``, ``mas/inbox``,
+    ``mas/board``, ``outputs/result`` and ``outputs/verification``.
 
     With ``previous`` (the snapshot written last time), unchanged documents are skipped.
     Status files are skipped for ids that are not safe file names (see ``SAFE_AGENT_ID``).
+    ``outputs/result`` and ``outputs/verification`` are removed when the snapshot has none.
     """
     root = Path(project_dir)
     prev = previous or {}
-    for key, rel in (("structure", "mas/structure"), ("state", "mas/state")):
-        if key not in prev or prev[key] != snapshot[key]:
+    for key, rel in (("structure", "mas/structure"), ("state", "mas/state"), ("inbox", "mas/inbox"), ("board", "mas/board")):
+        if key in snapshot and (key not in prev or prev[key] != snapshot[key]):
             write_document(root / rel, snapshot[key], GLOBALS[rel])
-    if snapshot["result"] is None:
-        # Spec §4.5: never leave the previous run's result looking current.
-        remove_document(root / "outputs/result")
-    elif "result" not in prev or prev["result"] != snapshot["result"]:
-        write_document(root / "outputs/result", snapshot["result"], GLOBALS["outputs/result"])
+    for key in ("result", "verification"):
+        rel = f"outputs/{key}"
+        if snapshot.get(key) is None:
+            # Spec 4.5: never leave the previous run's result or verification looking current.
+            remove_document(root / rel)
+        elif key not in prev or prev[key] != snapshot[key]:
+            write_document(root / rel, snapshot[key], GLOBALS[rel])
     prev_statuses = prev.get("statuses") or {}
     for agent_id, status in snapshot["statuses"].items():
         if prev_statuses.get(agent_id) != status and SAFE_AGENT_ID.fullmatch(agent_id):

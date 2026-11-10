@@ -1,0 +1,16 @@
+{"v": "0.2", "seq": 1, "ts": "2026-11-07T09:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Answers"}}
+{"v": "0.2", "seq": 2, "ts": "2026-11-07T09:00:02Z", "runId": "r1", "type": "agent.status", "agentId": "a", "data": {"state": "working", "say": "Working"}}
+{"v": "0.2", "seq": 3, "ts": "2026-11-07T09:00:03Z", "runId": "r1", "type": "request.opened", "agentId": "a", "data": {"requestId": "r1", "kind": "approval", "title": "Run the search tool?"}}
+{"v": "0.2", "seq": 4, "ts": "2026-11-07T09:00:04Z", "type": "request.resolved", "agentId": "a", "data": {"requestId": "r1", "outcome": "maybe"}}
+{"v": "0.2", "seq": 5, "ts": "2026-11-07T09:00:05Z", "type": "request.resolved", "agentId": "a", "data": {"requestId": "r1"}}
+{"v": "0.2", "seq": 6, "ts": "2026-11-07T09:00:06Z", "runId": "r1", "type": "request.resolved", "agentId": "a", "data": {"requestId": "r1", "outcome": "superseded", "by": {"kind": "terminal"}}}
+{"v": "0.2", "seq": 7, "ts": "2026-11-07T09:00:07Z", "runId": "r1", "type": "request.resolved", "agentId": "a", "data": {"requestId": "r1", "outcome": "declined", "by": {"kind": "human"}}}
+{"v": "0.2", "seq": 8, "ts": "2026-11-07T09:00:08Z", "runId": "r1", "type": "request.opened", "agentId": "a", "data": {"requestId": "r1", "kind": "approval", "title": "Asked again with the same id"}}
+{"v": "0.2", "seq": 9, "ts": "2026-11-07T09:00:09Z", "runId": "r1", "type": "request.resolved", "agentId": "lead", "data": {"requestId": "nope", "outcome": "selected"}}
+{"v": "0.2", "seq": 10, "ts": "2026-11-07T09:00:10Z", "runId": "r1", "type": "request.opened", "agentId": "a", "data": {"requestId": "__proto__", "kind": "custom-kind", "title": "Proto question"}}
+{"v": "0.2", "seq": 11, "ts": "2026-11-07T09:00:11Z", "runId": "r1", "type": "request.opened", "agentId": "b", "data": {"requestId": "constructor", "kind": "question", "title": "Which region?"}}
+{"v": "0.2", "seq": 12, "ts": "2026-11-07T09:00:12Z", "runId": "r1", "type": "request.resolved", "agentId": "c", "data": {"requestId": "constructor", "outcome": "submitted", "payload": false, "by": "human"}}
+{"v": "0.2", "seq": 13, "ts": "2026-11-07T09:00:13Z", "runId": "r1", "type": "request.resolved", "agentId": "a", "data": {"requestId": "__proto__", "outcome": "submitted", "payload": {"answer": 42}, "optionId": 3, "note": null, "cmdId": {"x": 1}}}
+{"v": "0.2", "seq": 14, "ts": "2026-11-07T09:00:14Z", "runId": "r1", "type": "request.opened", "agentId": "a", "data": {"requestId": "r2", "kind": "question", "title": "Which currency?"}}
+{"v": "0.2", "seq": 15, "ts": "2026-11-07T09:00:15Z", "runId": "r1", "type": "flag.raised", "agentId": "a", "data": {"text": "Prices look stale", "kind": "concern"}}
+{"v": "0.2", "seq": 16, "ts": "2026-11-07T09:00:16Z", "runId": "r1", "type": "request.resolved", "agentId": "lead", "data": {"requestId": "r2", "outcome": "expired", "by": {"kind": "policy", "rule": "timeout"}}}

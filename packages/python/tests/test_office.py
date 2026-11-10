@@ -319,3 +319,61 @@ def test_new_run_removes_previous_result(tmp_path):
         assert (result / "result.json").exists() and (result / "result.js").exists()
         project.run()
         assert not (result / "result.json").exists() and not (result / "result.js").exists()
+
+
+def test_protocol_0_2_helpers_reach_inbox_board_and_verification(tmp_path):
+    with Office(workspace=tmp_path) as office:
+        run = office.project("deals").run(STRUCTURE)
+        finder = run.agent("finder")
+        ask = finder.request("Open currys.co.uk?", kind="approval", options=[{"optionId": "ok", "name": "Allow"}])
+        question = finder.request("Refurbished too?", request_id="q-1", urgency="high")
+        assert ask.startswith("req-") and len(ask) == 12 and question == "q-1"
+        finder.resolve(ask, option_id="ok", by={"kind": "human"})
+        finder.usage(input_tokens=100, turns=1)
+        claim = run.claim("Currys has it for £279", sources=["currys"])
+        checker = run.agent("checker")
+        checker.evidence("currys", url="https://currys.example", url_health="live", grade="A")
+        checker.verdict(claim, "supported", source_id="currys", relationship="supports")
+        checker.stopped("Stopped by you", scope="agent", by={"kind": "human"})
+        checker.resolve()
+
+    pdir = tmp_path / "deals"
+    types = [e["type"] for e in read_log(pdir)]
+    assert types[1:] == ["request.opened", "request.opened", "request.resolved", "usage", "claim.added",
+                         "agent.registered", "evidence.checked", "verdict.recorded", "agent.stopped", "flag.resolved"]
+    inbox = json.loads((pdir / "mas" / "inbox.json").read_text(encoding="utf-8"))
+    assert [(r["requestId"], r["urgency"]) for r in inbox["pending"]] == [("q-1", "high")]
+    assert (inbox["recent"][0]["requestId"], inbox["recent"][0]["outcome"], inbox["recent"][0]["optionId"]) == (ask, "selected", "ok")
+    assert read_js(pdir / "mas" / "inbox.js", "window.MAS_INBOX = ") == inbox
+    assert json.loads((pdir / "mas" / "status" / "finder.json").read_text(encoding="utf-8"))["waitingOn"] == ["q-1"]
+    stopped = json.loads((pdir / "mas" / "status" / "checker.json").read_text(encoding="utf-8"))
+    assert (stopped["state"], stopped["say"], stopped["stopReason"]) == ("done", "Stopped by you", "cancelled")
+    board = json.loads((pdir / "mas" / "board.json").read_text(encoding="utf-8"))
+    assert board["usage"]["finder"]["inputTokens"] == 100
+    verification = json.loads((pdir / "outputs" / "verification.json").read_text(encoding="utf-8"))
+    assert (verification["claims"][0]["claimId"], verification["claims"][0]["author"]) == (claim, "lead")
+    assert verification["claims"][0]["status"] == "supported" and verification["summary"]["live"] == 1
+    assert read_js(pdir / "outputs" / "verification.js", "window.MAS_VERIFICATION = ") == verification
+
+
+def test_new_run_removes_previous_verification(tmp_path):
+    with Office(workspace=tmp_path) as office:
+        project = office.project("twice")
+        project.run().claim("A claim")
+        outputs = tmp_path / "twice" / "outputs"
+        assert (outputs / "verification.json").exists() and (outputs / "verification.js").exists()
+        project.run()
+        assert not (outputs / "verification.json").exists() and not (outputs / "verification.js").exists()
+
+
+def test_follow_up_opens_a_round_and_the_next_result_is_that_round(tmp_path):
+    with Office(workspace=tmp_path) as office:
+        with office.project("deals").run() as run:
+            run.result("one")
+            run.finish()
+            run.follow_up("Open-box too?", round=2)
+            run.result("two")
+    pdir = tmp_path / "deals"
+    assert [e["type"] for e in read_log(pdir)][-3:] == ["round.started", "result", "run.finished"]
+    result = json.loads((pdir / "outputs" / "result.json").read_text(encoding="utf-8"))
+    assert result["round"] == 2 and [p["markdown"] for p in result["previous"]] == ["one"]

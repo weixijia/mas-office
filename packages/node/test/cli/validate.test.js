@@ -42,7 +42,7 @@ test('a broken workspace reports every problem with a path', () => {
       '{"v":"0.1","seq":1,"ts":"t","type":"run.started"}',
       'not json',
       '{"v":"0.1","seq":1,"ts":"t","type":"message","data":{}}',
-      '{"v":"0.2","seq":3,"ts":"t","type":"run.finished"}',
+      '{"v":"0.9","seq":3,"ts":"t","type":"run.finished"}',
       '',
     ].join('\n'));
 
@@ -66,8 +66,34 @@ test('a broken workspace reports every problem with a path', () => {
       'line 2: not valid JSON',
       'line 3: "message" needs a string "data.text"',
       'line 3: seq 1 is not greater than the previous seq 1',
-      'line 4 /v: must match ^0\\.1$',
+      'line 4 /v: must match ^0\\.[12]$',
     ]);
+  } finally {
+    fs.rmSync(ws, { recursive: true, force: true });
+  }
+});
+
+test('0.2 documents: mas/inbox, mas/board and outputs/verification are checked', () => {
+  const ws = tmpDir();
+  try {
+    const request = { requestId: 'r1', agentId: 'a', kind: 'approval', title: 'T', urgency: 'urgent' };
+    write(path.join(ws, 'p/mas/inbox.json'), { pending: [request], recent: [], commands: [{ cmdId: 'c', type: 'command.message', agentId: 'a', status: 'done' }] });
+    write(path.join(ws, 'p/mas/board.json'), { tasks: [], reviews: [], recoveries: [], usage: { a: { turns: '1' } }, agents: { a: { accepts: 'message' } } });
+    write(path.join(ws, 'p/outputs/verification.js'), 'window.MAS_VERIFICATION = {"claims": [{"claimId": "c1", "text": "x", "status": "true"}], "evidence": []};');
+    write(path.join(ws, 'p/mas/status/a.json'), { state: 'flagged', waitingOn: 'r1', stopReason: 3 });
+    write(path.join(ws, 'p/mas/events.jsonl'), '{"v":"0.2","seq":1,"ts":"t","type":"request.opened","data":{"requestId":"r1","kind":"question"}}\n');
+    const errors = errorsByFile(validatePath(ws), ws);
+    assert.deepEqual(errors['p/mas/inbox.json'], [
+      '/pending/0/urgency: must be one of "low", "normal", "high"',
+      '/commands/0/status: must be one of "sent", "accepted", "applied", "rejected", "unsupported", "expired"',
+    ]);
+    assert.deepEqual(errors['p/mas/board.json'], ['/usage/a/turns: must be number', '/agents/a/accepts: must be array']);
+    assert.deepEqual(errors['p/outputs/verification.js'], [
+      '/summary: is required',
+      '/claims/0/status: must be one of "unchecked", "supported", "partial", "contradicted", "unknown", "not-checkworthy"',
+    ]);
+    assert.deepEqual(errors['p/mas/status/a.json'], ['/waitingOn: must be array', '/stopReason: must be string or null']);
+    assert.deepEqual(errors['p/mas/events.jsonl'], ['line 1: "request.opened" needs a string "data.title"']);
   } finally {
     fs.rmSync(ws, { recursive: true, force: true });
   }

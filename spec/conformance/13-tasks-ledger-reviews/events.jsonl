@@ -1,0 +1,27 @@
+{"v": "0.2", "seq": 1, "ts": "2026-11-07T09:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Board", "structure": {"title": "Headphone deals", "lead": {"id": "lead", "name": "Lead"}, "groups": [{"id": "A", "label": "Search", "after": null}, {"id": "B", "label": "Check", "after": "A"}], "roles": [{"id": "finder-a", "name": "Retail finder", "group": "A", "handsTo": "checker"}, {"id": "finder-b", "name": "Marketplace finder", "group": "A", "handsTo": "checker"}, {"id": "checker", "name": "Checker", "group": "B", "handsTo": "lead"}]}}}
+{"v": "0.2", "seq": 2, "ts": "2026-11-07T09:00:02Z", "runId": "r1", "type": "agent.registered", "agentId": "finder-a", "data": {"backend": "claude-code", "accepts": ["message", 5, "interrupt"], "session": {"backend": "claude-code", "id": "s-1", "resumable": true}}}
+{"v": "0.2", "seq": 3, "ts": "2026-11-07T09:00:03Z", "runId": "r1", "type": "agent.registered", "agentId": "finder-b", "data": {"name": "Ignored for a known agent"}}
+{"v": "0.2", "seq": 4, "ts": "2026-11-07T09:00:04Z", "runId": "r1", "type": "agent.registered", "agentId": "codex-1", "data": {"name": "Codex helper", "backend": "codex", "model": "gpt-x", "reviewerOf": ["finder-a"]}}
+{"v": "0.2", "seq": 5, "ts": "2026-11-07T09:00:05Z", "runId": "r1", "type": "agent.registered", "agentId": "finder-a", "data": {"model": "opus", "backend": 7, "accepts": "message"}}
+{"v": "0.2", "seq": 6, "ts": "2026-11-07T09:00:06Z", "runId": "r1", "type": "task.assigned", "agentId": "finder-a", "data": {"taskId": "t1", "title": "Search retailers", "brief": "UK only"}}
+{"v": "0.2", "seq": 7, "ts": "2026-11-07T09:00:07Z", "runId": "r1", "type": "task.assigned", "agentId": "finder-b", "data": {"taskId": "t2", "title": "Search marketplaces", "from": "checker", "round": "2", "attempt": 2}}
+{"v": "0.2", "seq": 8, "ts": "2026-11-07T09:00:08Z", "runId": "r1", "type": "task.assigned", "agentId": "checker", "data": {"taskId": "__proto__", "title": "Check offers", "round": 1.5}}
+{"v": "0.2", "seq": 9, "ts": "2026-11-07T09:00:09Z", "runId": "r1", "type": "task.updated", "agentId": "finder-a", "data": {"taskId": "t1", "state": "working", "say": "Searching Currys"}}
+{"v": "0.2", "seq": 10, "ts": "2026-11-07T09:00:10Z", "runId": "r1", "type": "task.updated", "agentId": "finder-a", "data": {"taskId": "t1", "state": "paused", "say": "Searching Argos"}}
+{"v": "0.2", "seq": 11, "ts": "2026-11-07T09:00:11Z", "runId": "r1", "type": "task.updated", "agentId": "finder-b", "data": {"taskId": "t9", "say": "Unknown task, status only"}}
+{"v": "0.2", "seq": 12, "ts": "2026-11-07T09:00:12Z", "runId": "r1", "type": "task.updated", "agentId": "finder-b", "data": {"taskId": "t2", "state": "blocked"}}
+{"v": "0.2", "seq": 13, "ts": "2026-11-07T09:00:13Z", "runId": "r1", "type": "task.finished", "agentId": "finder-a", "data": {"taskId": "t1", "outcome": "success", "summary": "3 offers"}}
+{"v": "0.2", "seq": 14, "ts": "2026-11-07T09:00:14Z", "runId": "r1", "type": "task.finished", "agentId": "finder-b", "data": {"taskId": "t2", "outcome": "meh"}}
+{"v": "0.2", "seq": 15, "ts": "2026-11-07T09:00:15Z", "runId": "r1", "type": "task.assigned", "agentId": "finder-b", "data": {"taskId": "t2", "title": "Search marketplaces again", "attempt": 3}}
+{"v": "0.2", "seq": 16, "ts": "2026-11-07T09:00:16Z", "runId": "r1", "type": "task.finished", "agentId": "finder-b", "data": {"taskId": "t-none"}}
+{"v": "0.2", "seq": 17, "ts": "2026-11-07T09:00:17Z", "type": "task.assigned", "agentId": "finder-b", "data": {"taskId": "t3"}}
+{"v": "0.2", "seq": 18, "ts": "2026-11-07T09:00:18Z", "runId": "r1", "type": "lead.ledger", "agentId": "lead", "data": {"satisfied": "yes", "looping": false, "progressing": true, "next": "finder-b", "instruction": "Search eBay", "plan": ["search", 1], "stalls": 0}}
+{"v": "0.2", "seq": 19, "ts": "2026-11-07T09:00:19Z", "runId": "r1", "type": "lead.ledger", "agentId": "lead", "data": {"satisfied": false, "progressing": true, "next": "checker", "reason": "Offers found", "plan": ["search", "check", "write"], "stalls": 1, "instruction": null}}
+{"v": "0.2", "seq": 20, "ts": "2026-11-07T09:00:20Z", "runId": "r1", "type": "review.verdict", "agentId": "checker", "data": {"target": "finder-a", "verdict": "revise", "note": "Add delivery costs"}}
+{"v": "0.2", "seq": 21, "ts": "2026-11-07T09:00:21Z", "runId": "r1", "type": "review.verdict", "agentId": "checker", "data": {"target": "finder-a", "verdict": "accept", "round": 2}}
+{"v": "0.2", "seq": 22, "ts": "2026-11-07T09:00:22Z", "type": "review.verdict", "agentId": "checker", "data": {"target": "finder-b", "verdict": "maybe"}}
+{"v": "0.2", "seq": 23, "ts": "2026-11-07T09:00:23Z", "runId": "r1", "type": "recovery.chosen", "agentId": "lead", "data": {"strategy": "retry", "target": "finder-b", "note": "Rate limited"}}
+{"v": "0.2", "seq": 24, "ts": "2026-11-07T09:00:24Z", "type": "recovery.chosen", "agentId": "lead", "data": {"strategy": "pray"}}
+{"v": "0.2", "seq": 25, "ts": "2026-11-07T09:00:25Z", "runId": "r1", "type": "usage", "agentId": "finder-a", "data": {"inputTokens": 1200, "outputTokens": 300, "costUsd": 0.05, "turns": 1}}
+{"v": "0.2", "seq": 26, "ts": "2026-11-07T09:00:26Z", "runId": "r1", "type": "usage", "agentId": "finder-a", "data": {"inputTokens": 2500, "turns": true, "limit": {"status": "allowed_warning", "kind": "five_hour"}}}
+{"v": "0.2", "seq": 27, "ts": "2026-11-07T09:00:27Z", "runId": "r1", "type": "usage", "agentId": "lead", "data": {"costUsd": "1", "outputTokens": null}}

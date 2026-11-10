@@ -11,8 +11,11 @@ Usage: mas-office <command> [options]
 
 Commands:
   demo                      Watch a simulated team in the panel (start here)
-  serve [workspace]         Serve the panel, the workspace files and the event API
+  up [workspace]            Run your locked team on real Claude Code and Codex sessions
+  serve [workspace]         Serve the panel, the workspace files, the event and command API
   init [dir]                Create a workspace (with --kit: the no-code AGENTS.md kit)
+  team check|lock|show <d>  Check a team design, lock it, or print it as Markdown
+  verify <project-dir>      Check an answer's claims and source links
   validate [path]           Check snapshots and event logs against the spec
   reduce <project-dir>      Rebuild snapshots from mas/events.jsonl
   export --ag-ui <dir>      Print a project's log as AG-UI events (experimental)
@@ -32,12 +35,34 @@ Creates a temporary workspace, serves it and plays a simulated 5-agent team
   --no-open      Do not open the browser
   --exit         Stop the server when the run finishes
   --speed <x>    Playback speed multiplier (default 1)`,
+  up: `Usage: mas-office up [workspace=.] [--project <folder>] [--task "<text>"] [--exit]
+                     [--port 4747] [--host 127.0.0.1] [--max-parallel 3] [--open]
+
+Runs the team you designed and locked. Every role is a real Claude Code or Codex
+session on this computer, signed in by you (claude auth login / codex login).
+MAS Office starts the unmodified programs and never sees your sign-in.
+
+The panel shows the office, the inbox of everything that needs you, and each
+agent's transcript and chat box. Needs the runtime: npm install mas-office-runtime
+
+  --project <f>       Project folder (default: the workspace's current project)
+  --task "<text>"     Start a run with this task right away
+  --exit              With --task: stop when the run ends (exit 1 if it failed)
+  --max-parallel <n>  Sessions working at once, 1-12 (default 3; each uses your plan)
+  --port, --host      As for serve
+  --open              Open the panel in the browser`,
   serve: `Usage: mas-office serve [workspace=.] [--port 4747] [--host 127.0.0.1] [--open]
 
-Serves the panel at /office/, the workspace files read-only, and the event API:
+Serves the panel at /office/, the workspace files read-only, and the API:
   POST /v0/events?project=<folder>   one event, a JSON array or NDJSON (max 1 MB)
+  POST /v0/commands?project=<folder> one command for an agent (needs the panel token)
   GET  /v0/stream                    Server-Sent Events: "change" and "mas"
-  GET  /v0/health                    {"ok": true, "spec": "0.1"}
+                                     (?project=<folder>&since=<seq> replays the log)
+  GET  /v0/health                    {"ok": true, "spec": "0.2"}
+
+The printed panel link carries a token: only a browser opened from that link may
+answer requests or message agents. Without a runtime (mas-office up), commands
+are logged and left in <project>/mas/commands/ for a file-only assistant.
 
   --port <n>     Port to listen on (default 4747; 0 = any free port)
   --host <h>     Interface to listen on (default 127.0.0.1)
@@ -55,6 +80,21 @@ Checks a workspace, a project folder or a single file: every snapshot (.json, an
 .js twins, read as data and never run) against the JSON Schemas, every line of
 mas/events.jsonl, that roles[].handsTo exist, and that .json and .js twins agree.
 Exits with 1 when anything is invalid.`,
+  team: `Usage: mas-office team check|lock|show <project-dir> [--workspace <dir>]
+
+  check   Report every problem in mas/structure.json (exit 1 on errors)
+  lock    Check, then set "locked" and the design's signature. A run refuses a
+          design that changed after it was locked.
+  show    Print the design as Markdown: roles, tools and who may approve what`,
+  verify: `Usage: mas-office verify <project-dir> [--no-network] [--json]
+
+Reads the project's answer and source cards. Lists every <claim> tag, checks each
+source link (live, archived, dead or blocked; private addresses are never
+fetched) and points at statements that carry no source. When the project has an
+event log, the findings are appended to it and the panel shows them.
+
+  --no-network   Do not fetch anything; only parse and count
+  --json         Print the findings as JSON`,
   reduce: `Usage: mas-office reduce <project-dir>
 
 Replays mas/events.jsonl and rewrites mas/structure, mas/state, mas/status/* and
@@ -76,7 +116,10 @@ nothing; errors go to <workspace>/home/hook-errors.log.
 
 const COMMANDS = {
   demo: () => import('./commands/demo.js').then((m) => m.demoCommand),
+  up: () => import('./commands/up.js').then((m) => m.upCommand),
   serve: () => import('./commands/serve.js').then((m) => m.serveCommand),
+  team: () => import('./commands/team.js').then((m) => m.teamCommand),
+  verify: () => import('./commands/verify.js').then((m) => m.verifyCommand),
   init: () => import('./commands/init.js').then((m) => m.initCommand),
   validate: () => import('./commands/validate.js').then((m) => m.validateCommand),
   reduce: () => import('./commands/reduce.js').then((m) => m.reduceCommand),

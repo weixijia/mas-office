@@ -65,7 +65,9 @@
       "flag": "Worker 1 failed",
       "flagKind": "error",
       "progress": 0,
-      "t": "2026-11-06T10:00:07Z"
+      "t": "2026-11-06T10:00:07Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "planner": {
       "state": "working",
@@ -74,7 +76,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 0,
-      "t": "2026-11-06T10:00:03Z"
+      "t": "2026-11-06T10:00:03Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "worker-1": {
       "state": "failed",
@@ -83,7 +87,9 @@
       "flag": "Rate limited",
       "flagKind": "error",
       "progress": 30,
-      "t": "2026-11-06T10:00:06Z"
+      "t": "2026-11-06T10:00:06Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "reviewer": {
       "state": "waiting",
@@ -92,7 +98,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 0,
-      "t": "2026-11-06T10:00:05Z"
+      "t": "2026-11-06T10:00:05Z",
+      "waitingOn": [],
+      "stopReason": null
     }
   },
   "state": {
@@ -106,5 +114,19 @@
     "updated": "2026-11-06T10:00:07Z",
     "next": "Run failed — see the Lead's desk."
   },
-  "result": null
+  "result": null,
+  "inbox": {
+    "pending": [],
+    "recent": [],
+    "commands": []
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
 }

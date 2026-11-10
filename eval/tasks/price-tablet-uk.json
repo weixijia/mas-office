@@ -1,0 +1,48 @@
+{
+  "id": "price-tablet-uk",
+  "title": "Cheapest new tablet offers from UK retailers",
+  "category": "price-comparison",
+  "task": "I want to buy a new Apple iPad Air 11-inch, Wi-Fi only, with the smallest storage option of the current generation, delivered to a UK address. Find the lowest current prices from at least four different UK retailers (not marketplace resellers or refurbished units). For each offer give the retailer, the price in GBP including VAT, delivery cost and time, and the date you saw the price. Then tell me which offer is cheapest in total and whether any of them come with a condition I should know about (pre-order, student-only price, trade-in required, bundle).",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "At least four distinct UK retailers, each with a total price in GBP including VAT and delivery."
+    },
+    {
+      "id": "R2",
+      "text": "Only new units of the requested model and configuration; anything else is excluded or clearly labelled."
+    },
+    {
+      "id": "R3",
+      "text": "A clear recommendation of the cheapest total offer, with any conditions attached to it."
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "kind": "must-cite",
+      "text": "Every price has a source link to the retailer's own product page (not a search result or an aggregator alone)."
+    },
+    {
+      "id": "C2",
+      "kind": "freshness",
+      "text": "Every price carries the date it was seen, and the answer says prices change and when they were collected."
+    },
+    {
+      "id": "C3",
+      "kind": "must-compare",
+      "text": "The offers are compared on the same basis (same model, storage, connectivity, new condition; total including delivery) in one table or list."
+    },
+    {
+      "id": "C4",
+      "kind": "must-state-uncertainty",
+      "text": "Where a price could not be confirmed on the retailer's page (out of stock, needs a login, region-locked), the answer says so instead of reporting it as confirmed."
+    },
+    {
+      "id": "C5",
+      "kind": "must-cite",
+      "text": "Conditions such as student pricing, trade-in or pre-order are attributed to the page that states them."
+    }
+  ],
+  "notes": "Ground truth goes stale within days, so the rubric checks properties of a good answer, not prices. A rater may spot-check two links on the day of the run."
+}

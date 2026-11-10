@@ -1,0 +1,52 @@
+{
+  "id": "plan-research-visit",
+  "title": "Plan a one-week research visit",
+  "category": "planning",
+  "task": "Plan a five-working-day research visit to ETH Zurich for one PhD student travelling from London, sometime in the next three months. Give a day-by-day outline (travel days, two or three blocks for meetings, one public seminar slot), suggest how to get there and back, two or three places to stay within 30 minutes by public transport of the ETH main building, and an itemised budget in GBP and CHF for travel, accommodation, local transport and meals. Say what the student must arrange in advance and by when.",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "A day-by-day plan covering travel, meetings and a seminar slot."
+    },
+    {
+      "id": "R2",
+      "text": "Two or three accommodation options within 30 minutes of the ETH main building by public transport."
+    },
+    {
+      "id": "R3",
+      "text": "An itemised budget in both GBP and CHF, with the exchange rate used and its date."
+    },
+    {
+      "id": "R4",
+      "text": "A list of things to arrange in advance with deadlines relative to the travel date."
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "kind": "must-cite",
+      "text": "Accommodation prices, transport fares and the exchange rate each have a source."
+    },
+    {
+      "id": "C2",
+      "kind": "freshness",
+      "text": "The exchange rate and prices carry the date they were looked up."
+    },
+    {
+      "id": "C3",
+      "kind": "must-state-uncertainty",
+      "text": "Budget lines that are estimates (meals, prices that depend on dates) are marked as estimates with the basis for them."
+    },
+    {
+      "id": "C4",
+      "kind": "must-compare",
+      "text": "Accommodation options are compared on price, distance or travel time, and booking conditions."
+    },
+    {
+      "id": "C5",
+      "kind": "must-state-uncertainty",
+      "text": "Entry requirements are addressed by saying they depend on the student's nationality, not by assuming one."
+    }
+  ],
+  "notes": "The task deliberately does not give the student's nationality; a good answer says entry rules depend on it rather than guessing."
+}

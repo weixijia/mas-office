@@ -12,7 +12,7 @@
   "properties": {
     "v": {
       "type": "string",
-      "pattern": "^0\\.1$"
+      "pattern": "^0\\.[12]$"
     },
     "seq": {
       "type": "integer",
@@ -24,7 +24,7 @@
     },
     "type": {
       "type": "string",
-      "pattern": "^(run\\.(started|finished|failed)|stage\\.(started|finished)|agent\\.(registered|status|finished|failed)|handoff|message|tool\\.(started|finished|failed)|flag\\.(raised|resolved)|artifact|result|custom\\.[A-Za-z0-9_.-]+)$"
+      "pattern": "^(run\\.(started|finished|failed)|stage\\.(started|finished)|agent\\.(registered|status|finished|failed|stopped)|handoff|message|tool\\.(started|finished|failed)|flag\\.(raised|resolved)|artifact|result|round\\.started|request\\.(opened|resolved)|command\\.(message|respond|assign|interrupt|ack)|usage|task\\.(assigned|updated|finished)|lead\\.ledger|review\\.verdict|recovery\\.chosen|claim\\.added|evidence\\.checked|verdict\\.recorded|custom\\.[A-Za-z0-9_.-]+)$"
     },
     "runId": {
       "type": [

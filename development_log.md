@@ -1,10 +1,10 @@
 # MAS Office 开发日志
 
-这份日志记录 MAS Office 从创建到 v0.2.1 的全部改动、原因、验证证据，以及已经讨论过的产品方向和下一步计划。版本细节以 `CHANGELOG.md` 为准，这里补充 changelog 写不下的背景：为什么这样改、怎么验证的、还剩什么风险。
+这份日志记录 MAS Office 从创建到 v0.3.0 的全部改动、原因、验证证据，以及已经讨论过的产品方向和下一步计划。版本细节以 `CHANGELOG.md` 为准，这里补充 changelog 写不下的背景：为什么这样改、怎么验证的、还剩什么风险。
 
-- 项目目录：`~/Documents/mas-office`（GitHub：`weixijia/mas-office`，npm：`mas-office`）
+- 项目目录：`~/Documents/mas-office`（GitHub：`weixijia/mas-office`，npm：`mas-office`、`mas-office-runtime`）
 - 网站：https://www.xijiawei.com/mas-office/
-- 最后更新：2026-11-07（最新 tag `v0.2.2`，npm `latest` = 0.2.2）
+- 最后更新：2026-11-10（最新 tag `v0.2.2`，npm `latest` = 0.2.2。v0.3.0 的代码和文档已完成，**尚未提交、未打 tag、未发布**；`mas-office` 和 `mas-office-runtime` 的 0.3.0 都还不在 npm 上）
 
 ---
 
@@ -21,10 +21,14 @@
 主要目录：
 
 ```
-spec/            协议 0.1：README、JSON Schemas、conformance cases
-packages/node/   npm 包 mas-office：JS SDK + CLI（bin/mas-office.js，src/cli/commands/*）
+spec/            协议 0.2：README、JSON Schemas、16 个 conformance cases、rfcs/0001-protocol-0.2.md
+packages/node/   npm 包 mas-office：JS SDK + CLI（bin/mas-office.js，src/cli/commands/*），零依赖；
+                 src/team（团队设计 v2 与权限编译）、src/policy（委托规则）、src/verify（claim、链接检查、判定）
+packages/runtime/ npm 包 mas-office-runtime：会话 adapter（Claude Agent SDK、codex app-server）、engine、`up`
 packages/python/ Python SDK mas_office（含 OpenAI Agents / LangGraph / Claude Agent SDK 集成，PyPI 未发布）
-panel/           面板：index.html、app.js（UI）、model.js（纯函数）、office.js（等距办公室绘制）、tests/
+panel/           面板：index.html、app.js（UI）、model.js（纯函数）、inbox.js（收件箱纯函数）、office.js（等距办公室绘制）、tests/
+eval/            评测：9 个任务、3 个锁定设计、指标、评分表、HCI 实验方案（Python 标准库）
+docs/design/     设计文档：runtime.md（包之间的契约）、reuse-map.md（复用地图）
 kit/             no-code kit：AGENTS.md、SETUP.md、harness/、.claude/、.mcp.json
 examples/        3 个完整示例（price-compare、trip-planning、thesis-feasibility）
 site/            项目网站（GitHub Pages）
@@ -47,8 +51,10 @@ site/            项目网站（GitHub Pages）
 | 2026-11-07 | `ae92c25` | **v0.2.1** | kit：角色浏览器、终端状态行、安全加固 |
 | 2026-11-07 | `2696fbf` | | 开发日志、路线图重写 |
 | 2026-11-07 | `61d4ab9` | **v0.2.2** | 修复结果抽屉不弹出；README / 网站 / 演示 GIF 更新 |
+| 2026-11-07 | `e2f5d24`–`e6066df` | | 产品定位、复用优先的参考库、README / 路线图 / 网站按 agent 团队重新定位 |
+| 2026-11-10 | （未提交） | **v0.3.0** | 驱动真实会话：`mas-office-runtime`、协议 0.2、收件箱、engine、核对层、评测框架（见 5c） |
 
-npm 发布：0.1.0、0.1.1、0.2.0、0.2.1、0.2.2 都已公开，账号 `simonwxj`。PyPI 尚未发布。
+npm 发布：0.1.0、0.1.1、0.2.0、0.2.1、0.2.2 都已公开，账号 `simonwxj`。0.3.0（`mas-office` 和新包 `mas-office-runtime`）待发布。PyPI 尚未发布。
 
 ---
 
@@ -186,6 +192,60 @@ npm 发布：0.1.0、0.1.1、0.2.0、0.2.1、0.2.2 都已公开，账号 `simonw
 - 演示 GIF 重新录制（1440×900 采集、缩放到 960×600、7fps、约 23 秒）：团队工作 → 小派对 → 结果抽屉滑出。
 - 网站：示例说明、代码注释、no-code 一节（加入追问、状态行、浏览器）、FAQ（npm 已发布、新增"接下来做什么"）、结果截图换成抽屉打开的样子；修正 no-code 一节命令框上方没有间距的问题。1440 与 390 宽度截图检查，无横向滚动。
 
+---
+
+## 5c. v0.3.0 — 驱动真实会话：协议 0.2、收件箱、engine、核对层
+
+目标（来自 §8 的方向和决策 19）：MAS Office 从"显示一支团队的面板"变成"驱动一支由真实 Claude Code 和 Codex 会话组成的团队的 runtime"。2026-11-10 完成，尚未提交和发布。包之间的契约见 `docs/design/runtime.md`，协议见 `spec/rfcs/0001-protocol-0.2.md`。
+
+### 5c.1 做了什么
+
+- **新包 `mas-office-runtime`**（`packages/runtime`，依赖 `mas-office` 和 `@anthropic-ai/claude-agent-sdk`）：
+  - Claude Code adapter（`backends/claude.js`）：Agent SDK 的 streaming-input `query()`，`pathToClaudeCodeExecutable` 指向用户自己安装的 `claude`；`canUseTool` 和 `PreToolUse` hook 都交给 engine 决定；steer / queue / interrupt；resume。
+  - Codex adapter（`backends/codex.js`）：一个共享的 `codex app-server` 子进程（stdio JSON-RPC），每个角色一个 thread；所有审批类 server request 交给 engine，未知请求明确拒绝；`turn/steer`、`thread/resume`；每个 thread 的 MCP 隔离。
+  - engine（`engine/project.js`、`broker.js`、`prompts.js`）：Lead 规划并写 brief → 各阶段并行 → reviewer 循环 → 关口 → Lead 写带 `<claim id src>` 的答案 → 链接检查 → checker 判定 → 超阈值开标记 → 结果；追问；停滞检测；委托审批；重启续跑。
+- **`mas-office`（仍零依赖）**：
+  - CLI 新增 `up`（动态 `import('mas-office-runtime')`，缺失时打印安装命令）、`team check|lock|show`、`verify`。
+  - `src/team/`：团队设计 v2 的 `normalizeTeam`、`signTeam` / `lockTeam`、`stageOrder`、`compileRole`、`decideTool`、`teamToMarkdown`；`src/policy/delegate.js`：`matchDelegation`；`src/verify/`：claim 解析、来源卡、URL health、判定合并、提示词。
+  - server：面板 token（打印在链接里）、`POST /v0/commands`、`POST /v0/runs`、`GET /v0/session`、`GET /v0/inbox`、`GET /v0/stream?since=` 回放；只有 server 写 `origin.kind: "human"`。
+  - reducer：协议 0.2（JS 和 Python 同步改），新快照 `mas/inbox`、`mas/board`、`outputs/verification`；SDK 新增 `request` / `resolve`、`stopped`、`usage`、`claim`、`evidence`、`verdict`、`followUp`（Python 为 `follow_up`）。
+  - `hook claude-code`：用户自己开的 Claude Code 会话里的权限提示进收件箱（只观察，答复仍在用户终端里）。
+- **协议 0.2**（additive）：`request.opened/resolved`；`command.message|respond|assign|interrupt` + `command.ack`；`agent.stopped`；`task.*`、`lead.ledger`、`review.verdict`、`recovery.chosen`；`claim.added`、`evidence.checked`、`verdict.recorded`；`round.started`；`usage`。conformance 新增 09–16，01–08 只多了两个 status 字段（`waitingOn`、`stopReason`）和空的新快照。0.1 日志归约出的 structure、statuses、state、result 除这两个字段外不变。
+- **面板**：`panel/inbox.js`（纯函数）+ `app.js`：Needs you 收件箱（等待时长、卡住了什么、"不回答会怎样"、就地答复）；agent 抽屉（记录、产出、聊天框带回执、Stop）；办公室里的 reviewer 连线和举手；键盘 `N`、`I`、`A`/`D`、`1–9`、`?`；结果里按判定高亮 claim、可信度一行、"What the checkers caught"。没有 token 时只读；示例和 `?demo=1` 不变。
+- **示例**：`examples/price-compare` 改成锁定的 v2 设计（Codex checker 审查两个 finder，`web search` 的审批按策略自动批准，检查阶段前有关口）。
+- **`eval/`**：9 个任务、3 个锁定设计（跨厂商 checker 的团队 / 同厂商 checker 的团队 / 单 agent，同一个 budget 块）、从事件日志算指标、评分表（可盲评、可接外部 judge 命令）、外部系统答案导入、HCI 实验方案。**还没有跑过任何评测**。
+
+### 5c.2 实现中做的关键决定（都是"实现中决定，待用户确认"，见 8.6 #24–#30）
+
+1. **runtime 是单独的包**：`mas-office-runtime` 依赖 Claude Agent SDK，放进 `mas-office` 会破坏零依赖（CLAUDE.md §2，决策 22 的同一原则）。`up` 留在核心 CLI，动态加载 runtime；`src/team`、`src/policy`、`src/verify` 是纯函数，放在核心包里，不需要任何后端就能单测。
+2. **一份日志，命令从不改变 agent 状态**：`command.*` 是意图，只有 adapter 报告的 `command.ack`、`agent.status`、`agent.stopped`、`request.resolved` 是事实，reducer 只按事实改状态（"接受了中断"≠"已停止"）。不另开命令日志，因为两份日志无法按同一顺序回放。
+3. **不双写 flag**：曾考虑为 0.1 面板同时写一条 `flag.raised`，放弃。面板读的是快照，0.2 reducer 已经把阻塞型请求变成 `flagged` 状态，0.1 面板照样能画出来；双写会让同一件事在日志里出现两次。
+4. **`decideTool` 是唯一的执行点，`allowedTools` 保持为空**：Agent SDK 的 `allowedTools` 不是限制，而是"跳过审批"，写进去的工具永远不会到 `canUseTool`，`ask` 就进不了收件箱。所以编译结果只用 `tools`（模型能看到哪些工具）和 `disallowedTools`（作用域 deny），每次需要审批的调用都经过 `canUseTool` → `decideTool`；`PreToolUse` hook 再覆盖那些不需要审批的调用（项目内读文件、只读命令），遇到 `deny` 就拦截。
+5. **Codex 角色永远是 `read-only` sandbox + `on-request`**：`workspace-write` 下，writable root 内的补丁会被自动批准、不经过审批请求（codex-rs `assess_patch_safety`），Codex 角色就能不经 `decideTool` 改项目里的任何文件，包括指令文件和别的角色的产出；`untrusted` 在当前 Codex 版本上会被拒绝（文档称已废弃，可能导致客户端无法启动）。在 read-only sandbox 里，每次写文件都变成 `item/fileChange/requestApproval`，由 `decideTool` 判断（只放行角色自己的文件）。
+6. **Codex 每个 thread 的 MCP 隔离**：Codex 会把 thread `config` 合并到用户自己的 Codex 配置上，不隔离的话每个角色都会加载用户配置的所有 MCP server。adapter 先列出 app-server 知道的 server（只取名字和 plugin id），对角色没分到的逐个设 `enabled = false`，关不掉的写进 transcript。
+7. **Lead 是真实会话，但只给确定性的调度器出主意**：Lead 通过结构化的 JSON 回合（plan、briefs、恢复策略、代批决定、追问派人）提建议，engine 校验每一个返回值，不合法就用默认值或交给人。调度、并发、计数、停滞判断都是普通代码。这取代了 §8.3 设想的"Lead 通过 mas MCP server 的工具编排"：MCP 方式下调度正确性取决于模型是否按规矩调用工具，而这里锁定的设计由代码保证执行。
+8. **改派 = superseded + 新请求**：请求从 Lead 转给人（Lead 忙、不确定或选择上报）时，旧请求以 `superseded` 关闭，再开一个 `routeTo: human` 的新请求，而不是修改原请求。这样"先发给谁、谁放弃了、最后谁答的"全在日志里，reducer 也不需要"修改请求"这种规则。
+9. **追问用 `round.started`**：追问不是新的 run；`run.started` 会清空 tasks、claims、证据和收件箱。新事件 `round.started` 只把 Lead 设为 working，保留结果、来源、标记和其他 agent 的状态，下一个 `result` 自动成为下一轮。
+10. **`outputs/result.md` 是 Lead 的答案文件**：Lead 把答案写到固定文件，engine 从文件解析 claim 和来源，而不是从 Lead 的回复文本里抠；`up --exit` 结束时打印这个路径。
+11. **hook 会话只观察**：用户自己打开的 Claude Code 会话不是 runtime 启动的，我们没有它的回调，答复只能在用户终端里完成。所以 `hook claude-code` 把权限提示放进收件箱让用户看到，但不提供答复按钮，避免面板假装能控制它。
+
+### 5c.3 验证
+
+- 测试（2026-11-10）：`mas-office` 261、`mas-office-runtime` 89、面板 60 + 21（`model.test.js` + `inbox.test.js`）、Python 133、eval 27，全部通过。JS 和 Python reducer 在 16 个 conformance cases 上输出一致。
+- adapter 对真实程序的 smoke test 通过（批准 allow / deny、steer、resume）：Claude Code 2.1.322，Codex 0.167.0。脚本：`packages/runtime/scripts/smoke-claude.mjs`、`smoke-codex.mjs`，在仓库外的临时目录运行。
+- **第一次真实端到端运行**（2026-11-10）：Lead 和 finder 跑在 Claude Code 上，checker 跑在 Codex 上；任务：当前的 Node.js Active LTS。checker 把 finder 的工作打回一次，第 2 轮接受；2 条 claim，都是 supported；4 个来源链接，全部 live；全程没有需要人处理的事；退出码 0。
+- 没有做的验证：中断（interrupt）没有在真实的 Claude CLI 上跑过；没有任何评测运行，所以**不能声称团队比单 agent 更好**。
+
+### 5c.4 已知缺口
+
+- 原始终端 tab 和接手终端（`mas-office-terminal`，决策 22 的可选包）没做；把官方 Codex TUI 接到角色 thread 上也没做。
+- Codex 0.167.0 不能把读取限制在项目文件夹内（sandbox 策略的 `access` 字段被这个版本丢弃，adapter 会在 transcript 里写明）。
+- Codex 只报 token，不报费用，所以费用是下界。
+- daemon 重启后不能重新接上待批准的请求：它们以 `expired` 关闭，agent 重新提问。
+- `teamFromMarkdown`（从 Markdown 读回团队设计）没做，只有 `teamToMarkdown`。
+- kit 还没迁到同一个 engine；评测运行、用户研究、桌面 app、PyPI 都没做。
+- Python 包版本号仍是 0.2.2（`pyproject.toml`、`__init__.py`），要和 0.3.0 一起改，见 §6 第 1 条。
+
 ## 6. 发布流程与注意事项
 
 规则缓存在 `.omc/RELEASE_RULE.md`（git 忽略），要点：
@@ -287,6 +347,13 @@ npm 发布：0.1.0、0.1.1、0.2.0、0.2.1、0.2.2 都已公开，账号 `simonw
 | 21 | 11-07 | 自研还是复用 | 自己实现 / 复用开源代码 | **复用优先**：参考代码放 `references/`（74 个仓库，固定 commit，`fetch.mjs` 可复现），复用地图 `docs/design/reuse-map.md` 逐组件写明读哪些文件、怎么复用、license 依据 | 用户："完全可以复用已经开源的优质项目的代码，把精力花在整合和提高竞争力上" |
 | 22 | 11-07 | 原始终端（xterm.js + node-pty）放哪 | 放进 `mas-office` / 单独的可选包 | **单独的可选包**，`mas-office` 保持零依赖 | 用户："只要学生下载下来能复用就行" |
 | 23 | 11-07 | 根目录 `CLAUDE.md` 是否会影响 kit | — | 不影响学生：`init --kit` 只复制 `kit/`。仓库内的 `.omc/kit-e2e` 会继承开发者指令，以后 kit 端到端测试改在仓库外的目录进行 | 同上 |
+| 24 | 11-10 | 独立运行时先接哪些后端（8.7 第 1 条） | `claude -p` + `codex exec` / Agent SDK + `codex app-server` | **Claude Code 走 Agent SDK（指向用户自己安装的 `claude`），Codex 走 `codex app-server`**。实现中决定，待用户确认 | `claude -p` 和 `codex exec` 一次只跑一轮，无法在会话中途答复审批、插话或 resume；SDK 的 `canUseTool` 和 app-server 的 server request 都把审批交给我们，`priority` / `turn/steer` 能插话。两者运行的都是未修改的官方程序（`CLAUDE.md` §3 规则 1） |
+| 25 | 11-10 | runtime 放哪，要不要做成 deepseek-harness 插件（8.7 第 4 条） | 放进 `mas-office` / 单独的包 / dsh 插件 | **单独的包 `mas-office-runtime`**；`up` 留在核心 CLI，动态加载 runtime。实现中决定，待用户确认 | runtime 依赖 Claude Agent SDK，放进核心包会破坏零依赖（与决策 22 同理）；做 dsh 插件会被它的架构限制（决策 13），而锁定设计、收件箱、核对层都需要我们自己的 engine |
+| 26 | 11-10 | 面板要不要变成可操作的控制台（8.7 第 2 条） | 一直只读 / 谁都能操作 / 只有带 token 的浏览器能操作 | **`serve` / `up` 打印的链接带 token**，只有从这个链接打开的浏览器能答复、发消息、发起运行；`file://`、网站、静态服务器只读；只有 server 写 `origin: human`。实现中决定，待用户确认 | 与 8.7 的推荐一致。`EventSource` 不能带 header，所以事件流不要 token（它只包含工作区文件本来就能看到的内容） |
+| 27 | 11-10 | 角色权限词表里 `cli:` / `mcp:` 自由填写还是白名单（8.7 第 3 条） | 自由填写 / 白名单 | **白名单**：`mcp:<server>` 必须在工作区 `.mcp.json` 里，`cli:<命令前缀>` 必须在 `home/commands.json` 里；词表外的词在检查和锁定时拒绝。实现中决定，待用户确认 | 与 8.7 的推荐一致：团队设计可能由 LLM 起草，自由填写等于让模型给自己开权限 |
+| 28 | 11-10 | 角色权限怎么强制（决策 10、8.5） | 生成 `.claude/agents/*.md` / 编译进每个会话的启动选项 | **编译进会话选项**（Claude：`tools`、`disallowedTools`、`settingSources: []`；Codex：`read-only` sandbox + `on-request`），每次工具调用都经过 `decideTool`，`allowedTools` 保持为空。实现中决定，待用户确认 | 每个角色现在是独立会话，不是 subagent，不需要 agent 文件；8.5 记下的"会话中途新建的 agent 文件要重启才加载""Codex 自定义 agent 改不了 sandbox"因此不再是限制。理由见 5c.2 第 4、5 条 |
+| 29 | 11-10 | Lead 怎么编排（取代 8.3 的 mas MCP server 方案） | Lead 通过 MCP 工具编排 / Lead 给确定性的调度器出主意 | **Lead 是真实会话，通过校验过的 JSON 回合给调度器出主意**；调度、并发、计数、停滞判断都是代码。实现中决定，待用户确认 | 锁定的设计要由代码保证执行，不能取决于模型是否按规矩调用工具。见 5c.2 第 7 条 |
+| 30 | 11-10 | 评测集选哪些任务、怎么人工抽查（8.7 第 5 条） | — | **9 个任务**（比价 2、规划 2、文献 1、可行性 1、选型 1、政策/签证/法规 2）；每个任务只有可核查的 rubric 项，不含会过时的标准答案；评分表可盲评，建议两人对一部分交叉打分，也可以接另一家厂商的 judge 命令。实现中决定，待用户确认 | 见 `eval/README.md`。评测还没跑 |
 
 明确放弃的方向与原因：
 - **Fork pi 当引擎**：它的 Claude 订阅登录伪装成 Claude Code，正是 Anthropic 条款明文禁止的做法；而且多 agent 要从头补。
@@ -297,20 +364,24 @@ npm 发布：0.1.0、0.1.1、0.2.0、0.2.1、0.2.2 都已公开，账号 `simonw
 
 ### 8.7 尚未决定的问题
 
-- 独立运行时先接哪些后端：推荐 `claude -p` + `codex exec`（直接用订阅，不需要 API key），pi 和各家 SDK 放后面。
-- 面板要不要变成可操作的控制台：推荐只在 `mas-office serve` 加本地 token 时开放审批、追问、停止、重跑，`file://` 和网站嵌入保持只读。
-- 角色权限词表里 `cli:` / `mcp:` 是自由填写，还是只能从已配置的 MCP server 和预审过的命令白名单里选（推荐后者）。
-- 是否把部分能力做成 deepseek-harness 插件：先读源码再定。
-- 评测集具体选哪 8–10 个任务、怎么做人工抽查。
+- ~~独立运行时先接哪些后端~~ → v0.3.0 实现中决定：Agent SDK + `codex app-server`，见决策 24（待用户确认）。
+- ~~面板要不要变成可操作的控制台~~ → v0.3.0 实现中决定：只有带 token 的浏览器能操作，见决策 26（待用户确认）。
+- ~~角色权限词表里 `cli:` / `mcp:` 是自由填写还是白名单~~ → v0.3.0 实现中决定：白名单，见决策 27（待用户确认）。
+- ~~是否把部分能力做成 deepseek-harness 插件~~ → v0.3.0 实现中决定：不做，runtime 是我们自己的单独包，见决策 25（待用户确认）。
+- ~~评测集具体选哪 8–10 个任务、怎么做人工抽查~~ → v0.3.0 实现中决定：9 个任务 + 盲评评分表，见决策 30（待用户确认）。
 - ~~由我们的产品调用用户本机的 `claude -p`，在 Anthropic 条款里属于灰区~~ → 已澄清，见决策 20。
 - 终端小人用哪套视角和美术风格（建议俯视或侧视的半字符块像素风），以及桌面版用 Tauri 还是 Electron（倾向 Tauri）。
+- 0.3.0 怎么发布：两个包一起发（`mas-office-runtime` 依赖 `mas-office` `^0.3.0`，必须先发 `mas-office`），以及 Python 包是否同步升到 0.3.0。
+- 决策 16 定的是 TypeScript，但 v0.3.0 的 runtime 和核心包仍是带 JSDoc 的 JavaScript（ESM）。要不要迁移、何时迁移，待定。
 
 ---
 
 ## 9. 已知问题与待办
 
+- v0.3.0 尚未提交、未打 tag、未发布到 npm（`mas-office`、`mas-office-runtime`）。
 - PyPI 尚未发布。
-- 协议里 `round`/`question`/`previous` 没有 conformance case，reducer 不生成。
+- ~~协议里 `round`/`question`/`previous` 没有 conformance case，reducer 不生成~~ → v0.3.0 已解决：reducer 生成，conformance case 15。
+- v0.3.0 的缺口（详见 5c.4）：原始终端 tab 与接手终端（`mas-office-terminal`）、接入官方 Codex TUI、Codex 0.167.0 下无法限制读取范围、Codex 不报费用、interrupt 未在真实 Claude CLI 上验证、daemon 重启后待批准请求只能过期重问、`teamFromMarkdown`、kit 迁到同一 engine、评测运行与用户研究、桌面 app。
 - 浏览器会弹出可见的 Chrome 窗口；下载无法技术拦截，只靠 brief 约束；DNS 解析到私有 IPv6 的域名未覆盖。
 - 状态行运行中的实时刷新尚未在真实运行中亲眼确认。
 - Codex / Antigravity 下没有状态行和 `mas-browser`（目前只在 Claude Code 生效），是否有对应机制未核实。

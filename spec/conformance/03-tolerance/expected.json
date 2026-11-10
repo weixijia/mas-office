@@ -53,7 +53,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 0,
-      "t": "2026-11-06T10:00:01Z"
+      "t": "2026-11-06T10:00:01Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "a": {
       "state": "working",
@@ -62,7 +64,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 100,
-      "t": "2026-11-06T10:00:03Z"
+      "t": "2026-11-06T10:00:03Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "ghost": {
       "state": "done",
@@ -71,7 +75,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 100,
-      "t": "2026-11-06T10:00:05Z"
+      "t": "2026-11-06T10:00:05Z",
+      "waitingOn": [],
+      "stopReason": null
     }
   },
   "state": {
@@ -85,5 +91,19 @@
     "updated": "2026-11-06T10:00:05Z",
     "next": "Watch the office panel — the team is working."
   },
-  "result": null
+  "result": null,
+  "inbox": {
+    "pending": [],
+    "recent": [],
+    "commands": []
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
 }

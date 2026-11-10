@@ -13,6 +13,7 @@
   <ol class="steps" id="steps" aria-label="Steps"></ol>
   <span class="steps-short" id="steps-short" aria-hidden="true"></span>
   <span class="mode-note" id="mode-note" hidden></span>
+  <button class="needs" id="needs" type="button" aria-controls="c-inbox" hidden></button>
   <button class="sb-toggle" id="sb-toggle" type="button" aria-controls="sidebar" aria-expanded="true"></button>
 </header>
 <main class="sheet">
@@ -27,9 +28,11 @@
   </section>
   <aside class="side" id="sidebar" aria-label="Title block">
     <div class="cells" id="cells">
+      <section class="cell inbox" id="c-inbox" aria-labelledby="ib-h" hidden></section>
       <section class="cell folder" id="c-folder" hidden></section>
       <section class="cell role" id="c-role" hidden></section>
       <section class="cell result" id="c-result" hidden></section>
+      <section class="cell run" id="c-run" hidden></section>
       <section class="cell" id="c-task"></section>
       <section class="cell" id="c-team"></section>
       <section class="cell" id="c-activity"></section>
@@ -44,9 +47,51 @@
       <button class="dr-btn dr-x" id="dr-close" type="button" aria-label="Close the result"></button>
     </header>
     <div class="dr-body" id="dr-body"></div>
+    <div class="dr-foot" id="dr-foot" hidden>
+      <p class="cf-ro" id="cf-ro" hidden></p>
+      <form class="cf" id="cf" hidden>
+        <ol class="cf-log" id="cf-log" aria-label="Messages and their receipts"></ol>
+        <div class="cf-msg" id="cf-msg">
+          <label class="cf-lbl" id="cf-lbl" for="cf-text">Message</label>
+          <textarea id="cf-text" rows="2" maxlength="8000" placeholder="Enter sends · Shift+Enter for a new line"></textarea>
+        </div>
+        <div class="cf-row">
+          <fieldset class="cf-del" id="cf-del">
+            <legend class="sr-only">Delivery</legend>
+            <label><input type="radio" name="cf-del" value="steer" checked><span>Steer</span></label>
+            <label><input type="radio" name="cf-del" value="queue"><span>Queue</span></label>
+            <label><input type="radio" name="cf-del" value="interrupt"><span>Interrupt</span></label>
+          </fieldset>
+          <button class="dr-btn cf-stop" id="cf-stop" type="button">Stop</button>
+          <button class="dr-open cf-send" id="cf-send" type="submit">Send</button>
+        </div>
+        <p class="cf-hint" id="cf-hint">At its next break, without stopping it.</p>
+        <p class="cf-stopstate" id="cf-stopstate" role="status"></p>
+      </form>
+    </div>
   </section>
 </main>
+<div class="pointers" id="pointers"></div>
+<div class="claim-card" id="claim-card" role="tooltip" hidden></div>
+<div class="keys" id="keys" role="dialog" aria-labelledby="keys-h" hidden>
+  <div class="keys-card">
+    <div class="keys-bar"><h2 id="keys-h">Keyboard</h2><button class="dr-btn dr-x" id="keys-close" type="button" aria-label="Close the keyboard list"></button></div>
+    <dl>
+      <dt><kbd>N</kbd></dt><dd>Next agent that needs you</dd>
+      <dt><kbd>Shift</kbd> <kbd>N</kbd></dt><dd>Next agent that is free</dd>
+      <dt><kbd>I</kbd></dt><dd>Go to the inbox</dd>
+      <dt><kbd>A</kbd> / <kbd>D</kbd></dt><dd>Allow once / decline the focused request (only when it offers exactly those two)</dd>
+      <dt><kbd>Enter</kbd></dt><dd>Write to the agent in the open drawer</dd>
+      <dt><kbd>1</kbd>–<kbd>9</kbd></dt><dd>Select a stage and message everyone in it</dd>
+      <dt><kbd>Esc</kbd></dt><dd>Close</dd>
+      <dt><kbd>?</kbd></dt><dd>This list</dd>
+    </dl>
+    <p class="quiet small">Keys do nothing while you type in a text field.</p>
+  </div>
+</div>
+<div class="sr-only" id="sr-live" aria-live="polite"></div>
 <script src="model.js"></script>
+<script src="inbox.js"></script>
 <script src="office.js"></script>
 <script src="app.js"></script>
 </body>

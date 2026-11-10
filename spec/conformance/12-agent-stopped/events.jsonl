@@ -1,0 +1,18 @@
+{"v": "0.2", "seq": 1, "ts": "2026-11-07T09:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Stops", "structure": {"roles": [{"id": "a", "name": "A", "group": "G"}, {"id": "b", "name": "B", "group": "G"}]}}}
+{"v": "0.2", "seq": 2, "ts": "2026-11-07T09:00:02Z", "runId": "r1", "type": "agent.status", "agentId": "a", "data": {"state": "working", "say": "Searching", "progress": 20}}
+{"v": "0.2", "seq": 3, "ts": "2026-11-07T09:00:03Z", "runId": "r1", "type": "agent.status", "agentId": "b", "data": {"state": "working", "say": "Comparing", "progress": 40}}
+{"v": "0.2", "seq": 4, "ts": "2026-11-07T09:00:04Z", "runId": "r1", "type": "request.opened", "agentId": "a", "data": {"requestId": "r1", "kind": "approval", "title": "Fetch the page?"}}
+{"v": "0.2", "seq": 5, "ts": "2026-11-07T09:00:05Z", "runId": "r1", "type": "request.opened", "agentId": "a", "data": {"requestId": "r2", "kind": "question", "title": "FYI only", "blocking": false}}
+{"v": "0.2", "seq": 6, "ts": "2026-11-07T09:00:06Z", "runId": "r1", "type": "request.opened", "agentId": "b", "data": {"requestId": "r3", "kind": "question", "title": "Which seller?"}}
+{"v": "0.2", "seq": 7, "ts": "2026-11-07T09:00:07Z", "runId": "r1", "type": "command.interrupt", "agentId": "a", "data": {"cmdId": "cmd-1", "origin": {"kind": "human"}}}
+{"v": "0.2", "seq": 8, "ts": "2026-11-07T09:00:08Z", "runId": "r1", "type": "command.ack", "agentId": "a", "data": {"cmdId": "cmd-1", "status": "accepted"}}
+{"v": "0.2", "seq": 9, "ts": "2026-11-07T09:00:09Z", "runId": "r1", "type": "agent.stopped", "agentId": "a", "data": {"reason": "Stopped by you", "by": {"kind": "human"}}}
+{"v": "0.2", "seq": 10, "ts": "2026-11-07T09:00:10Z", "runId": "r1", "type": "command.ack", "agentId": "a", "data": {"cmdId": "cmd-1", "status": "applied"}}
+{"v": "0.2", "seq": 11, "ts": "2026-11-07T09:00:11Z", "runId": "r1", "type": "message", "agentId": "a", "data": {"text": "Resuming"}}
+{"v": "0.2", "seq": 12, "ts": "2026-11-07T09:00:12Z", "runId": "r1", "type": "agent.status", "agentId": "a", "data": {"state": "idle", "say": "Turn over", "stopReason": "end_turn"}}
+{"v": "0.2", "seq": 13, "ts": "2026-11-07T09:00:13Z", "runId": "r1", "type": "agent.status", "agentId": "a", "data": {"state": "idle", "say": "Turn over"}}
+{"v": "0.2", "seq": 14, "ts": "2026-11-07T09:00:14Z", "runId": "r1", "type": "agent.status", "agentId": "a", "data": {"state": "idle", "stopReason": 5}}
+{"v": "0.2", "seq": 15, "ts": "2026-11-07T09:00:15Z", "runId": "r1", "type": "agent.stopped", "agentId": "b", "data": {"scope": "agent"}}
+{"v": "0.2", "seq": 16, "ts": "2026-11-07T09:00:16Z", "runId": "r1", "type": "agent.stopped", "agentId": "lead", "data": {"scope": "everything", "reason": 3, "by": "human"}}
+{"v": "0.2", "seq": 17, "ts": "2026-11-07T09:00:17Z", "runId": "r1", "type": "tool.started", "agentId": "lead", "data": {"name": "plan"}}
+{"v": "0.2", "seq": 18, "ts": "2026-11-07T09:00:18Z", "runId": "r1", "type": "agent.status", "agentId": "b", "data": {"state": "working", "stopReason": "max_turns"}}

@@ -76,7 +76,9 @@
       "flag": "boom",
       "flagKind": "error",
       "progress": 0,
-      "t": "2026-11-06T10:00:08Z"
+      "t": "2026-11-06T10:00:08Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "b": {
       "state": "handoff",
@@ -85,7 +87,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 0,
-      "t": "2026-11-06T10:00:04Z"
+      "t": "2026-11-06T10:00:04Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "constructor": {
       "state": "handoff",
@@ -94,7 +98,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 0,
-      "t": "2026-11-06T10:00:03Z"
+      "t": "2026-11-06T10:00:03Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "g": {
       "state": "waiting",
@@ -103,7 +109,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 0,
-      "t": "2026-11-06T10:00:05Z"
+      "t": "2026-11-06T10:00:05Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "x": {
       "state": "waiting",
@@ -112,7 +120,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 0,
-      "t": "2026-11-06T10:00:07Z"
+      "t": "2026-11-06T10:00:07Z",
+      "waitingOn": [],
+      "stopReason": null
     }
   },
   "state": {
@@ -143,5 +153,19 @@
       }
     ],
     "work": []
-  }
+  },
+  "inbox": {
+    "pending": [],
+    "recent": [],
+    "commands": []
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
 }

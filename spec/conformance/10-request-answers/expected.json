@@ -1,0 +1,256 @@
+{
+  "structure": {
+    "title": "Answers",
+    "version": 1,
+    "locked": true,
+    "topology": "dynamic",
+    "lead": {
+      "id": "lead",
+      "name": "Lead",
+      "emoji": "🧭",
+      "job": "",
+      "serves": []
+    },
+    "groups": [
+      {
+        "id": "dyn",
+        "label": "Spawned at runtime",
+        "after": null
+      }
+    ],
+    "roles": [
+      {
+        "id": "a",
+        "name": "a",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      },
+      {
+        "id": "b",
+        "name": "b",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      },
+      {
+        "id": "c",
+        "name": "c",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      }
+    ]
+  },
+  "statuses": {
+    "lead": {
+      "state": "working",
+      "say": "Planning the run",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:01Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "a": {
+      "state": "flagged",
+      "say": "Working",
+      "to": null,
+      "flag": "Prices look stale",
+      "flagKind": "concern",
+      "progress": 0,
+      "t": "2026-11-07T09:00:16Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "b": {
+      "state": "working",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:12Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "c": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:12Z",
+      "waitingOn": [],
+      "stopReason": null
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "running",
+    "locked": true,
+    "version": 1,
+    "run": 1,
+    "runId": "r1",
+    "updated": "2026-11-07T09:00:16Z",
+    "next": "Watch the office panel — the team is working."
+  },
+  "result": null,
+  "inbox": {
+    "pending": [],
+    "recent": [
+      {
+        "requestId": "r2",
+        "agentId": "a",
+        "kind": "question",
+        "title": "Which currency?",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": true,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "normal",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:14Z",
+        "seq": 14,
+        "run": 1,
+        "outcome": "expired",
+        "optionId": null,
+        "payload": null,
+        "note": null,
+        "by": {
+          "kind": "policy",
+          "rule": "timeout"
+        },
+        "cmdId": null,
+        "resolvedAt": "2026-11-07T09:00:16Z"
+      },
+      {
+        "requestId": "__proto__",
+        "agentId": "a",
+        "kind": "custom-kind",
+        "title": "Proto question",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": true,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "normal",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:10Z",
+        "seq": 10,
+        "run": 1,
+        "outcome": "submitted",
+        "optionId": null,
+        "payload": {
+          "answer": 42
+        },
+        "note": null,
+        "by": {
+          "kind": "system"
+        },
+        "cmdId": null,
+        "resolvedAt": "2026-11-07T09:00:13Z"
+      },
+      {
+        "requestId": "constructor",
+        "agentId": "b",
+        "kind": "question",
+        "title": "Which region?",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": true,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "normal",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:11Z",
+        "seq": 11,
+        "run": 1,
+        "outcome": "submitted",
+        "optionId": null,
+        "payload": false,
+        "note": null,
+        "by": {
+          "kind": "system"
+        },
+        "cmdId": null,
+        "resolvedAt": "2026-11-07T09:00:12Z"
+      },
+      {
+        "requestId": "r1",
+        "agentId": "a",
+        "kind": "approval",
+        "title": "Run the search tool?",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": true,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "normal",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:03Z",
+        "seq": 3,
+        "run": 1,
+        "outcome": "superseded",
+        "optionId": null,
+        "payload": null,
+        "note": null,
+        "by": {
+          "kind": "terminal"
+        },
+        "cmdId": null,
+        "resolvedAt": "2026-11-07T09:00:06Z"
+      }
+    ],
+    "commands": []
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
+}

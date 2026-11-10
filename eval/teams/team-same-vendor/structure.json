@@ -1,0 +1,97 @@
+{
+  "title": "Eval: two finders and a same-vendor checker",
+  "version": 2,
+  "topology": "staged",
+  "budget": {
+    "maxParallel": 3,
+    "maxTurnMinutes": 20,
+    "maxRunMinutes": 60,
+    "maxQuestionsPerRole": 2,
+    "stallMinutes": 5
+  },
+  "lead": {
+    "id": "lead",
+    "name": "Lead",
+    "emoji": "🧭",
+    "job": "Plan the work, brief the team, and write the answer with every factual statement tagged as a claim that cites a source card.",
+    "backend": "claude-code",
+    "model": null
+  },
+  "groups": [
+    {
+      "id": "A",
+      "label": "Search",
+      "after": null
+    },
+    {
+      "id": "B",
+      "label": "Check",
+      "after": "A"
+    }
+  ],
+  "roles": [
+    {
+      "id": "finder-a",
+      "name": "Primary-source finder",
+      "emoji": "🔎",
+      "group": "A",
+      "handsTo": "checker",
+      "job": "Research the task and write your findings to your work file. Save one source card per page you rely on, with the URL, the date you accessed it, an A-D evidence grade and a verbatim quote. Prefer primary sources: official, vendor, operator, government and publisher pages, and the papers themselves.",
+      "output": "Findings with a source card for every fact",
+      "backend": "claude-code",
+      "model": null,
+      "tools": [
+        "web search"
+      ]
+    },
+    {
+      "id": "finder-b",
+      "name": "Independent-source finder",
+      "emoji": "🧭",
+      "group": "A",
+      "handsTo": "checker",
+      "job": "Research the task and write your findings to your work file. Save one source card per page you rely on, with the URL, the date you accessed it, an A-D evidence grade and a verbatim quote. Look for independent and secondary sources: comparison sites, reviews, surveys and citing papers, and note where they disagree with primary sources.",
+      "output": "Findings with a source card for every fact",
+      "backend": "claude-code",
+      "model": null,
+      "tools": [
+        "web search"
+      ]
+    },
+    {
+      "id": "checker",
+      "name": "Checker",
+      "emoji": "✅",
+      "group": "B",
+      "handsTo": "lead",
+      "job": "Check both finders' work claim by claim against the cited pages. Accept, send back with a note, or escalate.",
+      "output": "A verdict per finder and per claim",
+      "backend": "claude-code",
+      "model": null,
+      "tools": [
+        "web search"
+      ],
+      "reviewerOf": [
+        "finder-a",
+        "finder-b"
+      ],
+      "cleanContext": true,
+      "review": {
+        "maxRounds": 2,
+        "onExceed": "ask-human"
+      }
+    }
+  ],
+  "gates": [],
+  "verify": {
+    "claims": true,
+    "urlHealth": true,
+    "flagWhen": {
+      "contradicted": 1,
+      "unknownShare": 0.34,
+      "hallucinated": 1
+    }
+  },
+  "locked": true,
+  "signature": "sha256:90a2151ed299a910a83692d73d6e2809405e0994d12040036d56fcb79934a705"
+}

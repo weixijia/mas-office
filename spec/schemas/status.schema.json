@@ -55,6 +55,18 @@
         "string",
         "null"
       ]
+    },
+    "waitingOn": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stopReason": {
+      "type": [
+        "string",
+        "null"
+      ]
     }
   }
 }

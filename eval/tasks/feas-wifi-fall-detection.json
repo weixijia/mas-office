@@ -1,0 +1,43 @@
+{
+  "id": "feas-wifi-fall-detection",
+  "title": "Feasibility of a Wi-Fi sensing MSc thesis",
+  "category": "feasibility",
+  "task": "Assess whether a six-month MSc thesis on detecting falls from Wi-Fi channel state information (CSI) is feasible for a student with one consumer GPU and no budget for new hardware. Find which public CSI datasets include falls or similar activities, their size, licence and collection hardware; which published baselines exist and what accuracy they report and under which evaluation protocol; and what compute those baselines need. Conclude with a go / no-go recommendation, the main risks, and a narrower scope that would be safe if the full topic is not.",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "Public CSI datasets with falls or comparable activities, with size, licence and hardware for each."
+    },
+    {
+      "id": "R2",
+      "text": "Published baselines with reported accuracy, the evaluation protocol (e.g. cross-subject or cross-environment) and compute needs."
+    },
+    {
+      "id": "R3",
+      "text": "A go / no-go recommendation with the main risks and a safer narrower scope."
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "kind": "must-cite",
+      "text": "Every dataset and every reported accuracy links to the dataset page or the paper that reports it."
+    },
+    {
+      "id": "C2",
+      "kind": "must-compare",
+      "text": "Reported accuracies are compared only together with their evaluation protocol; numbers from different protocols are not ranked as if comparable."
+    },
+    {
+      "id": "C3",
+      "kind": "must-state-uncertainty",
+      "text": "Dataset licences or access conditions that could not be confirmed are marked as unconfirmed."
+    },
+    {
+      "id": "C4",
+      "kind": "must-state-uncertainty",
+      "text": "The feasibility judgement states its assumptions (GPU memory, time available, no new hardware)."
+    }
+  ],
+  "notes": "A good answer notices that cross-environment results are usually far below same-environment results; do not require specific numbers."
+}

@@ -70,7 +70,7 @@ after(async () => {
 test('health, redirects and the panel', async () => {
   const health = await request('/v0/health');
   assert.equal(health.status, 200);
-  assert.deepEqual(JSON.parse(health.text), { ok: true, spec: '0.1' });
+  assert.deepEqual(JSON.parse(health.text), { ok: true, spec: '0.2' });
   assert.equal((await request('/')).headers.location, '/office/');
   assert.equal((await request('/office')).headers.location, '/office/');
   const index = await request('/office/');
@@ -172,7 +172,7 @@ test('POST /v0/events assigns seq, writes the log and snapshots, and streams "ma
 
   const log = fs.readFileSync(path.join(ws, 'live/mas/events.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l));
   assert.deepEqual(log.map((e) => e.seq), [1, 2, 3, 4, 5]);
-  assert.ok(log.every((e) => e.v === '0.1' && typeof e.ts === 'string'));
+  assert.ok(log.every((e) => e.v === '0.2' && typeof e.ts === 'string'));
   assert.equal(log[2].ts, '2026-11-06T10:00:00Z', 'a given ts is kept');
   assert.equal(readJson(path.join(ws, 'live/mas/state.json')).phase, 'done');
   assert.equal(readJson(path.join(ws, 'live/mas/status/finder.json')).say, 'Found 3');
@@ -262,4 +262,197 @@ test('parseEventsBody accepts an object, an array or NDJSON', () => {
   assert.deepEqual(parseEventsBody('{"type":"a"}\r\n\n{"type":"b"}\n'), [{ type: 'a' }, { type: 'b' }]);
   assert.throws(() => parseEventsBody('  '), /Empty body/);
   assert.throws(() => parseEventsBody('{"type":"a"}\nnope'), /line 2/);
+});
+
+// ---- Protocol 0.2: token, commands, replay (docs/design/runtime.md §3) ----
+
+const bearer = () => ({ authorization: `Bearer ${srv.token}` });
+const command = (project, body, headers = bearer()) => request(`/v0/commands?project=${project}`, {
+  method: 'POST', headers: { 'content-type': 'application/json', ...headers }, body: JSON.stringify(body),
+});
+const openRequest = (project, requestId, extra = {}) => post(project, [
+  { type: 'run.started', data: { title: 'T' } },
+  { type: 'request.opened', agentId: 'finder', data: { requestId, kind: 'approval', title: 'Search the web?', ...extra } },
+]);
+
+test('session reports whether the caller holds the token', async () => {
+  const anon = JSON.parse((await request('/v0/session')).text);
+  assert.equal(anon.token, false);
+  assert.equal(anon.runtime, false);
+  const mine = JSON.parse((await request('/v0/session', { headers: bearer() })).text);
+  assert.equal(mine.token, true);
+  const wrong = JSON.parse((await request('/v0/session', { headers: { authorization: 'Bearer nope' } })).text);
+  assert.equal(wrong.token, false);
+});
+
+test('commands need the token', async () => {
+  const res = await command('cmd-a', { type: 'command.message', agentId: 'finder', data: { text: 'hi' } }, {});
+  assert.equal(res.status, 401);
+  assert.equal(fs.existsSync(path.join(ws, 'cmd-a')), false);
+});
+
+test('a malformed command is refused and nothing is logged', async () => {
+  for (const body of [
+    { type: 'command.ack', data: { cmdId: 'x', status: 'applied' } },
+    { type: 'command.message', agentId: 'finder', data: {} },
+    { type: 'command.message', agentId: '../x', data: { text: 'hi' } },
+    { type: 'command.message', agentId: 'finder', data: { text: 'hi', delivery: 'now' } },
+    { type: 'command.respond', agentId: 'finder', data: { requestId: 'r', outcome: 'expired' } },
+    { type: 'command.interrupt', agentId: 'finder', data: { scope: 'world' } },
+    { type: 'command.message', agentId: 'finder', data: { text: 'hi', cmdId: 'a b' } },
+  ]) {
+    assert.equal((await command('cmd-bad', body)).status, 400, JSON.stringify(body));
+  }
+  assert.equal(fs.existsSync(path.join(ws, 'cmd-bad')), false);
+});
+
+test('without a runtime a message goes to the mailbox and is acknowledged as accepted', async () => {
+  const res = await command('cmd-b', { type: 'command.message', agentId: 'finder', data: { text: 'Check eBay too' } });
+  assert.equal(res.status, 200);
+  const { cmdId } = JSON.parse(res.text);
+  const mail = fs.readFileSync(path.join(ws, 'cmd-b/mas/commands/finder.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+  assert.equal(mail.length, 1);
+  assert.deepEqual(mail[0].data.origin, { kind: 'human' });
+  const inbox = readJson(path.join(ws, 'cmd-b/mas/inbox.json'));
+  const logged = inbox.commands.find((c) => c.cmdId === cmdId);
+  assert.equal(logged.status, 'accepted');
+  assert.equal(logged.text, 'Check eBay too');
+  assert.deepEqual(logged.origin, { kind: 'human' });
+});
+
+test('a caller cannot choose the origin', async () => {
+  const res = await command('cmd-c', { type: 'command.message', agentId: 'finder', data: { text: 'x', origin: { kind: 'policy' } } });
+  const { cmdId } = JSON.parse(res.text);
+  const inbox = readJson(path.join(ws, 'cmd-c/mas/inbox.json'));
+  assert.deepEqual(inbox.commands.find((c) => c.cmdId === cmdId).origin, { kind: 'human' });
+});
+
+test('answering a request resolves it once; the second answer is a 409', async () => {
+  await openRequest('cmd-d', 'req-1', { options: [{ optionId: 'allow', name: 'Allow', kind: 'allow_once' }] });
+  assert.equal(readJson(path.join(ws, 'cmd-d/mas/status/finder.json')).state, 'flagged');
+  const first = await command('cmd-d', { type: 'command.respond', agentId: 'finder', data: { requestId: 'req-1', outcome: 'selected', optionId: 'allow' } });
+  assert.equal(first.status, 200);
+  const inbox = readJson(path.join(ws, 'cmd-d/mas/inbox.json'));
+  assert.equal(inbox.pending.length, 0);
+  assert.equal(inbox.recent[0].outcome, 'selected');
+  assert.deepEqual(inbox.recent[0].by, { kind: 'human' });
+  assert.equal(readJson(path.join(ws, 'cmd-d/mas/status/finder.json')).state, 'working');
+  const second = await command('cmd-d', { type: 'command.respond', agentId: 'finder', data: { requestId: 'req-1', outcome: 'declined' } });
+  assert.equal(second.status, 409);
+  assert.equal(JSON.parse(second.text).reason, 'already_resolved');
+});
+
+test('the same cmdId twice is one command', async () => {
+  const body = { type: 'command.message', agentId: 'finder', data: { text: 'once', cmdId: 'cmd_fixed' } };
+  const a = JSON.parse((await command('cmd-e', body)).text);
+  const b = JSON.parse((await command('cmd-e', body)).text);
+  assert.equal(b.duplicate, true);
+  assert.equal(a.seq, b.seq);
+  const mail = fs.readFileSync(path.join(ws, 'cmd-e/mas/commands/finder.jsonl'), 'utf8').trim().split('\n');
+  assert.equal(mail.length, 1);
+});
+
+test('/v0/events refuses commands and forged human answers', async () => {
+  const cmd = await post('cmd-f', { type: 'command.message', agentId: 'finder', data: { cmdId: 'c1', text: 'x' } });
+  assert.equal(cmd.status, 400);
+  await openRequest('cmd-f', 'req-2');
+  const forged = await post('cmd-f', { type: 'request.resolved', agentId: 'finder', data: { requestId: 'req-2', outcome: 'selected', by: { kind: 'human' } } });
+  assert.equal(forged.status, 403);
+  assert.equal(readJson(path.join(ws, 'cmd-f/mas/inbox.json')).pending.length, 1);
+  const policy = await post('cmd-f', { type: 'request.resolved', agentId: 'finder', data: { requestId: 'req-2', outcome: 'selected', by: { kind: 'policy', rule: 'web' } } });
+  assert.equal(policy.status, 200);
+  const ackOnly = await post('cmd-f', { type: 'command.ack', agentId: 'finder', data: { cmdId: 'c1', status: 'applied' } });
+  assert.equal(ackOnly.status, 200);
+});
+
+test('an attached runtime receives the command and its failure becomes a rejected ack', async () => {
+  const seen = [];
+  srv.attach({
+    info: () => ({ backends: { 'claude-code': true } }),
+    handleCommand: async (project, event) => {
+      seen.push([project, event.type, event.data.origin.kind]);
+      if (event.data.text === 'boom') throw new Error('no session');
+      srv.emit(project, [{ type: 'command.ack', agentId: event.agentId, data: { cmdId: event.data.cmdId, status: 'applied' } }]);
+    },
+  });
+  try {
+    const session = JSON.parse((await request('/v0/session', { headers: bearer() })).text);
+    assert.equal(session.runtime, true);
+    assert.deepEqual(session.backends, { 'claude-code': true });
+    const ok = JSON.parse((await command('cmd-g', { type: 'command.message', agentId: 'finder', data: { text: 'go' } })).text);
+    const bad = JSON.parse((await command('cmd-g', { type: 'command.message', agentId: 'finder', data: { text: 'boom' } })).text);
+    await new Promise((r) => setTimeout(r, 50));
+    const { commands } = readJson(path.join(ws, 'cmd-g/mas/inbox.json'));
+    assert.equal(commands.find((c) => c.cmdId === ok.cmdId).status, 'applied');
+    const failed = commands.find((c) => c.cmdId === bad.cmdId);
+    assert.equal(failed.status, 'rejected');
+    assert.match(failed.reason, /no session/);
+    assert.deepEqual(seen.map((s) => s[2]), ['human', 'human']);
+    assert.equal(fs.existsSync(path.join(ws, 'cmd-g/mas/commands')), false);
+  } finally {
+    srv.attach(null);
+  }
+});
+
+test('runs need a runtime', async () => {
+  const res = await request('/v0/runs?project=cmd-h', {
+    method: 'POST', headers: { 'content-type': 'application/json', ...bearer() }, body: JSON.stringify({ task: 'Find headphones' }),
+  });
+  assert.equal(res.status, 409);
+  assert.equal(JSON.parse(res.text).reason, 'no_runtime');
+});
+
+test('the stream replays logged events after `since`', async () => {
+  await post('cmd-i', [{ type: 'run.started', data: { title: 'R' } }, { type: 'message', data: { text: 'one' } }, { type: 'message', data: { text: 'two' } }]);
+  const text = await new Promise((resolve, reject) => {
+    let buffer = '';
+    const req = http.get({ host: '127.0.0.1', port: srv.port, path: '/v0/stream?project=cmd-i&since=1' }, (res) => {
+      res.setEncoding('utf8');
+      res.on('data', (c) => {
+        buffer += c;
+        if (buffer.includes('"two"')) { req.destroy(); resolve(buffer); }
+      });
+    });
+    setTimeout(() => { req.destroy(); reject(new Error(`no replay: ${buffer}`)); }, 3000);
+    req.on('error', () => {});
+  });
+  assert.equal(text.includes('"Planning the run"'), false);
+  assert.match(text, /id: 2\n/);
+  assert.match(text, /id: 3\n/);
+  assert.equal(/id: 1\n/.test(text), false);
+});
+
+test('while a runtime is attached, its facts cannot be posted without the token', async () => {
+  const waiting = new Set(['req-live']);
+  srv.attach({ handleCommand: async () => {}, waitsOn: (_project, id) => waiting.has(id) });
+  try {
+    for (const type of ['verdict.recorded', 'request.resolved', 'result', 'run.finished', 'evidence.checked', 'agent.stopped']) {
+      const data = { claimId: 'c1', status: 'supported', requestId: 'r', outcome: 'declined', sourceId: 's' };
+      assert.equal((await post('cmd-j', { type, agentId: 'checker', data })).status, 403, type);
+    }
+    assert.equal((await post('cmd-j', { type: 'message', agentId: 'checker', data: { text: 'hello' } })).status, 200);
+    const trusted = await request('/v0/events?project=cmd-j', {
+      method: 'POST', headers: { 'content-type': 'application/json', ...bearer() }, body: JSON.stringify({ type: 'run.started', data: {} }),
+    });
+    assert.equal(trusted.status, 200);
+    // "Still waiting" is the runtime's word, not the log's.
+    const gone = await command('cmd-j', { type: 'command.respond', agentId: 'lead', data: { requestId: 'req-gone', outcome: 'declined' } });
+    assert.equal(gone.status, 409);
+    const live = await command('cmd-j', { type: 'command.respond', agentId: 'lead', data: { requestId: 'req-live', outcome: 'declined' } });
+    assert.equal(live.status, 200);
+  } finally {
+    srv.attach(null);
+  }
+});
+
+test('a prompt from a terminal session is not answerable from the panel; notes are bounded', async () => {
+  await post('cmd-k', [
+    { type: 'run.started', data: {} },
+    { type: 'request.opened', agentId: 'lead', data: { requestId: 'hook_1', kind: 'approval', title: 'Run rm?', options: [], source: { backend: 'claude-code', raw: 'hook:PermissionRequest' } } },
+  ]);
+  const res = await command('cmd-k', { type: 'command.respond', agentId: 'lead', data: { requestId: 'hook_1', outcome: 'declined' } });
+  assert.equal(res.status, 409);
+  assert.equal(JSON.parse(res.text).reason, 'answer_in_terminal');
+  const long = await command('cmd-k', { type: 'command.respond', agentId: 'lead', data: { requestId: 'hook_1', outcome: 'declined', note: 'x'.repeat(1001) } });
+  assert.equal(long.status, 400);
 });

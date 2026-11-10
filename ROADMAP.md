@@ -6,12 +6,14 @@ This is a direction, not a promise. Items link to issues once someone picks them
 
 > **An AI team you design, can watch, can steer, and that checks its own work.**
 
-Today MAS Office shows a team at work. Next, it runs the team:
+Since v0.3.0 MAS Office runs the team, not only shows it:
 
 - Every worker is a real Claude Code or Codex session, signed in with your own account.
-- The Lead schedules the team from a design you locked.
+- The Lead plans the work for a design you locked; plain code schedules it.
 - Checkers verify the answer claim by claim.
 - Everything that needs you lands in one inbox.
+
+What is left: a raw terminal you can take over, attaching the official Codex TUI, moving the team kit onto the same engine, the evaluation runs, the user study and a desktop app.
 
 Many tools already run many agents:
 
@@ -48,31 +50,43 @@ MAS Office is about the **team**, and we put our effort into five things those t
 - [x] **v0.2.0**: a result drawer over the office; follow-up rounds in the kit, where the Lead sends back only the roles a question needs.
 - [x] **v0.2.1**: in the kit, a real browser for roles (`mas-browser`, confined to public addresses), the team in Claude Code's status line, and security hardening.
 - [x] **v0.2.2**: the result drawer opens reliably on live runs; README and website refreshed.
+- [x] **v0.3.0**: MAS Office drives the team.
+  - `mas-office-runtime` with Claude Code (Agent SDK) and Codex (`codex app-server`) adapters, and `mas-office up`.
+  - Protocol 0.2: requests, commands with acknowledgements, tasks, ledger, reviews, claims, evidence and verdicts; 16 conformance cases.
+  - The "Needs you" inbox and the agent drawer (transcript, outputs, chat, Stop) in the panel.
+  - Team design v2 compiled into per-role permissions; `mas-office team check|lock|show`.
+  - The engine: Lead plan, parallel stages, review rounds, gates, stall recovery, delegated approvals, follow-up rounds, restart.
+  - Claim-level verification and `mas-office verify`.
+  - The evaluation harness in `eval/` (no runs yet).
 
-## S0: drive real sessions (next)
+## S0: drive real sessions (v0.3.0, one item open)
 
-- [ ] Claude adapter on the Agent SDK. It covers start, stream events, detect `requires_action`, answer permission requests from the UI, steer with `priority`, and resume.
-- [ ] Codex adapter on `codex app-server`. It covers threads, approval requests, `turn/steer`, resume, and attaching the official TUI to the same thread.
-- [ ] One closed loop in the browser: see a session blocked, click it, approve or reply, watch it continue.
-- [ ] Settle the open risks: handing a Claude session over to its terminal and back, concurrency and usage limits, and crash recovery.
+- [x] Claude adapter on the Agent SDK. It covers start, stream events, detect `requires_action`, answer permission requests from the UI, steer with `priority`, and resume.
+- [x] Codex adapter on `codex app-server`. It covers threads, approval requests, `turn/steer` and resume.
+  - [ ] Attaching the official Codex TUI to the same thread.
+- [x] One closed loop in the browser: see a session blocked, click it, approve or reply, watch it continue.
+- [ ] Settle the open risks:
+  - [ ] handing a Claude session over to its terminal and back;
+  - [x] concurrency and usage limits: 3 sessions at once by default, usage shown as the programs report it;
+  - [x] crash recovery: a restart continues an unfinished run. A pending approval is not re-attached; it expires and the agent asks again.
 
-## S1: protocol 0.2, inbox and drawer
+## S1: protocol 0.2, inbox and drawer (v0.3.0, one item open)
 
-- [ ] Protocol 0.2, all additive:
+- [x] Protocol 0.2, all additive:
   - `request.*` for things waiting on a person, with ids, options and who may answer.
   - `command.*` for messages, answers, assignments and interrupts, with acknowledgements.
   - An inbox snapshot.
   - JS and Python reducers updated, with new conformance cases.
-- [ ] The inbox in the panel: wait timers, `N` to jump to the next agent that needs you, and edge pointers.
+- [x] The inbox in the panel: wait timers, `N` to jump to the next agent that needs you, and edge pointers.
 - [ ] An agent drawer:
-  - a structured transcript;
-  - a chat box into the real session;
-  - an outputs tab;
-  - a raw terminal tab you can take over (`xterm.js` + `node-pty`, shipped as a separate optional package).
+  - [x] a structured transcript;
+  - [x] a chat box into the real session;
+  - [x] an outputs tab;
+  - [ ] a raw terminal tab you can take over (`xterm.js` + `node-pty`, shipped as a separate optional package, `mas-office-terminal`).
 
-## S2: the Lead runs the team
+## S2: the Lead runs the team (v0.3.0, one item open)
 
-- [ ] Team design v2, compiled into each backend's per-role tools and permissions:
+- [x] Team design v2, compiled into each backend's per-role tools and permissions:
   - stages;
   - who hands to whom, and with what context;
   - backend per role;
@@ -80,17 +94,19 @@ MAS Office is about the **team**, and we put our effort into five things those t
   - `reviewerOf`;
   - review rounds with escalation to you;
   - gates.
-- [ ] A Lead that wakes on events. It keeps a progress ledger, detects stalls and replans, and approves only from an allow-list you set.
+- [x] A Lead that wakes on events. It keeps a progress ledger, detects stalls and replans, and approves only from an allow-list you set. (In v0.3.0 the Lead is woken for the plan, for requests routed to it, for a stall, for the write-up and for follow-ups; the scheduler counts stalls and the Lead picks the recovery. It does not yet get a digest after every finished role.)
 - [ ] Move the `AGENTS.md` kit onto the same engine.
 
-## S3: verification and evaluation
+## S3: verification and evaluation (verification in v0.3.0; evaluation open)
 
-- [ ] A claim, evidence and verdict model:
+- [x] A claim, evidence and verdict model:
   - inline citations;
   - link health checks;
-  - checker verdicts of supported, refuted or unknown;
+  - checker verdicts of supported, partial, contradicted or unknown;
   - optional cross-vendor review.
 - [ ] Evaluation on 8–10 research tasks. Compare a single agent with the same budget, a MAS Office team, Claude Code `/deep-research`, and a Deep Research product. Measure claim support, broken or invented links, errors caught, cost and time.
+  - [x] The harness: 9 tasks, three locked designs, metrics from the event log, rubric sheets, import of other systems' answers (`eval/`).
+  - [ ] The runs and the results.
 
 ## S4: people and packaging
 
@@ -107,7 +123,7 @@ MAS Office is about the **team**, and we put our effort into five things those t
 - [ ] CAMEL `WorkforceCallback`, Google ADK `BasePlugin`, Microsoft Agent Framework workflow events
 - [ ] JS integrations: OpenAI Agents SDK (TS), Mastra, Claude Agent SDK (TS)
 - [ ] `graph` topology layout; replay scrubber; `export --otlp`
-- [ ] Conformance cases for result rounds (`round`, `question`, `previous`)
+- [x] Conformance cases for result rounds (`round`, `question`, `previous`) (v0.3.0, case 15)
 - [ ] Publish the Python SDK to PyPI
 
 Background for these choices: [`docs/research/landscape/SYNTHESIS.md`](docs/research/landscape/SYNTHESIS.md).

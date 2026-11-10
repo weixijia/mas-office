@@ -209,6 +209,15 @@ class Run:
         self._ended = True
         self.emit("run.failed", _compact(reason=reason))
 
+    def follow_up(self, question: Optional[str] = None, *, round: Optional[int] = None) -> None:
+        """Start a follow-up round on this run's result (``round.started``). The next ``result`` is that round."""
+        self._ended = False
+        self.emit("round.started", _compact(round=round, question=question))
+
+    def claim(self, text: str, **options: Any) -> str:
+        """The lead records a checkable claim (``claim.added``); see ``Agent.claim``. Returns the claim id."""
+        return self.lead.claim(text, **options)
+
     def __enter__(self) -> "Run":
         return self
 
@@ -283,8 +292,80 @@ class Agent:
         """Raise a problem (``flag.raised``): ``concern``, ``needs_input``, ``needs_approval`` or ``error``."""
         self.emit("flag.raised", {"text": text, "kind": kind})
 
-    def resolve(self) -> None:
-        self.emit("flag.resolved")
+    def resolve(self, request_id: Optional[str] = None, *, outcome: Optional[str] = None,
+                option_id: Optional[str] = None, payload: Any = None, note: Optional[str] = None,
+                by: Optional[Dict[str, Any]] = None, cmd_id: Optional[str] = None) -> None:
+        """Without a request id: clear this agent's flag (``flag.resolved``).
+
+        With one: close that request (``request.resolved``). ``outcome`` defaults to ``selected``
+        when ``option_id`` is given, otherwise ``submitted``.
+        """
+        if request_id is None:
+            self.emit("flag.resolved")
+            return
+        if outcome is None:
+            outcome = "submitted" if option_id is None else "selected"
+        self.emit("request.resolved", _compact(requestId=request_id, outcome=outcome, optionId=option_id,
+                                               payload=payload, note=note, by=by, cmdId=cmd_id))
+
+    # ---------------------------------------------------- requests and usage (0.2)
+
+    def request(self, title: str, *, kind: str = "question", request_id: Optional[str] = None,
+                description: Optional[str] = None, options: Optional[List[Dict[str, Any]]] = None,
+                blocking: Optional[bool] = None, route_to: Optional[str] = None, resolver: Optional[str] = None,
+                urgency: Optional[str] = None, tool_call_id: Optional[str] = None,
+                subject: Optional[Dict[str, Any]] = None, response_schema: Optional[Dict[str, Any]] = None,
+                expires_at: Optional[str] = None, on_expire: Optional[str] = None,
+                source: Optional[Dict[str, Any]] = None) -> str:
+        """Ask for something that needs an answer (``request.opened``); returns the request id.
+
+        ``kind`` is ``approval``, ``question`` (default), ``decision``, ``flag`` or ``gate``. A blocking
+        request (the default) shows the agent as flagged until it is resolved.
+        """
+        request_id = request_id or f"req-{uuid.uuid4().hex[:8]}"
+        self.emit("request.opened", _compact(
+            requestId=request_id, kind=kind, title=title, description=description, options=options,
+            blocking=blocking, routeTo=route_to, resolver=resolver, urgency=urgency, toolCallId=tool_call_id,
+            subject=subject, responseSchema=response_schema, expiresAt=expires_at, onExpire=on_expire, source=source))
+        return request_id
+
+    def stopped(self, reason: Optional[str] = None, *, scope: Optional[str] = None,
+                by: Optional[Dict[str, Any]] = None) -> None:
+        """The agent's session stopped (``agent.stopped``): ``scope`` ``turn`` (default) or ``agent``."""
+        self.emit("agent.stopped", _compact(reason=reason, scope=scope, by=by))
+
+    def usage(self, *, input_tokens: Optional[float] = None, output_tokens: Optional[float] = None,
+              cost_usd: Optional[float] = None, turns: Optional[float] = None,
+              limit: Optional[Dict[str, Any]] = None) -> None:
+        """Usage totals so far for this agent (``usage``)."""
+        self.emit("usage", _compact(inputTokens=input_tokens, outputTokens=output_tokens, costUsd=cost_usd,
+                                    turns=turns, limit=limit))
+
+    # ------------------------------------------------------- verification (0.2)
+
+    def claim(self, text: str, *, claim_id: Optional[str] = None, sources: Optional[List[str]] = None,
+              serves: Optional[str] = None, checkworthy: Optional[bool] = None) -> str:
+        """Record a checkable claim (``claim.added``) authored by this agent; returns the claim id."""
+        claim_id = claim_id or f"claim-{uuid.uuid4().hex[:8]}"
+        self.emit("claim.added", _compact(claimId=claim_id, text=text, sources=sources, serves=serves,
+                                          checkworthy=checkworthy))
+        return claim_id
+
+    def evidence(self, source_id: str, *, url: Optional[str] = None, url_health: Optional[str] = None,
+                 http_status: Optional[int] = None, archived_url: Optional[str] = None, grade: Optional[str] = None,
+                 quote: Optional[str] = None, note: Optional[str] = None) -> None:
+        """Record what this agent found about a source (``evidence.checked``)."""
+        self.emit("evidence.checked", _compact(sourceId=source_id, url=url, urlHealth=url_health,
+                                               httpStatus=http_status, archivedUrl=archived_url, grade=grade,
+                                               quote=quote, note=note))
+
+    def verdict(self, claim_id: str, status: str, *, source_id: Optional[str] = None,
+                relationship: Optional[str] = None, method: Optional[str] = None, note: Optional[str] = None,
+                backend: Optional[str] = None) -> None:
+        """Record this agent's verdict on a claim (``verdict.recorded``): ``supported``, ``partial``,
+        ``contradicted``, ``unknown`` or ``not-checkworthy``."""
+        self.emit("verdict.recorded", _compact(claimId=claim_id, status=status, sourceId=source_id,
+                                               relationship=relationship, method=method, note=note, backend=backend))
 
     # ----------------------------------------------------------- tools, sources
 

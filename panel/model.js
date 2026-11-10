@@ -165,7 +165,56 @@
       .replace(/(^|[^\w*])\*(?=\S)([^*]+?)\*(?!\w)/g, '$1<em>$2</em>')
       .replace(/(^|[^\w])_(?=\S)([^_]+?)_(?!\w)/g, '$1<em>$2</em>');
   }
+  /* ---------- claim tags: <claim id="c3" src="a,b">…</claim> (protocol 0.2 §2.5) ---------- */
+  // Split text into plain segments and claim spans. Linear: each tag is looked for within a bounded window, and a
+  // tag that is malformed, unclosed, nested or closes nothing stays as plain text (escaped like any other text).
+  const CLAIM_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$/;
+  const CLAIM_MAX_TAG = 300;
+  function claimAttrs(body) {
+    if (/[<>]/.test(body) || !/^(\s+[A-Za-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s"'=<>`]+))*\s*$/.test(body)) return null;
+    const out = {};
+    const re = /([A-Za-z]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g;
+    let m;
+    while ((m = re.exec(body))) out[m[1].toLowerCase()] = m[2] != null ? m[2] : m[3] != null ? m[3] : m[4];
+    if (!out.id || !CLAIM_ID.test(out.id)) return null;
+    return { id: out.id, src: String(out.src || '').split(',').map((x) => x.trim()).filter((x) => CLAIM_ID.test(x)) };
+  }
+  function claimSegments(text) {
+    const t = String(text), segs = [], lower = t.toLowerCase();
+    let plainFrom = 0, open = null, i = 0;
+    const flushPlain = (to) => { if (to > plainFrom) segs.push({ text: t.slice(plainFrom, to) }); };
+    while (i < t.length) {
+      const at = lower.indexOf('<', i);
+      if (at < 0) break;
+      if (lower.startsWith('</claim>', at)) {
+        if (open) { flushPlain(open.at); segs.push({ claim: open.attrs, text: t.slice(open.end, at) }); plainFrom = at + 8; open = null; }
+        i = at + 8; continue;
+      }
+      if (lower.startsWith('<claim', at) && /[\s>]/.test(t.charAt(at + 6))) {
+        const close = t.slice(at, at + CLAIM_MAX_TAG).indexOf('>');
+        const attrs = close > 0 ? claimAttrs(t.slice(at + 6, at + close)) : null;
+        if (attrs) { open = { at, end: at + close + 1, attrs }; i = at + close + 1; continue; } // a nested open replaces the outer one, which stays text
+      }
+      i = at + 1;
+    }
+    flushPlain(t.length); // an unclosed tag: everything from it on is plain text
+
+    // merge neighbouring plain segments
+    return segs.reduce((acc, s) => { const last = acc[acc.length - 1]; if (!s.claim && last && !last.claim) last.text += s.text; else acc.push(s); return acc; }, []);
+  }
+  const CLAIM_STATUSES = ['supported', 'partial', 'contradicted', 'unknown', 'unchecked', 'not-checkworthy'];
   function inlineMd(text, opts) {
+    const segs = claimSegments(text);
+    if (segs.length === 1 && !segs[0].claim) return inlineCore(segs[0].text, opts);
+    const claims = (opts && opts.claims) || null;
+    return segs.map((s) => {
+      if (!s.claim) return inlineCore(s.text, opts);
+      const known = claims && Object.prototype.hasOwnProperty.call(claims, s.claim.id);
+      const status = known && CLAIM_STATUSES.includes(claims[s.claim.id]) ? claims[s.claim.id] : 'unchecked';
+      return '<span class="claim" data-claim="' + esc(s.claim.id) + '" data-status="' + status + '"' + (known ? ' tabindex="0"' : '') + '>' + inlineCore(s.text, opts) + '</span>';
+    }).join('');
+  }
+  function inlineCore(text, opts) {
     const re = /`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
     const out = [];
     let last = 0, m;
@@ -234,6 +283,109 @@
       html.push('<p>' + inlineMd(para.join(' '), opts) + '</p>');
     }
     return html.join('\n');
+  }
+
+  /* ---------- verification: claims, evidence, verdicts (protocol 0.2 §2.5, outputs/verification) ---------- */
+  // URL health in plain words; the evidence grade (A–D) is a different thing and is shown as its own badge.
+  const HEALTH = { live: 'live', stale: 'stale', hallucinated: 'dead', blocked: 'blocked', unknown: 'unchecked' };
+  const CLAIM_WORDS = { supported: 'supported', partial: 'partial', contradicted: 'contradicted', unknown: 'unknown', unchecked: 'unchecked', 'not-checkworthy': 'not checked' };
+  function normalizeVerification(v) {
+    if (!v || typeof v !== 'object') return null;
+    const claims = (Array.isArray(v.claims) ? v.claims : []).filter((c) => c && typeof c.claimId === 'string').map((c) => ({
+      claimId: c.claimId, text: typeof c.text === 'string' ? c.text : '', sources: (Array.isArray(c.sources) ? c.sources : []).filter((x) => typeof x === 'string'),
+      status: CLAIM_STATUSES.includes(c.status) ? c.status : 'unchecked', author: typeof c.author === 'string' ? c.author : null,
+      verdicts: (Array.isArray(c.verdicts) ? c.verdicts : []).filter((x) => x && typeof x === 'object').map((x) => ({
+        by: typeof x.by === 'string' ? x.by : null, status: CLAIM_STATUSES.includes(x.status) ? x.status : 'unknown', sourceId: typeof x.sourceId === 'string' ? x.sourceId : null,
+        relationship: typeof x.relationship === 'string' ? x.relationship : null, note: typeof x.note === 'string' ? x.note : null, backend: typeof x.backend === 'string' ? x.backend : null }))
+    }));
+    const evidence = dict();
+    (Array.isArray(v.evidence) ? v.evidence : []).forEach((e) => {
+      if (!e || typeof e.sourceId !== 'string') return;
+      evidence[e.sourceId] = { sourceId: e.sourceId, url: typeof e.url === 'string' ? e.url : null, urlHealth: HEALTH[e.urlHealth] ? e.urlHealth : null,
+        httpStatus: typeof e.httpStatus === 'number' ? e.httpStatus : null, grade: /^[A-D]$/.test(e.grade || '') ? e.grade : null, quote: typeof e.quote === 'string' ? e.quote : null };
+    });
+    const s = v.summary && typeof v.summary === 'object' ? v.summary : {};
+    const n = (k) => (typeof s[k] === 'number' && isFinite(s[k]) && s[k] >= 0 ? Math.floor(s[k]) : 0);
+    const summary = dict();
+    ['claims', 'checkworthy', 'supported', 'partial', 'contradicted', 'unknown', 'unchecked', 'sources', 'live', 'stale', 'hallucinated', 'blocked', 'uncited'].forEach((k) => { summary[k] = n(k); });
+    return { claims, evidence, summary, byId: dict(Object.fromEntries(claims.map((c) => [c.claimId, c]))) };
+  }
+  // claimId → status, for renderMarkdown's claim spans.
+  const claimStatusMap = (ver) => dict(Object.fromEntries(((ver && ver.claims) || []).map((c) => [c.claimId, c.status])));
+  // "12 claims · 9 supported · 2 partial · 1 unknown · links: 7 live, 1 dead", with the bar's segments.
+  function credibility(summary) {
+    const s = summary || {};
+    const order = ['supported', 'partial', 'contradicted', 'unknown', 'unchecked'];
+    const segments = order.map((k) => ({ status: k, n: s[k] || 0 })).filter((x) => x.n);
+    const parts = [(s.claims || 0) + ((s.claims || 0) === 1 ? ' claim' : ' claims')].concat(segments.map((x) => x.n + ' ' + CLAIM_WORDS[x.status]));
+    const links = [['live', 'live'], ['stale', 'stale'], ['hallucinated', 'dead'], ['blocked', 'blocked']].filter(([k]) => s[k]).map(([k, w]) => s[k] + ' ' + w);
+    return { text: parts.join(' · ') + (links.length ? ' · links: ' + links.join(', ') : ''), segments, total: segments.reduce((a, x) => a + x.n, 0) };
+  }
+  // What the checkers caught: contradicted and unknown claims, and review verdicts that sent work back or up.
+  function checkersCaught(ver, board) {
+    const claims = ((ver && ver.claims) || []).filter((c) => c.status === 'contradicted' || c.status === 'unknown');
+    const reviews = ((board && Array.isArray(board.reviews) ? board.reviews : [])).filter((r) => r && (r.verdict === 'revise' || r.verdict === 'escalate') && typeof r.target === 'string');
+    return { claims, reviews };
+  }
+
+  /* ---------- board: tasks, ledger, reviews, usage, agent info ---------- */
+  function normalizeBoard(b) {
+    if (!b || typeof b !== 'object') return null;
+    const list = (v) => (Array.isArray(v) ? v.filter((x) => x && typeof x === 'object') : []);
+    const map = (v) => dict(v && typeof v === 'object' && !Array.isArray(v) ? Object.fromEntries(Object.keys(v).filter((k) => v[k] && typeof v[k] === 'object').map((k) => [k, v[k]])) : {});
+    return { tasks: list(b.tasks), ledger: b.ledger && typeof b.ledger === 'object' ? b.ledger : null, reviews: list(b.reviews), recoveries: list(b.recoveries), usage: map(b.usage), agents: map(b.agents) };
+  }
+  const BACKENDS = { 'claude-code': 'Claude Code', codex: 'Codex' };
+  const backendLabel = (b) => (typeof b === 'string' && b ? BACKENDS[b] || b : '');
+  // Reviewer → target pairs from the board (agent.registered) or the team design, with the last verdict for the pair.
+  function reviewPairs(s, board) {
+    const pairs = [], seen = new Set();
+    const add = (from, to) => { const k = from + '>' + to; if (typeof from === 'string' && typeof to === 'string' && from !== to && !seen.has(k)) { seen.add(k); pairs.push({ from, to }); } };
+    const agents = (board && board.agents) || {};
+    Object.keys(agents).forEach((id) => (Array.isArray(agents[id].reviewerOf) ? agents[id].reviewerOf : []).forEach((t) => add(id, t)));
+    ((s && s.roles) || []).forEach((r) => r && (Array.isArray(r.reviewerOf) ? r.reviewerOf : []).forEach((t) => add(r.id, t)));
+    const reviews = (board && board.reviews) || [];
+    return pairs.map((p) => {
+      let last = null;
+      reviews.forEach((r) => { if (r.reviewer === p.from && r.target === p.to) last = r; });
+      const verdict = last && typeof last.verdict === 'string' ? last.verdict : null;
+      return Object.assign(p, { verdict, bad: verdict === 'revise' || verdict === 'escalate' });
+    });
+  }
+  // The Lead's ledger in one line: "Progressing · next: Catch checker".
+  function ledgerLine(ledger, nameOf) {
+    if (!ledger || typeof ledger !== 'object') return '';
+    const word = ledger.satisfied === true ? 'Satisfied' : ledger.looping === true ? 'Looping' : ledger.progressing === true ? 'Progressing' : ledger.progressing === false ? 'Not progressing' : '';
+    const next = typeof ledger.next === 'string' && ledger.next ? 'next: ' + (nameOf ? nameOf(ledger.next) : ledger.next) : '';
+    const stalls = typeof ledger.stalls === 'number' && ledger.stalls > 0 ? ledger.stalls + (ledger.stalls === 1 ? ' stall' : ' stalls') : '';
+    return [word, next, stalls].filter(Boolean).join(' · ');
+  }
+  const compact = (n) => (n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(n >= 1e4 ? 0 : 1) + 'k' : String(Math.round(n)));
+  // Usage in a line ("12.4k in · 3.1k out · $0.42 · 6 turns") and a limit warning, from numbers the backend reported.
+  function usageInfo(u) {
+    if (!u || typeof u !== 'object') return null;
+    const n = (k) => (typeof u[k] === 'number' && isFinite(u[k]) && u[k] >= 0 ? u[k] : 0);
+    const parts = [n('inputTokens') || n('outputTokens') ? compact(n('inputTokens')) + ' in · ' + compact(n('outputTokens')) + ' out' : '', n('costUsd') ? '$' + n('costUsd').toFixed(2) : '', n('turns') ? n('turns') + (n('turns') === 1 ? ' turn' : ' turns') : ''].filter(Boolean);
+    const lim = u.limit && typeof u.limit === 'object' ? u.limit : null;
+    const warn = lim && typeof lim.status === 'string' && lim.status !== 'allowed' ? 'Usage limit: ' + lim.status.replace(/_/g, ' ') + (typeof lim.resetsAt === 'string' ? ' · resets ' + lim.resetsAt : '') : '';
+    return { text: parts.join(' · '), warn, tokens: n('inputTokens') + n('outputTokens'), cost: n('costUsd') };
+  }
+  function usageTotal(usage) {
+    const ids = Object.keys(usage || {});
+    if (!ids.length) return null;
+    let tokens = 0, cost = 0;
+    const warns = [];
+    ids.forEach((id) => { const u = usageInfo(usage[id]); if (!u) return; tokens += u.tokens; cost += u.cost; if (u.warn) warns.push({ id, text: u.warn }); });
+    return { text: compact(tokens) + ' tokens' + (cost ? ' · $' + cost.toFixed(2) : '') + ' across ' + ids.length + (ids.length === 1 ? ' agent' : ' agents'), warns };
+  }
+
+  // A tool entry of a role: "web search" or {name, effect: allow | ask | deny} (team design v2). Returns
+  // {name, effect, text} with the effect in words ("browse the web (asks first)"), or null for an unusable entry.
+  function toolInfo(t) {
+    const name = typeof t === 'string' ? t : t && typeof t === 'object' && typeof t.name === 'string' ? t.name : '';
+    if (!name) return null;
+    const effect = t && typeof t === 'object' && (t.effect === 'ask' || t.effect === 'deny') ? t.effect : 'allow';
+    return { name, effect, text: name + (effect === 'ask' ? ' (asks first)' : effect === 'deny' ? ' (not allowed)' : '') };
   }
 
   /* ---------- data files ---------- */
@@ -896,6 +1048,8 @@
     TOOLS, STATES, FINISHED, MAX_DESKS, EVIDENCE, GROUP_COLORS, DEMO_DATA,
     clone, dict, safeRoot, oneLine, esc, hash, colorFor, roleName, member, orderGroups, groupCaption, zoneCaption, receivesFrom, withDynamicGroup, capRoles,
     coverage, costInfo, isSdk, deriveProgress, wrapUp, flagInfo, stateLabel, needsYou, formatHint, renderMarkdown, evalDataFile, pushSay, timeAgo,
+    claimSegments, HEALTH, CLAIM_WORDS, normalizeVerification, claimStatusMap, credibility, checkersCaught,
+    normalizeBoard, backendLabel, reviewPairs, toolInfo, ledgerLine, usageInfo, usageTotal,
     phaseLine, activityFor, clampProgress, formatElapsed, formatClock, teamProgress, statusKey,
     buildDemoScript, demoStatusesAt, demoWork,
     PLAN, planOffice, gridRoute, polyXRange, convexHull, layoutLabels, leaderPath, pathsCross, roleBoxes, leaderCrossings, pathLength, polysOverlap, letterRooms, normalizeWork, resultRounds, drawerDue, normalizeHome, headline, seededRandom, loungeLayout, pickStation, partyDue, figBox, boxesOverlap

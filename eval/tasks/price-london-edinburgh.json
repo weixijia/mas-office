@@ -1,0 +1,48 @@
+{
+  "id": "price-london-edinburgh",
+  "title": "London to Edinburgh: train, plane or coach",
+  "category": "price-comparison",
+  "task": "Compare the cost and total door-to-door time of travelling one way from central London to central Edinburgh for one adult on a weekday about three weeks from today, leaving in the morning. Compare at least one train option, one flight option and one coach option. For each give the operator, the fare you found and its fare type or restrictions, the travel time including getting to and from the airport or station, and the date you looked the fare up. Then recommend one option for someone who values cost and time equally, and say what would change the recommendation.",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "At least one option for each of train, plane and coach, each with operator, fare and fare conditions."
+    },
+    {
+      "id": "R2",
+      "text": "Door-to-door time for each option, including transfers to and from airports or stations."
+    },
+    {
+      "id": "R3",
+      "text": "A recommendation for a traveller who weighs cost and time equally, with what would change it."
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "kind": "must-cite",
+      "text": "Every fare and timetable figure links to an operator or booking page that shows it."
+    },
+    {
+      "id": "C2",
+      "kind": "freshness",
+      "text": "The travel date searched and the date of the lookup are both stated."
+    },
+    {
+      "id": "C3",
+      "kind": "must-compare",
+      "text": "The three modes are compared side by side on fare and door-to-door time, with the same journey assumptions."
+    },
+    {
+      "id": "C4",
+      "kind": "must-state-uncertainty",
+      "text": "Estimated transfer times and any fare that may sell out or change are marked as estimates, not stated as fixed facts."
+    },
+    {
+      "id": "C5",
+      "kind": "must-cite",
+      "text": "Baggage or fare-class restrictions that affect the comparison (e.g. a cabin-bag-only air fare) are stated with a source."
+    }
+  ],
+  "notes": "Fares move daily; do not score the fare values. Score whether the comparison is like-for-like and sourced."
+}

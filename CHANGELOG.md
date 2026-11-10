@@ -4,6 +4,37 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-11-10
+
+MAS Office now runs the team, not only shows it. Every role of a locked design is a real Claude Code or Codex session on your computer, signed in by you, and the panel is where you answer and steer it.
+
+### Added
+- **`mas-office-runtime`**, a new npm package (`packages/runtime`) that drives a locked team of real sessions. It depends on `mas-office` and `@anthropic-ai/claude-agent-sdk`; `mas-office` itself stays zero-dependency.
+  - **Claude Code backend**: the Agent SDK pointed at your installed `claude`, one streaming session per role. Approvals go through `canUseTool` and a `PreToolUse` hook; messages can steer, queue or interrupt; sessions resume by id.
+  - **Codex backend**: one shared `codex app-server` (your installed `codex`), one thread per role. Every approval server request goes to the engine; `turn/steer`, `thread/resume`; MCP servers a role was not given are switched off for its thread.
+  - **The engine**: the Lead, itself a real session, plans and writes each role's brief; a deterministic scheduler validates every JSON turn the Lead returns. Stages run in parallel, at most 3 sessions at once by default. A reviewer can send work back for a bounded number of rounds; then the person decides, never a silent accept. Gates (plan, stage, final). The Lead writes the answer to `outputs/result.md` with `<claim id src>` tags; every source URL is checked; checkers judge each claim; flags open when `verify.flagWhen` thresholds are crossed. Follow-up rounds send back only the roles needed. Stall detection: a nudge, then the Lead picks a recovery, then the person. Approvals are delegated by policy or to the Lead within an allow-list, and every such decision is logged. A restart continues an unfinished run and expires requests the old process left open.
+- **CLI**:
+  - `mas-office up [workspace] --project <p> --task "…"` runs a locked team with the panel. It needs `mas-office-runtime` and prints the install command when it is missing.
+  - `mas-office team check|lock|show <project>` checks a team design, locks it with a signature, or prints it as Markdown.
+  - `mas-office verify <project>` lists an answer's claims, checks each source link (private addresses are never fetched) and appends the findings to the project's log.
+- **Protocol 0.2** (`spec/rfcs/0001-protocol-0.2.md`), all additive: `request.opened` / `request.resolved`; `command.message`, `command.respond`, `command.assign`, `command.interrupt` with `command.ack`; `agent.stopped`; `task.assigned` / `task.updated` / `task.finished`, `lead.ledger`, `review.verdict`, `recovery.chosen`; `claim.added`, `evidence.checked`, `verdict.recorded`; `round.started`; `usage`. New snapshots `mas/inbox`, `mas/board` and `outputs/verification`, with JSON Schemas. Statuses gain `waitingOn` and `stopReason`. The reducer now builds result rounds (`round`, `question`, `previous`). The JS and Python reducers agree on 16 conformance cases (09–16 are new).
+- **Team design v2** (optional fields on `mas/structure`; a 0.1 structure stays valid): a `backend` per role, a fixed tool vocabulary with `allow` / `ask` / `deny`, `reviewerOf` and `review` rounds with escalation, `cleanContext`, gates, `lead.delegate` rules, `budget`, and a `signature` set at lock. The design is compiled into each backend's options and enforced at one point (`decideTool`) for every tool call.
+- **Server**: `POST /v0/commands`, `POST /v0/runs`, `GET /v0/session`, `GET /v0/inbox`, and replay on `GET /v0/stream` with `since` (or `Last-Event-ID`). Without a runtime, commands are left in `<project>/mas/commands/<agentId>.jsonl` for a file-only assistant.
+- **SDKs** (JS and Python): `request` / `resolve`, `stopped`, `usage`, `claim`, `evidence`, `verdict` and `followUp` / `follow_up`.
+- **Panel**: the "Needs you" inbox with wait clocks, what each request holds up, and answers in place; an agent drawer with transcript, outputs, a chat box (steer / queue / interrupt) with delivery receipts, and Stop; reviewer lines and raised hands in the office; keyboard shortcuts (`N`, `I`, `A` / `D`, `1`–`9`, `?`); in the result, claims highlighted by verdict, a credibility line and "What the checkers caught".
+- **`eval/`**: an evaluation harness (Python, standard library only) with 9 research and decision tasks, three locked designs (a team with a cross-vendor checker, the same team with a same-vendor checker, a single agent), metrics computed from the event log, rubric sheets, import of answers from other systems, and an HCI study protocol. No evaluation runs have been made yet.
+
+### Changed
+- **Protocol version** is `0.2`. A 0.1 log reduces to the same structure, statuses, state and result as before, apart from the two new status fields (`waitingOn`, `stopReason`). Cases 01–08 gain those fields and the new empty snapshots in `expected.json`.
+- **`mas-office hook claude-code`**: a permission prompt in a Claude Code session you opened yourself now appears in the inbox. You answer it in your own terminal; the panel only watches that session.
+- **Panel**: without the token the panel is read-only; the examples and `?demo=1` work as before.
+- **Examples**: `price-compare` is a locked v2 design: a Codex checker reviews both finders, `web search` approvals are given by policy, and a gate sits before the check stage.
+- **Docs**: README (both languages), ROADMAP, `docs/design/runtime.md`, `packages/runtime/README.md`, `eval/README.md`.
+
+### Security
+- **Sessions**: only the unmodified `claude` and `codex` the user installed and signed in to (`claude auth login`, `codex login`). Login state is checked with `claude auth status` and Codex `account/read`; no credential is read, stored or passed. Child processes get a minimal environment. Claude roles run with `settingSources: []`, so no user or project setting widens a role. Codex roles run in a read-only sandbox with `on-request` approvals, so every write goes through the policy.
+- **Server**: the printed panel link carries a token; only a browser opened from it can answer requests, message agents or start runs. Only the server writes `origin: human`. `POST /v0/events` refuses `command.*` (other than `command.ack`) and refuses a `request.resolved` that claims `by.kind: "human"` without the token.
+
 ## [0.2.2] — 2026-11-07
 
 ### Fixed

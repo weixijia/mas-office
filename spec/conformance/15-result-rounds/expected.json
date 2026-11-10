@@ -1,0 +1,136 @@
+{
+  "structure": {
+    "title": "Rounds",
+    "version": 1,
+    "locked": true,
+    "topology": "dynamic",
+    "lead": {
+      "id": "lead",
+      "name": "Lead",
+      "emoji": "🧭",
+      "job": "",
+      "serves": []
+    },
+    "groups": [
+      {
+        "id": "dyn",
+        "label": "Spawned at runtime",
+        "after": null
+      }
+    ],
+    "roles": [
+      {
+        "id": "checker",
+        "name": "checker",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      }
+    ]
+  },
+  "statuses": {
+    "lead": {
+      "state": "working",
+      "say": "Working on your follow-up",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:11Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "checker": {
+      "state": "flagged",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": "Check the open-box price",
+      "flagKind": "concern",
+      "progress": 0,
+      "t": "2026-11-07T09:00:08Z",
+      "waitingOn": [],
+      "stopReason": null
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "running",
+    "locked": true,
+    "version": 1,
+    "run": 1,
+    "runId": "r1",
+    "updated": "2026-11-07T09:00:12Z",
+    "next": "Watch the office panel — the team is working."
+  },
+  "result": {
+    "title": "Rounds — run 1",
+    "run": 1,
+    "updated": "2026-11-07T09:00:12Z",
+    "markdown": "One open-box unit at £249.",
+    "sources": [],
+    "flags": [],
+    "work": [],
+    "round": 10,
+    "question": "Any open-box units?",
+    "previous": [
+      {
+        "round": 1,
+        "title": "Rounds — run 1",
+        "markdown": "## Shortlist\n- Currys £279",
+        "updated": "2026-11-07T09:00:02Z"
+      },
+      {
+        "round": 2,
+        "question": "What about Argos?",
+        "title": "Rounds — run 1",
+        "markdown": "Argos has no stock.",
+        "updated": "2026-11-07T09:00:03Z"
+      },
+      {
+        "round": 3,
+        "title": "Follow-up",
+        "markdown": "Same price.",
+        "updated": "2026-11-07T09:00:04Z"
+      },
+      {
+        "round": 7,
+        "title": "Rounds — run 1",
+        "markdown": "Jumped ahead.",
+        "updated": "2026-11-07T09:00:05Z"
+      },
+      {
+        "round": 8,
+        "question": "Half a round?",
+        "title": "Rounds — run 1",
+        "markdown": "Not an integer.",
+        "updated": "2026-11-07T09:00:06Z"
+      },
+      {
+        "round": 9,
+        "title": "Rounds — run 1",
+        "markdown": "Wrong type.",
+        "updated": "2026-11-07T09:00:07Z"
+      }
+    ]
+  },
+  "inbox": {
+    "pending": [],
+    "recent": [],
+    "commands": []
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
+}

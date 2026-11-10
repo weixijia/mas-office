@@ -1,0 +1,28 @@
+{"v": "0.2", "seq": 1, "ts": "2026-11-07T09:00:01Z", "runId": "r1", "type": "run.started", "agentId": "lead", "data": {"title": "Verification"}}
+{"v": "0.2", "seq": 2, "ts": "2026-11-07T09:00:02Z", "runId": "r1", "type": "claim.added", "agentId": "lead", "data": {"claimId": "c1", "text": "Currys sells the XM6 for £279", "sources": ["currys-xm6", 7, "ebay-xm6"], "serves": "R1"}}
+{"v": "0.2", "seq": 3, "ts": "2026-11-07T09:00:03Z", "runId": "r1", "type": "claim.added", "agentId": "lead", "data": {"claimId": "c2", "text": "eBay has it for £240", "sources": ["ebay-xm6"]}}
+{"v": "0.2", "seq": 4, "ts": "2026-11-07T09:00:04Z", "runId": "r1", "type": "claim.added", "agentId": "lead", "data": {"claimId": "c3", "text": "Sony is a good brand", "checkworthy": false}}
+{"v": "0.2", "seq": 5, "ts": "2026-11-07T09:00:05Z", "runId": "r1", "type": "claim.added", "agentId": "lead", "data": {"claimId": "c4", "text": "Argos has stock"}}
+{"v": "0.2", "seq": 6, "ts": "2026-11-07T09:00:06Z", "runId": "r1", "type": "claim.added", "agentId": "lead", "data": {"claimId": "c5", "text": "The XM6 launched in 2025", "sources": "currys-xm6"}}
+{"v": "0.2", "seq": 7, "ts": "2026-11-07T09:00:07Z", "runId": "r1", "type": "claim.added", "agentId": "lead", "data": {"claimId": "c6", "text": "Battery lasts 30 hours", "checkworthy": "no"}}
+{"v": "0.2", "seq": 8, "ts": "2026-11-07T09:00:08Z", "runId": "r1", "type": "claim.added", "agentId": "writer", "data": {"claimId": "__proto__", "text": "Proto claim", "sources": ["proto-src"]}}
+{"v": "0.2", "seq": 9, "ts": "2026-11-07T09:00:09Z", "type": "claim.added", "agentId": "lead", "data": {"claimId": "c9"}}
+{"v": "0.2", "seq": 10, "ts": "2026-11-07T09:00:10Z", "runId": "r1", "type": "evidence.checked", "agentId": "checker", "data": {"sourceId": "currys-xm6", "url": "https://www.currys.co.uk/xm6", "urlHealth": "live", "httpStatus": 200, "grade": "A", "quote": "£279"}}
+{"v": "0.2", "seq": 11, "ts": "2026-11-07T09:00:11Z", "runId": "r1", "type": "evidence.checked", "agentId": "checker", "data": {"sourceId": "ebay-xm6", "url": "https://www.ebay.co.uk/itm/1", "urlHealth": "dead", "grade": "E"}}
+{"v": "0.2", "seq": 12, "ts": "2026-11-07T09:00:12Z", "runId": "r1", "type": "evidence.checked", "agentId": "checker-2", "data": {"sourceId": "ebay-xm6", "urlHealth": "hallucinated", "httpStatus": 404, "note": "No such item"}}
+{"v": "0.2", "seq": 13, "ts": "2026-11-07T09:00:13Z", "runId": "r1", "type": "evidence.checked", "agentId": "checker", "data": {"sourceId": "orphan", "urlHealth": "stale", "archivedUrl": "https://web.archive.org/x", "grade": "C"}}
+{"v": "0.2", "seq": 14, "ts": "2026-11-07T09:00:14Z", "runId": "r1", "type": "evidence.checked", "agentId": "checker", "data": {"sourceId": "__proto__", "urlHealth": "blocked", "httpStatus": "403"}}
+{"v": "0.2", "seq": 15, "ts": "2026-11-07T09:00:15Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker", "data": {"claimId": "c1", "status": "supported", "sourceId": "currys-xm6", "relationship": "supports", "method": "page-read", "backend": "claude-code"}}
+{"v": "0.2", "seq": 16, "ts": "2026-11-07T09:00:16Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker", "data": {"claimId": "c2", "status": "partial", "relationship": "kind-of"}}
+{"v": "0.2", "seq": 17, "ts": "2026-11-07T09:00:17Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker-2", "data": {"claimId": "c2", "status": "partial", "note": "Refurbished unit"}}
+{"v": "0.2", "seq": 18, "ts": "2026-11-07T09:00:18Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker", "data": {"claimId": "c5", "status": "supported"}}
+{"v": "0.2", "seq": 19, "ts": "2026-11-07T09:00:19Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker-2", "data": {"claimId": "c5", "status": "contradicted", "relationship": "refutes"}}
+{"v": "0.2", "seq": 20, "ts": "2026-11-07T09:00:20Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker", "data": {"claimId": "c6", "status": "supported"}}
+{"v": "0.2", "seq": 21, "ts": "2026-11-07T09:00:21Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker-2", "data": {"claimId": "c6", "status": "partial"}}
+{"v": "0.2", "seq": 22, "ts": "2026-11-07T09:00:22Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker", "data": {"claimId": "c4", "status": "contradicted"}}
+{"v": "0.2", "seq": 23, "ts": "2026-11-07T09:00:23Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker", "data": {"claimId": "c4", "status": "supported", "note": "Rechecked: in stock"}}
+{"v": "0.2", "seq": 24, "ts": "2026-11-07T09:00:24Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker", "data": {"claimId": "c3", "status": "contradicted"}}
+{"v": "0.2", "seq": 25, "ts": "2026-11-07T09:00:25Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker", "data": {"claimId": "c99", "status": "supported"}}
+{"v": "0.2", "seq": 26, "ts": "2026-11-07T09:00:26Z", "type": "verdict.recorded", "agentId": "checker", "data": {"claimId": "c1", "status": "true"}}
+{"v": "0.2", "seq": 27, "ts": "2026-11-07T09:00:27Z", "runId": "r1", "type": "claim.added", "agentId": "writer", "data": {"claimId": "c2", "text": "eBay has it for £240 (refurbished)", "checkworthy": true}}
+{"v": "0.2", "seq": 28, "ts": "2026-11-07T09:00:28Z", "runId": "r1", "type": "verdict.recorded", "agentId": "checker", "data": {"claimId": "__proto__", "status": "unknown"}}

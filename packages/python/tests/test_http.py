@@ -67,7 +67,7 @@ def test_http_transport_posts_ordered_batches(server):
     deals = [e for _, project, _, events in received if project == "deals" for e in events]
     assert [e["type"] for e in deals] == ["run.started", "agent.registered"] + ["agent.status"] * 20 + ["run.finished"]
     assert [e["data"]["say"] for e in deals if e["type"] == "agent.status"] == [f"step {i}" for i in range(20)]
-    assert all(e["v"] == "0.1" and "ts" in e and "seq" not in e for e in deals)
+    assert all(e["v"] == "0.2" and "ts" in e and "seq" not in e for e in deals)
     assert deals[0]["data"]["title"] == "Deals"
     assert [e["type"] for _, project, _, events in received if project == "other" for e in events] == [
         "run.started", "run.finished"]

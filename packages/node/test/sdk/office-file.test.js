@@ -48,7 +48,7 @@ test('file transport end to end: log, snapshots, twins, task and home index', as
     const dir = path.join(ws, 'headphone-deals');
     const log = readLog(path.join(dir, 'mas/events.jsonl'));
     assert.deepEqual(log.map((e) => e.seq), log.map((_, i) => i + 1), 'seq is 1, 2, 3, …');
-    assert.ok(log.every((e) => e.v === '0.1' && typeof e.ts === 'string' && e.runId === run.id));
+    assert.ok(log.every((e) => e.v === '0.2' && typeof e.ts === 'string' && e.runId === run.id));
     assert.deepEqual(log.map((e) => e.type), [
       'run.started', 'agent.status', 'tool.started', 'tool.finished', 'tool.started', 'tool.failed', 'artifact',
       'agent.registered', 'message', 'handoff', 'agent.finished', 'flag.raised', 'flag.resolved', 'agent.finished',
@@ -187,4 +187,63 @@ test('a new run removes the previous run\'s result files (spec §4.5)', async ()
   project.run();
   assert.ok(!fs.existsSync(`${result}.json`) && !fs.existsSync(`${result}.js`));
   await office.close();
+});
+
+test('0.2 helpers: requests, stops, usage and verification reach the inbox, board and verification files', async () => {
+  const ws = tmpDir();
+  try {
+    const office = new Office({ workspace: ws });
+    const run = office.project('deals').run({ structure: STRUCTURE });
+    const finder = run.agent('finder-a');
+    const checker = run.agent('checker');
+    const ask = finder.request('Open currys.co.uk?', { kind: 'approval', options: [{ optionId: 'ok', name: 'Allow' }] });
+    const question = finder.request('Refurbished too?', { requestId: 'q-1', urgency: 'high' });
+    assert.match(ask, /^req-[0-9a-f]{8}$/);
+    assert.equal(question, 'q-1');
+    finder.resolve(ask, { optionId: 'ok', by: { kind: 'human' } });
+    finder.usage({ inputTokens: 100, turns: 1 });
+    const claim = run.claim('Currys has it for £279', { sources: ['currys'] });
+    checker.evidence('currys', { url: 'https://currys.example', urlHealth: 'live', grade: 'A' });
+    checker.verdict(claim, 'supported', { sourceId: 'currys', relationship: 'supports' });
+    checker.stopped('Stopped by you', { scope: 'agent', by: { kind: 'human' } });
+    checker.resolve();
+    await office.close();
+
+    const dir = path.join(ws, 'deals');
+    const types = readLog(path.join(dir, 'mas/events.jsonl')).map((e) => e.type);
+    assert.deepEqual(types.slice(1), [
+      'request.opened', 'request.opened', 'request.resolved', 'usage', 'claim.added', 'evidence.checked',
+      'verdict.recorded', 'agent.stopped', 'flag.resolved',
+    ]);
+    const inbox = readJson(path.join(dir, 'mas/inbox.json'));
+    assert.deepEqual(inbox.pending.map((r) => [r.requestId, r.urgency]), [['q-1', 'high']]);
+    assert.deepEqual([inbox.recent[0].requestId, inbox.recent[0].outcome, inbox.recent[0].optionId], [ask, 'selected', 'ok']);
+    assert.deepEqual(readJson(path.join(dir, 'mas/status/finder-a.json')).waitingOn, ['q-1']);
+    const stopped = readJson(path.join(dir, 'mas/status/checker.json'));
+    assert.deepEqual([stopped.state, stopped.say, stopped.stopReason], ['done', 'Stopped by you', 'cancelled']);
+    assert.equal(readJson(path.join(dir, 'mas/board.json')).usage['finder-a'].inputTokens, 100);
+    const verification = readJson(path.join(dir, 'outputs/verification.json'));
+    assert.deepEqual([verification.claims[0].claimId, verification.claims[0].author, verification.claims[0].status], [claim, 'lead', 'supported']);
+    assert.equal(verification.summary.live, 1);
+    assert.deepEqual(evalTwin(fs.readFileSync(path.join(dir, 'outputs/verification.js'), 'utf8')).MAS_VERIFICATION, verification);
+  } finally {
+    fs.rmSync(ws, { recursive: true, force: true });
+  }
+});
+
+test('run.followUp opens a follow-up round; the next result is that round', async () => {
+  const ws = tmpDir();
+  try {
+    const office = new Office({ workspace: ws });
+    const run = office.project('deals').run();
+    run.result({ markdown: 'one' }).finish();
+    run.followUp('Open-box too?', { round: 2 }).result({ markdown: 'two' });
+    await office.close();
+    const dir = path.join(ws, 'deals');
+    assert.equal(readJson(path.join(dir, 'mas/state.json')).phase, 'running');
+    const result = readJson(path.join(dir, 'outputs/result.json'));
+    assert.deepEqual([result.round, result.previous.map((p) => p.markdown)], [2, ['one']]);
+  } finally {
+    fs.rmSync(ws, { recursive: true, force: true });
+  }
 });

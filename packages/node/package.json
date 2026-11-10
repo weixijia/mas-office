@@ -1,7 +1,7 @@
 {
   "name": "mas-office",
-  "version": "0.2.2",
-  "description": "Show any multi-agent system's team live in an animated office panel: SDK (events, reducer, snapshot writers) and CLI (serve, validate, replay, demo).",
+  "version": "0.3.0",
+  "description": "An AI team you design, can watch, can steer, and that checks its own work: protocol, reducer, live office panel, inbox and CLI.",
   "type": "module",
   "bin": {
     "mas-office": "bin/mas-office.js"
@@ -11,6 +11,9 @@
     ".": "./src/sdk/index.js",
     "./server": "./src/cli/server.js",
     "./cli": "./src/cli/cli.js",
+    "./team": "./src/team/index.js",
+    "./policy": "./src/policy/index.js",
+    "./verify": "./src/verify/index.js",
     "./package.json": "./package.json"
   },
   "files": [
@@ -25,7 +28,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "test": "node --test test/sdk/reducer.test.js test/sdk/files.test.js test/sdk/office-file.test.js test/sdk/office-http.test.js test/cli/schema.test.js test/cli/validate.test.js test/cli/server.test.js test/cli/hook.test.js test/cli/export.test.js test/cli/cli.test.js test/cli/kit-statusline.test.js",
+    "test": "node --test test/sdk/reducer.test.js test/sdk/files.test.js test/sdk/office-file.test.js test/sdk/office-http.test.js test/cli/schema.test.js test/cli/validate.test.js test/cli/server.test.js test/cli/hook.test.js test/cli/export.test.js test/cli/cli.test.js test/cli/kit-statusline.test.js test/policy/delegate.test.js test/team/compile.test.js test/team/decide.test.js test/team/markdown.test.js test/team/normalize.test.js test/team/sign.test.js test/team/vocabulary.test.js test/verify/claims.test.js test/verify/cli.test.js test/verify/sources.test.js test/verify/url-health.test.js test/verify/verdicts.test.js test/cli/team.test.js test/team/bypass.test.js",
     "prepack": "node scripts/bundle.js",
     "postpack": "node scripts/bundle.js --clean"
   },

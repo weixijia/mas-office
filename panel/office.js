@@ -76,6 +76,8 @@
     let figs = M.dict(), deskEls = M.dict(), docs = M.dict(), noteEls = M.dict(), labelPos = M.dict(), listMode = false, sig = '', raf = 0, fallback = 0, last = 0, pulseN = 0, printNext = false;
     let extra = [], allStatuses = M.dict(), moreEl = null; // extra: role ids beyond the desk cap
     let lounge = null, runKey = null, party = { key: null, active: false }, decorKey = null, partyTimer = 0, ball = { el: null, t0: 0, on: false }, talkAt = 0;
+    // supervision overlay: who waits on a person (id → since, ms), reviewer → target pairs, a highlighted stage, handoffs done this run
+    let waits = M.dict(), pairs = [], pairSig = '', group = null, handed = new Set();
     const P = (x, y, z) => [O[0] + (x - y) * C * U, O[1] + (x + y) * 0.5 * U - (z || 0) * U];
     const L = (x, y, z) => [(x - y) * C * U, (x + y) * 0.5 * U - (z || 0) * U];
 
@@ -326,6 +328,21 @@
         const e = P(b.visit.x, b.visit.y, 0.01);
         svg('circle', { class: 'route-end', 'data-route': r.id, cx: e[0], cy: e[1], r: 3 }, lay.routes);
       });
+      drawReviews();
+    }
+    // Reviewer → target: a cobalt dash-dot line between the two desks, vermilion when the last verdict sent work back.
+    function drawReviews() {
+      lay.routes.querySelectorAll('.rev').forEach((n) => n.remove());
+      pairs.forEach((p) => {
+        const a = plan.desks[p.from], b = plan.desks[p.to];
+        if (!a || !b) return;
+        const path = [a.visit].concat(M.gridRoute(plan, a.visit, b.visit)).map((q) => P(q.x, q.y, 0.02));
+        const cls = 'rev' + (p.bad ? ' bad' : '');
+        const t = svg('polyline', { class: 'route-rev ' + cls, 'data-route': p.from, points: pts(path) }, lay.routes);
+        svg('title', {}, t).textContent = (M.member(S, p.from) || {}).name + ' reviews ' + ((M.member(S, p.to) || {}).name || p.to) + (p.verdict ? ' · last verdict: ' + p.verdict : '');
+        const e = path[path.length - 1];
+        svg('circle', { class: 'route-rev-end ' + cls, 'data-route': p.from, cx: e[0], cy: e[1], r: 3 }, lay.routes);
+      });
     }
 
     /* ----- figures ----- */
@@ -368,6 +385,10 @@
       svg('g', { class: 'b-ask' }, badge).innerHTML = '<circle cx="' + s / 2 + '" cy="' + s / 2 + '" r="' + s / 2 + '" fill="#BDCBEA" stroke="#1B1F23"/><path d="M' + s * 0.34 + ' ' + s * 0.38 + 'a' + s * 0.16 + ' ' + s * 0.16 + ' 0 1 1 ' + s * 0.2 + ' ' + s * 0.15 + 'c-' + s * 0.05 + ' ' + s * 0.03 + '-' + s * 0.04 + ' ' + s * 0.06 + '-' + s * 0.04 + ' ' + s * 0.12 + 'M' + s / 2 + ' ' + s * 0.78 + 'v' + s * 0.04 + '" fill="none" stroke="#1B1F23" stroke-width="2" stroke-linecap="round"/>';
       svg('g', { class: 'b-fail' }, badge).innerHTML = '<rect x="0" y="0" width="' + s + '" height="' + s + '" fill="#F4C2B1" stroke="#1B1F23"/><path d="M' + s * 0.28 + ' ' + s * 0.28 + 'L' + s * 0.72 + ' ' + s * 0.72 + 'M' + s * 0.72 + ' ' + s * 0.28 + 'L' + s * 0.28 + ' ' + s * 0.72 + '" stroke="#1B1F23" stroke-width="2"/>';
       svg('g', { class: 'b-warn' }, badge).innerHTML = '<path d="M' + s / 2 + ' 0L' + s * 1.1 + ' ' + s + 'H' + -s * 0.1 + 'Z" fill="#D89A12" stroke="#1B1F23" stroke-linejoin="round"/><path d="M' + s / 2 + ' ' + s * 0.32 + 'v' + s * 0.34 + 'M' + s / 2 + ' ' + s * 0.78 + 'v' + s * 0.06 + '" stroke="#1B1F23" stroke-width="2"/>';
+      // waiting on a person: a vermilion tag with the wait time above the raised hand
+      const wt = svg('g', { class: 'wait', transform: 'translate(' + (hc[0] - r - 6).toFixed(1) + ' ' + (hc[1] - r - 26).toFixed(1) + ')' }, g);
+      f.waitRect = svg('rect', { x: -40, y: 0, width: 40, height: 18 }, wt);
+      f.waitText = svg('text', { x: -34, y: 13 }, wt);
       // speech bubble, drawn on the side away from the chat partner (right for the right-hand speaker, mirrored for the left)
       const bw = Math.max(26, 0.62 * U), bh = Math.max(14, 0.3 * U), bx = hc[0] + r * 0.4, by = hc[1] - r - bh - 6;
       ['r', 'l'].forEach((side) => {
@@ -381,10 +402,11 @@
       g.addEventListener('click', (e) => { e.stopPropagation(); opts.onSelect && opts.onSelect(f.id); });
       f.g = g;
       setCls(f, f.cls || []);
+      fillWait(f);
     }
     function setCls(f, list) {
       f.cls = list.filter(Boolean);
-      if (f.g) f.g.setAttribute('class', 'fig ' + f.cls.join(' ') + (selected === f.id ? ' on' : ''));
+      if (f.g) f.g.setAttribute('class', 'fig ' + f.cls.join(' ') + (waits[f.id] != null ? ' waits' : '') + (selected === f.id || (group && group.includes(f.id)) ? ' on' : ''));
     }
     function placeFig(f) {
       if (!f.g) return;
@@ -477,7 +499,8 @@
       b.querySelector('.n-num').textContent = [p != null && (busy || ended) ? p + '%' : '', clock].filter(Boolean).join(' · ');
       b.dataset.state = st.state;
       if (fl && fl.needsYou) b.dataset.ask = ''; else delete b.dataset.ask;
-      b.setAttribute('aria-label', name + ', ' + word + (shown ? ': ' + shown : '') + '. Show details');
+      const wt = waits[id] != null ? M.formatClock(Date.now() - waits[id]) : '';
+      b.setAttribute('aria-label', name + ', ' + word + (wt ? ', waiting on you for ' + wt : '') + (shown ? ': ' + shown : '') + '. Show details');
     }
     function drawLeader(id) {
       const l = labelPos[id];
@@ -670,6 +693,19 @@
         default: return goStand(f, instant);
       }
     }
+    // The wait clock on a figure: 0:42, 4:05 … (minutes only under reduced motion: no ticking).
+    function fillWait(f) {
+      if (!f.waitText) return;
+      const since = waits[f.id];
+      if (since == null) return;
+      const ms = Math.max(0, Date.now() - since), m = Math.floor(ms / 60000);
+      const text = reduced() ? (m < 1 ? '<1 min' : m < 60 ? m + ' min' : Math.floor(m / 60) + ' h') : M.formatClock(ms);
+      if (f.waitText.textContent === text) return;
+      f.waitText.textContent = text;
+      const w = 12 + text.length * 7.4;
+      f.waitRect.setAttribute('x', (-w).toFixed(1)); f.waitRect.setAttribute('width', w.toFixed(1));
+      f.waitText.setAttribute('x', (-w + 6).toFixed(1));
+    }
     function goStand(f, instant) {
       const s = plan.desks[f.id].stand;
       if (instant) { f.x = s.x; f.y = s.y; placeFig(f); setCls(f, ['stand']); return; }
@@ -680,6 +716,7 @@
       pulseN++;
       const now = Date.now();
       Object.keys(noteEls).forEach(fillNote);
+      Object.values(figs).forEach(fillWait);
       if (reduced()) { // static after-work: one chat bubble, no rotation
         const c0 = figAt('chat-0'), c1 = figAt('chat-1');
         if (c0 && c1 && !c0.cls.includes('talk')) setCls(c0, c0.cls.concat('talk'));
@@ -757,11 +794,12 @@
         const instant = (first || f.state === null || moved) && !entering && !f.enterDelay;
         const same = !moved && f.state === st.state && !f.go && (st.state === 'working' || (st.state === 'flagged' && M.needsYou(st) === f.ask));
         f.key = key; f.state = st.state; f.ask = M.needsYou(st);
+        if (st.state === 'handoff') handed.add(id);
         if (same) return;
         if (f.enterDelay) { const dl = f.enterDelay; f.enterDelay = 0; f.timer = setTimeout(() => enter(f, statusOf(id), false), dl); return; }
         enter(f, st, instant);
       });
-      if (allIdle) Object.keys(docs).forEach((id) => { if (docs[id]) { docs[id] = 0; renderStack(id); } });
+      if (allIdle) { handed.clear(); Object.keys(docs).forEach((id) => { if (docs[id]) { docs[id] = 0; renderStack(id); } }); }
       // the wrap party: once per finished run, only when the finish was seen live; opening a finished run draws it statically
       // a run where someone failed ends quietly: no bunting, no games (see M.wrapUp and teamBusy)
       const allDone = mode === 'live' && M.wrapUp(members().map((id) => statusOf(id).state)) === 'party';
@@ -779,8 +817,10 @@
     }
     function highlightRoutes() {
       lay.routes.querySelectorAll('[data-route]').forEach((r) => {
-        const id = r.getAttribute('data-route');
-        r.classList.toggle('active', statusOf(id).state === 'handoff');
+        if (r.classList.contains('rev')) return;
+        const id = r.getAttribute('data-route'), now = statusOf(id).state === 'handoff';
+        r.classList.toggle('active', now);
+        r.classList.toggle('handed', !now && handed.has(id)); // the trail of a handoff stays visible for the rest of the run
       });
     }
     function setSelected(id) {
@@ -788,17 +828,32 @@
       applySelection();
     }
     function applySelection() {
-      root.classList.toggle('isolate', !!selected && !!(plan && plan.desks[selected])); // an agent without a desk dims nothing
-      const room = selected ? roomOf(selected) : null;
+      if (!plan) return;
+      const ids = selected ? [selected] : (group || []).filter((id) => plan.desks[id]);
+      root.classList.toggle('isolate', ids.some((id) => plan.desks[id])); // an agent without a desk dims nothing
+      const rooms = new Set(ids.map(roomOf));
       const target = selected && S ? ((M.member(S, selected) || {}).handsTo || (selected === 'lead' ? null : 'lead')) : null;
       root.querySelectorAll('[data-id],[data-room],[data-route]').forEach((el) => {
-        const on = !!selected && (el.getAttribute('data-id') === selected || (el.getAttribute('data-room') === room && !el.getAttribute('data-id')) || el.getAttribute('data-route') === selected || (target && el.getAttribute('data-id') === target && el.classList.contains('desk')));
+        const id = el.getAttribute('data-id');
+        const on = ids.length > 0 && (ids.includes(id) || (rooms.has(el.getAttribute('data-room')) && !id) || ids.includes(el.getAttribute('data-route')) || (target && id === target && el.classList.contains('desk')));
         el.classList.toggle('on', on);
       });
       Object.values(figs).forEach((f) => setCls(f, f.cls));
-      Object.keys(noteEls).forEach((id) => noteEls[id].classList.toggle('on', id === selected));
-      leaders.querySelectorAll('.leader').forEach((l) => l.classList.toggle('on', l.getAttribute('data-id') === selected));
+      Object.keys(noteEls).forEach((id) => noteEls[id].classList.toggle('on', ids.includes(id)));
+      leaders.querySelectorAll('.leader').forEach((l) => l.classList.toggle('on', ids.includes(l.getAttribute('data-id'))));
     }
+    // The supervision overlay, set on every render: waits {id: since ms}, reviewer pairs, a highlighted stage (ids or null).
+    function setOverlay(o) {
+      const w = M.dict(o && o.waits), changedWaits = JSON.stringify(w) !== JSON.stringify(waits);
+      waits = w;
+      const ps = (o && o.pairs) || [], sg = JSON.stringify(ps);
+      if (sg !== pairSig) { pairSig = sg; pairs = ps; if (plan) drawReviews(); applySelection(); }
+      const g = o && o.highlight && o.highlight.length ? o.highlight.slice() : null;
+      if (JSON.stringify(g) !== JSON.stringify(group)) { group = g; applySelection(); }
+      if (changedWaits) Object.values(figs).forEach((f) => { setCls(f, f.cls || []); fillWait(f); });
+    }
+    // Where a figure is on screen (for edge pointers), or null when it has no desk.
+    function figRect(id) { const f = figs[id]; return f && f.g ? f.g.getBoundingClientRect() : null; }
     scene.addEventListener('click', () => opts.onSelect && opts.onSelect(null));
     if (window.ResizeObserver) {
       let w = 0, hgt = 0;
@@ -808,13 +863,14 @@
     function reset() {
       Object.values(figs).forEach((f) => { clearTimeout(f.timer); clearTimeout(f.later); });
       figs = M.dict(); docs = M.dict(); plan = null; sig = ''; S = null; selected = null; mode = 'live'; extra = []; allStatuses = M.dict(); moreEl = null;
+      waits = M.dict(); pairs = []; pairSig = ''; group = null; handed = new Set();
       lounge = null; runKey = null; party = { key: null, active: false }; decorKey = null; clearTimeout(partyTimer); ball = { el: null, t0: 0, on: false };
       Object.values(lay).forEach((g) => { g.textContent = ''; });
       leaders.textContent = ''; notes.textContent = ''; list.textContent = '';
       root.classList.remove('isolate');
       printNext = !reduced();
     }
-    return { setData, setSelected, relayout, reset };
+    return { setData, setSelected, setOverlay, figRect, relayout, reset };
   }
 
   window.MASOffice = { create };

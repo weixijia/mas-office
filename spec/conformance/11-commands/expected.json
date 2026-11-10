@@ -1,0 +1,202 @@
+{
+  "structure": {
+    "roles": [
+      {
+        "id": "w",
+        "name": "Worker",
+        "group": "A"
+      },
+      {
+        "id": "ghost",
+        "name": "ghost",
+        "emoji": "🤖",
+        "job": "",
+        "serves": [],
+        "tools": [],
+        "group": "dyn",
+        "handsTo": "lead",
+        "dynamic": true,
+        "parent": "lead"
+      }
+    ],
+    "title": "Commands",
+    "version": 1,
+    "locked": true,
+    "topology": "staged",
+    "lead": {
+      "id": "lead",
+      "name": "Lead",
+      "emoji": "🧭",
+      "job": "",
+      "serves": []
+    },
+    "groups": [
+      {
+        "id": "dyn",
+        "label": "Spawned at runtime",
+        "after": null
+      }
+    ]
+  },
+  "statuses": {
+    "lead": {
+      "state": "working",
+      "say": "Planning the run",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:01Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "w": {
+      "state": "working",
+      "say": "Reading",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 30,
+      "t": "2026-11-07T09:00:02Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "ghost": {
+      "state": "waiting",
+      "say": "Waiting for my turn",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:21Z",
+      "waitingOn": [],
+      "stopReason": null
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "running",
+    "locked": true,
+    "version": 1,
+    "run": 1,
+    "runId": "r1",
+    "updated": "2026-11-07T09:00:22Z",
+    "next": "Watch the office panel — the team is working."
+  },
+  "result": null,
+  "inbox": {
+    "pending": [],
+    "recent": [],
+    "commands": [
+      {
+        "cmdId": "cmd-1",
+        "type": "command.message",
+        "agentId": "w",
+        "origin": {
+          "kind": "human"
+        },
+        "text": "Also check Argos",
+        "delivery": "queue",
+        "requestId": null,
+        "status": "applied",
+        "reason": "delivered after the turn",
+        "sentAt": "2026-11-07T09:00:03Z",
+        "ackAt": "2026-11-07T09:00:13Z",
+        "seq": 3
+      },
+      {
+        "cmdId": "cmd-2",
+        "type": "command.message",
+        "agentId": "w",
+        "origin": {
+          "kind": "agent",
+          "id": "lead"
+        },
+        "text": "Hurry up",
+        "delivery": "steer",
+        "requestId": null,
+        "status": "sent",
+        "reason": null,
+        "sentAt": "2026-11-07T09:00:04Z",
+        "ackAt": null,
+        "seq": 4
+      },
+      {
+        "cmdId": "cmd-3",
+        "type": "command.respond",
+        "agentId": "w",
+        "origin": {
+          "kind": "human"
+        },
+        "text": null,
+        "delivery": null,
+        "requestId": "req-9",
+        "status": "rejected",
+        "reason": "already_resolved",
+        "sentAt": "2026-11-07T09:00:05Z",
+        "ackAt": "2026-11-07T09:00:17Z",
+        "seq": 5
+      },
+      {
+        "cmdId": "cmd-4",
+        "type": "command.assign",
+        "agentId": "w",
+        "origin": {
+          "kind": "agent",
+          "id": "lead"
+        },
+        "text": "Check eBay",
+        "delivery": null,
+        "requestId": null,
+        "status": "unsupported",
+        "reason": "no_session",
+        "sentAt": "2026-11-07T09:00:06Z",
+        "ackAt": "2026-11-07T09:00:19Z",
+        "seq": 6
+      },
+      {
+        "cmdId": "cmd-5",
+        "type": "command.interrupt",
+        "agentId": "w",
+        "origin": {
+          "kind": "human"
+        },
+        "text": null,
+        "delivery": null,
+        "requestId": null,
+        "status": "accepted",
+        "reason": null,
+        "sentAt": "2026-11-07T09:00:07Z",
+        "ackAt": "2026-11-07T09:00:18Z",
+        "seq": 7
+      },
+      {
+        "cmdId": "__proto__",
+        "type": "command.message",
+        "agentId": "ghost",
+        "origin": {
+          "kind": "agent",
+          "id": "lead"
+        },
+        "text": "Are you there?",
+        "delivery": "steer",
+        "requestId": null,
+        "status": "expired",
+        "reason": null,
+        "sentAt": "2026-11-07T09:00:21Z",
+        "ackAt": "2026-11-07T09:00:22Z",
+        "seq": 21
+      }
+    ]
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
+}

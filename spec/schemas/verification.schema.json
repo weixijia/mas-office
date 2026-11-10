@@ -1,0 +1,269 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/weixijia/mas-office/main/spec/schemas/verification.schema.json",
+  "title": "MAS Office verification (outputs/verification)",
+  "type": "object",
+  "required": [
+    "claims",
+    "evidence",
+    "summary"
+  ],
+  "properties": {
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "claimId",
+          "text",
+          "status"
+        ],
+        "properties": {
+          "claimId": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "serves": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "checkworthy": {
+            "type": "boolean"
+          },
+          "author": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "unchecked",
+              "supported",
+              "partial",
+              "contradicted",
+              "unknown",
+              "not-checkworthy"
+            ]
+          },
+          "verdicts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "by",
+                "status"
+              ],
+              "properties": {
+                "by": {
+                  "type": "string"
+                },
+                "status": {
+                  "enum": [
+                    "supported",
+                    "partial",
+                    "contradicted",
+                    "unknown",
+                    "not-checkworthy"
+                  ]
+                },
+                "sourceId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "relationship": {
+                  "enum": [
+                    "supports",
+                    "refutes",
+                    "irrelevant",
+                    null
+                  ]
+                },
+                "method": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "backend": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "sourceId"
+        ],
+        "properties": {
+          "sourceId": {
+            "type": "string"
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "urlHealth": {
+            "enum": [
+              "live",
+              "stale",
+              "hallucinated",
+              "blocked",
+              "unknown",
+              null
+            ]
+          },
+          "httpStatus": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "archivedUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "grade": {
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D",
+              null
+            ]
+          },
+          "quote": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "checkedBy": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "claims",
+        "checkworthy",
+        "supported",
+        "partial",
+        "contradicted",
+        "unknown",
+        "unchecked",
+        "sources",
+        "live",
+        "stale",
+        "hallucinated",
+        "blocked",
+        "uncited"
+      ],
+      "properties": {
+        "claims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "checkworthy": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "supported": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "partial": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contradicted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unchecked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sources": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "live": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stale": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hallucinated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uncited": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

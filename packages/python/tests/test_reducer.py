@@ -210,3 +210,133 @@ def test_non_string_agent_name_and_parent_are_not_given():
     ])
     role = snap["structure"]["roles"][0]
     assert (role["name"], role["parent"]) == ("a", "lead")
+
+
+@pytest.mark.parametrize(
+    "type, data",
+    [
+        ("request.opened", {"requestId": "r", "kind": "question"}),
+        ("request.opened", {"requestId": 1, "kind": "question", "title": "T"}),
+        ("request.resolved", {"requestId": "r", "outcome": "maybe"}),
+        ("command.message", {"cmdId": "c"}),
+        ("command.respond", {"cmdId": "c", "outcome": "selected"}),
+        ("command.ack", {"cmdId": "c", "status": "done"}),
+        ("command.ack", {"cmdId": "c", "status": True}),
+        ("task.assigned", {"taskId": "t"}),
+        ("task.updated", {"taskId": None}),
+        ("review.verdict", {"target": "a", "verdict": "maybe"}),
+        ("recovery.chosen", {"strategy": "pray"}),
+        ("claim.added", {"claimId": "c"}),
+        ("evidence.checked", {}),
+        ("verdict.recorded", {"claimId": "c", "status": "true"}),
+    ],
+)
+def test_0_2_invalid_events_are_dropped(type, data):
+    event = ev(1, type, **data)
+    assert not validate_event(event)
+    assert not Reducer().apply(event)
+
+
+def test_0_2_valid_events_with_open_kinds_and_outcomes():
+    assert validate_event(ev(1, "request.opened", requestId="r", kind="anything", title="T"))
+    assert validate_event(ev(1, "command.respond", cmdId="c", requestId="r", outcome="free text"))
+    for type in ("agent.stopped", "usage", "lead.ledger"):
+        assert validate_event(ev(1, type))
+
+
+def test_empty_log_has_empty_0_2_snapshots():
+    snap = reduce([])
+    assert snap["statuses"]["lead"]["waitingOn"] == [] and snap["statuses"]["lead"]["stopReason"] is None
+    assert snap["inbox"] == {"pending": [], "recent": [], "commands": []}
+    assert snap["board"] == {"tasks": [], "ledger": None, "reviews": [], "recoveries": [], "usage": {}, "agents": {}}
+    assert snap["verification"] is None
+    assert list(snap) == ["structure", "statuses", "state", "result", "inbox", "board", "verification"]
+
+
+def test_recent_keeps_50_and_commands_keep_100():
+    events = [ev(1, "run.started")]
+    for i in range(60):
+        events.append(ev(len(events) + 1, "request.opened", requestId=f"r{i}", kind="question", title=f"Q{i}", blocking=False))
+        events.append(ev(len(events) + 1, "request.resolved", requestId=f"r{i}", outcome="declined"))
+    for i in range(105):
+        events.append(ev(len(events) + 1, "command.message", "w", cmdId=f"c{i}", text="x"))
+    events.append(ev(len(events) + 1, "request.opened", requestId="r0", kind="question", title="Reused id", blocking=False))
+    events.append(ev(len(events) + 1, "command.ack", cmdId="c0", status="applied"))
+    snap = reduce(events)
+    recent = snap["inbox"]["recent"]
+    assert len(recent) == 50 and (recent[0]["requestId"], recent[-1]["requestId"]) == ("r59", "r10")
+    assert [r["title"] for r in snap["inbox"]["pending"]] == ["Reused id"]
+    commands = snap["inbox"]["commands"]
+    assert len(commands) == 100 and (commands[0]["cmdId"], commands[-1]["cmdId"]) == ("c5", "c104")
+    assert all(c["status"] == "sent" for c in commands)
+
+
+def test_stop_reason_is_cleared_only_when_entering_working_waiting_or_handoff():
+    reducer = Reducer()
+    for event in [
+        ev(1, "run.started"),
+        ev(2, "agent.status", "a", state="working"),
+        ev(3, "agent.stopped", "a"),
+        ev(4, "agent.status", "a", state="idle", stopReason="cancelled"),
+    ]:
+        reducer.apply(event)
+    a = reducer.snapshot()["statuses"]["a"]
+    assert (a["state"], a["stopReason"], a["t"]) == ("idle", "cancelled", "t3")
+    reducer.apply(ev(5, "handoff", "a", to="lead"))
+    assert reducer.snapshot()["statuses"]["a"]["stopReason"] is None
+    reducer.apply(ev(6, "agent.status", "a", state="handoff", stopReason="odd"))
+    reducer.apply(ev(7, "agent.status", "a", state="handoff"))
+    assert reducer.snapshot()["statuses"]["a"]["stopReason"] == "odd"
+
+
+def test_0_2_numbers_reject_bools_and_round_must_be_integral():
+    snap = reduce([
+        ev(1, "run.started"),
+        ev(2, "usage", "a", inputTokens=True, turns=2.0, costUsd=float("inf")),
+        ev(3, "task.assigned", "a", taskId="t", title="T", round=False, attempt=2),
+        ev(4, "result", markdown="one", round=True),
+        ev(5, "result", markdown="two", round=3.0),
+    ])
+    usage = snap["board"]["usage"]["a"]
+    assert (usage["inputTokens"], usage["turns"], usage["costUsd"]) == (0, 2, 0)
+    assert (snap["board"]["tasks"][0]["round"], snap["board"]["tasks"][0]["attempt"]) == (1, 2)
+    result = snap["result"]
+    assert result["round"] == 3 and type(result["round"]) is int
+    assert result["previous"] == [{"round": 1, "title": "Untitled MAS — run 1", "markdown": "one", "updated": "t4"}]
+
+
+def test_snapshots_of_0_2_state_are_copies():
+    reducer = Reducer()
+    for event in [
+        ev(1, "run.started"),
+        ev(2, "request.opened", "a", requestId="r1", kind="approval", title="T", options=[{"optionId": "o"}]),
+        ev(3, "claim.added", claimId="c1", text="x", sources=["s"]),
+    ]:
+        reducer.apply(event)
+    snap = reducer.snapshot()
+    snap["statuses"]["a"]["waitingOn"].append("x")
+    snap["inbox"]["pending"][0]["options"][0]["optionId"] = "changed"
+    snap["verification"]["claims"][0]["sources"].append("y")
+    again = reducer.snapshot()
+    assert again["statuses"]["a"]["waitingOn"] == ["r1"]
+    assert again["inbox"]["pending"][0]["options"][0]["optionId"] == "o"
+    assert again["verification"]["claims"][0]["sources"] == ["s"]
+
+
+def test_round_started_keeps_the_run_and_is_ignored_before_any_run():
+    assert reduce([ev(1, "round.started", round=2)])["state"]["phase"] == "locked"
+    assert reduce([ev(1, "round.started")])["statuses"]["lead"]["state"] == "idle"
+    snap = reduce([
+        ev(1, "run.started"),
+        ev(2, "request.opened", "a", requestId="r1", kind="gate", title="G", routeTo="lead"),
+        ev(3, "task.assigned", "a", taskId="t1", title="T"),
+        ev(4, "claim.added", claimId="c1", text="x"),
+        ev(5, "result", markdown="one"),
+        ev(6, "run.finished"),
+        ev(7, "round.started", round=2, question="More?"),
+    ])
+    assert (snap["state"]["phase"], snap["state"]["run"]) == ("running", 1)
+    lead = snap["statuses"]["lead"]
+    assert (lead["state"], lead["say"], lead["progress"]) == ("working", "Working on your follow-up", 0)
+    assert snap["statuses"]["a"]["state"] == "flagged" and snap["result"]["markdown"] == "one"
+    assert (len(snap["inbox"]["pending"]), len(snap["board"]["tasks"]), len(snap["verification"]["claims"])) == (1, 1, 1)

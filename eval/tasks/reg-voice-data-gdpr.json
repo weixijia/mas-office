@@ -1,0 +1,47 @@
+{
+  "id": "reg-voice-data-gdpr",
+  "title": "Using voice recordings from Germany to train a model",
+  "category": "policy",
+  "task": "A UK university lab wants to use audio recordings of research participants collected by a partner university in Germany to train a speech recognition model. The participants signed consent forms for a specific earlier study. Explain what the UK GDPR and the EU GDPR require for this reuse: the lawful basis options, whether the scientific-research provisions help, whether the original consent covers model training, what the international transfer from Germany to the UK requires, and what documents the lab should prepare. Say clearly which points depend on facts the lab must check.",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "Lawful basis options for reusing the recordings, under both UK GDPR and EU GDPR."
+    },
+    {
+      "id": "R2",
+      "text": "Whether and how the scientific-research provisions apply, and whether the original consent covers training."
+    },
+    {
+      "id": "R3",
+      "text": "What the Germany-to-UK transfer requires."
+    },
+    {
+      "id": "R4",
+      "text": "A list of documents to prepare, and the facts the lab must check."
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "kind": "must-cite",
+      "text": "Every legal requirement cites the article or official guidance (legislation text, ICO, EDPB or the European Commission) it comes from."
+    },
+    {
+      "id": "C2",
+      "kind": "must-state-uncertainty",
+      "text": "The answer says it is not legal advice and names the points that depend on the consent wording, the partner's national law or the institutions' own policies."
+    },
+    {
+      "id": "C3",
+      "kind": "must-compare",
+      "text": "Differences between UK GDPR and EU GDPR that matter here are stated explicitly rather than treating them as one regime."
+    },
+    {
+      "id": "C4",
+      "kind": "freshness",
+      "text": "The status of the transfer mechanism (e.g. an adequacy decision) is given with the date it was checked."
+    }
+  ],
+  "notes": "Score the structure of the legal reasoning and its sourcing; the rater does not need to be a lawyer to check that each requirement cites an official text."
+}

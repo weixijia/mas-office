@@ -19,6 +19,9 @@ test('describeDocument maps paths to documents', () => {
   assert.deepEqual(describeDocument('demo/mas/env.json'), { kind: 'env', global: 'MAS_ENV' });
   assert.deepEqual(describeDocument('/x/demo/mas/status/lead.json'), { kind: 'status', global: 'MAS_STATUS', statusId: 'lead' });
   assert.deepEqual(describeDocument('demo/outputs/result'), { kind: 'result', global: 'MAS_RESULT' });
+  assert.deepEqual(describeDocument('demo/mas/inbox.js'), { kind: 'inbox', global: 'MAS_INBOX' });
+  assert.deepEqual(describeDocument('demo/mas/board.json'), { kind: 'board', global: 'MAS_BOARD' });
+  assert.deepEqual(describeDocument('demo/outputs/verification.js'), { kind: 'verification', global: 'MAS_VERIFICATION' });
   assert.equal(describeDocument('demo/outputs/work/a.md'), null);
 });
 
@@ -29,10 +32,32 @@ test('writeSnapshots writes JSON + twins and skips unsafe status ids', () => {
     snap.statuses['../evil'] = { state: 'idle' };
     writeSnapshots(dir, snap);
     const files = listTree(dir);
-    assert.deepEqual(files, ['mas', 'mas/state.js', 'mas/state.json', 'mas/status', 'mas/status/lead.js', 'mas/status/lead.json', 'mas/structure.js', 'mas/structure.json']);
+    assert.deepEqual(files, [
+      'mas', 'mas/board.js', 'mas/board.json', 'mas/inbox.js', 'mas/inbox.json', 'mas/state.js', 'mas/state.json',
+      'mas/status', 'mas/status/lead.js', 'mas/status/lead.json', 'mas/structure.js', 'mas/structure.json',
+    ]);
+    assert.deepEqual(evalTwin(fs.readFileSync(path.join(dir, 'mas/inbox.js'), 'utf8')).MAS_INBOX, snap.inbox);
+    assert.deepEqual(evalTwin(fs.readFileSync(path.join(dir, 'mas/board.js'), 'utf8')).MAS_BOARD, snap.board);
     assert.deepEqual(evalTwin(fs.readFileSync(path.join(dir, 'mas/structure.js'), 'utf8')).MAS_STRUCTURE, snap.structure);
     assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dir, 'mas/state.json'), 'utf8')), snap.state);
     assert.ok(!fs.existsSync(path.join(path.dirname(dir), 'evil.json')));
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('writeSnapshots writes outputs/verification while there are claims and removes it after', () => {
+  const dir = tmp();
+  try {
+    const ev = (seq, type, data) => ({ v: '0.2', seq, ts: `t${seq}`, type, data });
+    const first = [ev(1, 'run.started', {}), ev(2, 'claim.added', { claimId: 'c1', text: 'x' })];
+    const cache = new Map();
+    writeSnapshots(dir, reduce(first), { cache });
+    const file = path.join(dir, 'outputs/verification');
+    assert.deepEqual(readDocument(file), reduce(first).verification);
+    assert.deepEqual(evalTwin(fs.readFileSync(`${file}.js`, 'utf8')).MAS_VERIFICATION.summary.unchecked, 1);
+    writeSnapshots(dir, reduce([...first, ev(3, 'run.started', {})]), { cache });
+    assert.ok(!fs.existsSync(`${file}.json`) && !fs.existsSync(`${file}.js`), 'a new run has no claims yet');
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }

@@ -29,14 +29,16 @@ export async function serveCommand(argv, { out = console.log } = {}) {
   const srv = await listen({ workspace, port: parsePort(options.port, 4747), host }, out);
   if (!srv) return 1;
   out(`MAS Office is serving ${workspace}`);
-  out(`  Panel:   ${srv.url}/office/`);
+  out(`  Panel:   ${srv.url}/office/?token=${srv.token}`);
+  out('           (the token lets this browser answer requests and message agents; keep the link to yourself)');
   out(`  Events:  POST ${srv.url}/v0/events?project=<folder>`);
+  out(`  Commands: POST ${srv.url}/v0/commands?project=<folder>   (needs the token)`);
   out(`  Stream:  ${srv.url}/v0/stream`);
   if (!['127.0.0.1', 'localhost', '::1'].includes(host)) {
     out(`  Warning: listening on ${host} — anyone who can reach this machine can read the workspace and post events.`);
   }
   out('Press Ctrl+C to stop.');
-  if (options.open) openBrowser(`${srv.url}/office/`);
+  if (options.open) openBrowser(`${srv.url}/office/?token=${srv.token}`);
   const stop = async () => {
     await srv.close();
     process.exit(0);

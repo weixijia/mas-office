@@ -1,0 +1,55 @@
+{
+  "title": "Eval: one researcher (baseline)",
+  "version": 2,
+  "topology": "staged",
+  "budget": {
+    "maxParallel": 3,
+    "maxTurnMinutes": 20,
+    "maxRunMinutes": 60,
+    "maxQuestionsPerRole": 2,
+    "stallMinutes": 5
+  },
+  "lead": {
+    "id": "lead",
+    "name": "Lead",
+    "emoji": "🧭",
+    "job": "Plan the work, brief the team, and write the answer with every factual statement tagged as a claim that cites a source card.",
+    "backend": "claude-code",
+    "model": null
+  },
+  "groups": [
+    {
+      "id": "A",
+      "label": "Research",
+      "after": null
+    }
+  ],
+  "roles": [
+    {
+      "id": "researcher",
+      "name": "Researcher",
+      "emoji": "🔎",
+      "group": "A",
+      "handsTo": "lead",
+      "job": "Research the task and write your findings to your work file. Save one source card per page you rely on, with the URL, the date you accessed it, an A-D evidence grade and a verbatim quote. Use primary sources where they exist and independent sources to cross-check them.",
+      "output": "Findings with a source card for every fact",
+      "backend": "claude-code",
+      "model": null,
+      "tools": [
+        "web search"
+      ]
+    }
+  ],
+  "gates": [],
+  "verify": {
+    "claims": true,
+    "urlHealth": true,
+    "flagWhen": {
+      "contradicted": 1,
+      "unknownShare": 0.34,
+      "hallucinated": 1
+    }
+  },
+  "locked": true,
+  "signature": "sha256:40c339e73d6b0e0d6a85b34c84be32fe8b540bdd5573fcccda401a74aa7a67f6"
+}

@@ -42,6 +42,14 @@ test('enum (with null), const, bounds and lengths', () => {
   assert.equal(validate({ type: 'string', maxLength: 2 }, 'abc').length, 1);
 });
 
+test('additionalProperties (schema form) checks the values of keys not in properties', () => {
+  const schema = { type: 'object', properties: { fixed: { type: 'string' } }, additionalProperties: { type: 'object', required: ['turns'] } };
+  assert.deepEqual(validate(schema, { fixed: 'x', a: { turns: 1 } }), []);
+  assert.deepEqual(paths(validate(schema, { fixed: 'x', a: {}, __proto__: [] })), ['/a/turns is required']);
+  assert.deepEqual(paths(validate(schema, JSON.parse('{"__proto__": 1}'))), ['/__proto__ must be object'], 'own keys, even __proto__');
+  assert.throws(() => validate({ additionalProperties: false }, {}), /only the schema form/);
+});
+
 test('annotations are ignored, unknown keywords throw', () => {
   assert.deepEqual(validate({ $schema: 'x', $id: 'y', title: 't', description: 'd', type: 'string' }, 's'), []);
   assert.throws(() => validate({ oneOf: [] }, 1), /Unsupported schema keyword "oneOf"/);

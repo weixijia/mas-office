@@ -35,6 +35,8 @@
 
 ## C9 "需要你"收件箱
 
+> v0.3.0 已改编到 `panel/inbox.js`、`panel/app.js`（agent-office、paperclip、agent-virtual-office），见 [`reuse-map.md`](../reuse-map.md#已改编)。
+
 ### 我们要做什么
 
 在 daemon 里，把各后端的待决事项统一成 `request.opened` / `request.resolved` 写进 `events.jsonl`，由 reducer 产出 `mas/inbox.json`。面板加一个收件箱列表（侧栏 cell 或抽屉 tab）。条目分五类：工具审批、提问、决策、checker 举旗、阶段 gate。每条可以"选项 + 一句话"就地答复，显示已等多久、阻塞了谁、不回答会怎样。按规则发系统通知，并有降噪。`routeTo: lead` 的请求先给 CEO，CEO 只能处理白名单里的 kind。
@@ -320,6 +322,8 @@ transcript 解析放在 daemon 侧，面板只消费规范化之后的条目。
 ---
 
 ## C12 核对与证据
+
+> v0.3.0 已改编到 `packages/node/src/verify/url-health.js`、`prompts.js`（gpt-researcher、Alibaba-NLP/DeepResearch、deep_research_bench、OpenFactVerification），见 [`reuse-map.md`](../reuse-map.md#已改编)。
 
 ### 我们要做什么
 

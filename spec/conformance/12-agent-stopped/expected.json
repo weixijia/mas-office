@@ -1,0 +1,197 @@
+{
+  "structure": {
+    "roles": [
+      {
+        "id": "a",
+        "name": "A",
+        "group": "G"
+      },
+      {
+        "id": "b",
+        "name": "B",
+        "group": "G"
+      }
+    ],
+    "title": "Stops",
+    "version": 1,
+    "locked": true,
+    "topology": "staged",
+    "lead": {
+      "id": "lead",
+      "name": "Lead",
+      "emoji": "🧭",
+      "job": "",
+      "serves": []
+    },
+    "groups": []
+  },
+  "statuses": {
+    "lead": {
+      "state": "working",
+      "say": "Using plan",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 0,
+      "t": "2026-11-07T09:00:17Z",
+      "waitingOn": [],
+      "stopReason": null
+    },
+    "a": {
+      "state": "idle",
+      "say": "Turn over",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 20,
+      "t": "2026-11-07T09:00:12Z",
+      "waitingOn": [],
+      "stopReason": "end_turn"
+    },
+    "b": {
+      "state": "working",
+      "say": "Stopped",
+      "to": null,
+      "flag": null,
+      "flagKind": null,
+      "progress": 40,
+      "t": "2026-11-07T09:00:18Z",
+      "waitingOn": [],
+      "stopReason": "max_turns"
+    }
+  },
+  "state": {
+    "mode": "sdk",
+    "step": 4,
+    "phase": "running",
+    "locked": true,
+    "version": 1,
+    "run": 1,
+    "runId": "r1",
+    "updated": "2026-11-07T09:00:18Z",
+    "next": "Watch the office panel — the team is working."
+  },
+  "result": null,
+  "inbox": {
+    "pending": [],
+    "recent": [
+      {
+        "requestId": "r3",
+        "agentId": "b",
+        "kind": "question",
+        "title": "Which seller?",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": true,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "normal",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:06Z",
+        "seq": 6,
+        "run": 1,
+        "outcome": "cancelled",
+        "optionId": null,
+        "payload": null,
+        "note": null,
+        "by": {
+          "kind": "system"
+        },
+        "cmdId": null,
+        "resolvedAt": "2026-11-07T09:00:15Z"
+      },
+      {
+        "requestId": "r2",
+        "agentId": "a",
+        "kind": "question",
+        "title": "FYI only",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": false,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "normal",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:05Z",
+        "seq": 5,
+        "run": 1,
+        "outcome": "cancelled",
+        "optionId": null,
+        "payload": null,
+        "note": null,
+        "by": {
+          "kind": "human"
+        },
+        "cmdId": null,
+        "resolvedAt": "2026-11-07T09:00:09Z"
+      },
+      {
+        "requestId": "r1",
+        "agentId": "a",
+        "kind": "approval",
+        "title": "Fetch the page?",
+        "description": null,
+        "subject": null,
+        "toolCallId": null,
+        "options": [],
+        "responseSchema": null,
+        "blocking": true,
+        "routeTo": "human",
+        "resolver": "anyone",
+        "urgency": "normal",
+        "expiresAt": null,
+        "onExpire": null,
+        "source": null,
+        "openedAt": "2026-11-07T09:00:04Z",
+        "seq": 4,
+        "run": 1,
+        "outcome": "cancelled",
+        "optionId": null,
+        "payload": null,
+        "note": null,
+        "by": {
+          "kind": "human"
+        },
+        "cmdId": null,
+        "resolvedAt": "2026-11-07T09:00:09Z"
+      }
+    ],
+    "commands": [
+      {
+        "cmdId": "cmd-1",
+        "type": "command.interrupt",
+        "agentId": "a",
+        "origin": {
+          "kind": "human"
+        },
+        "text": null,
+        "delivery": null,
+        "requestId": null,
+        "status": "applied",
+        "reason": null,
+        "sentAt": "2026-11-07T09:00:07Z",
+        "ackAt": "2026-11-07T09:00:10Z",
+        "seq": 7
+      }
+    ]
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
+}

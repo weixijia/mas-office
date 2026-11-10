@@ -627,7 +627,7 @@ function startup(search) {
     setTimeout: () => 1, clearTimeout: () => {},
     $: () => ({}), ICON: { panel: '' }, S: { sidebar: false, demo: new URLSearchParams(search).get('demo') === '1' },
     LIVE: { on: false }, Date, performance: { now: () => 0 },
-    setSidebar() {}, renderTop() {}, renderSidebar() {}, renderOffice() {},
+    setSidebar() {}, renderTop() {}, renderSidebar() {}, renderOffice() {}, startSupervision() {},
     poll: () => { calls.polls++; }, demoTick() {}, demoStart: 0, lastPoll: 0
   };
   vm.runInNewContext(staticDeclaration + '\n' + liveCode + '\n' + startupCode, context);
@@ -705,6 +705,106 @@ test('the result drawer is an overlay: it never resizes the office', () => {
   assert.doesNotMatch(css, /drawer-open[^{]*\.(sheet|stage|drawing-host)\b/, 'opening it does not restyle the drawing');
   assert.match(html, /id="drawer"[^>]*aria-hidden="true"[^>]*inert/, 'closed and out of the tab order at start');
   assert.doesNotMatch(app, /setDrawer\(true[^)]*\);[^\n]*setSidebar\(/, 'opening the drawer does not also resize the title block');
+});
+
+/* ---------- protocol 0.2: claim tags, verification, board ---------- */
+const SUP = path.join(__dirname, 'fixtures', 'mock-supervise', 'deals');
+const supLoad = (rel) => M.evalDataFile(fs.readFileSync(path.join(SUP, rel), 'utf8'));
+
+test('claim tags: stripped, wrapped with the checker status, markdown inside still works', () => {
+  const html = M.renderMarkdown('A <claim id="c1" src="a,b">**new** at £279</claim> deal.', { claims: { c1: 'supported' } });
+  assert.strictEqual(html, '<p>A <span class="claim" data-claim="c1" data-status="supported" tabindex="0"><strong>new</strong> at £279</span> deal.</p>');
+  assert.match(M.renderMarkdown('<claim id=c9>x</claim>'), /data-status="unchecked">x<\/span>/, 'no verification: unchecked, not focusable');
+  assert.doesNotMatch(M.renderMarkdown('<claim id=c9>x</claim>'), /tabindex/);
+  assert.match(M.renderMarkdown('<claim id="c1">x</claim>', { claims: { c1: 'evil"><script>' } }), /data-status="unchecked"/, 'statuses are a fixed list');
+  assert.match(M.renderMarkdown('| a | b |\n|---|---|\n| <claim id="c2">cell</claim> | y |', { claims: { c2: 'partial' } }), /<td><span class="claim" data-claim="c2" data-status="partial" tabindex="0">cell<\/span><\/td>/);
+  assert.match(M.renderMarkdown('<CLAIM ID="c3">upper</CLAIM>', { claims: { c3: 'contradicted' } }), /data-status="contradicted"/);
+  assert.deepStrictEqual(M.claimSegments('a <claim id="k" src="s1, bad id ,s2">b</claim> c'), [{ text: 'a ' }, { claim: { id: 'k', src: ['s1', 's2'] }, text: 'b' }, { text: ' c' }]);
+});
+
+test('claim tags: hostile input renders as text and never injects markup', () => {
+  const cases = [
+    ['<claim id=\'x" onmouseover="alert(1)\'>t</claim>', '<p>&lt;claim id=&#39;x&quot; onmouseover=&quot;alert(1)&#39;&gt;t&lt;/claim&gt;</p>'],
+    ['<claim id=x><script>alert(1)</script>', '<p>&lt;claim id=x&gt;&lt;script&gt;alert(1)&lt;/script&gt;</p>'],
+    ['<claim id=a>outer <claim id=b>inner</claim> tail</claim>', '<p>&lt;claim id=a&gt;outer <span class="claim" data-claim="b" data-status="unchecked">inner</span> tail&lt;/claim&gt;</p>'],
+    ['</claim> stray', '<p>&lt;/claim&gt; stray</p>'],
+    ['<claim>no id</claim>', '<p>&lt;claim&gt;no id&lt;/claim&gt;</p>'],
+    ['<claim id="ok" onclick="x()">t</claim>', '<p><span class="claim" data-claim="ok" data-status="unchecked">t</span></p>'],
+    ['<claim id="a<b">t</claim>', '<p>&lt;claim id=&quot;a&lt;b&quot;&gt;t&lt;/claim&gt;</p>'],
+    ['<claimx id=a>t</claim>', '<p>&lt;claimx id=a&gt;t&lt;/claim&gt;</p>']
+  ];
+  cases.forEach(([src, want]) => assert.strictEqual(M.renderMarkdown(src), want, src));
+  const r = supLoad('outputs/result.js').MAS_RESULT;
+  const html = M.renderMarkdown(r.markdown, { claims: { c1: 'supported' } });
+  assert.doesNotMatch(html, /<img|<script|\son[a-z]+="/i);
+  assert.match(html, /&lt;img src=x onerror=alert\(1\)&gt;/);
+});
+
+test('claim tags: linear time on 500 KB of hostile input', () => {
+  const inputs = ['<claim '.repeat(75000), '<claim id=a>'.repeat(45000), ('<claim id="c1">x</claim> ').repeat(20000), '<'.repeat(500000), ('<claim id="' + 'a'.repeat(280)).repeat(1700)];
+  inputs.forEach((s) => {
+    const t = Date.now();
+    M.renderMarkdown(s, { claims: { c1: 'supported' } });
+    assert.ok(Date.now() - t < 1500, 'took ' + (Date.now() - t) + ' ms for ' + s.slice(0, 20));
+  });
+});
+
+test('verification: normalised, summarised, and what the checkers caught', () => {
+  const ver = M.normalizeVerification(supLoad('outputs/verification.js').MAS_VERIFICATION);
+  assert.deepStrictEqual(ver.claims.map((c) => c.status), ['supported', 'partial', 'contradicted', 'unknown', 'unchecked', 'not-checkworthy']);
+  assert.strictEqual(ver.evidence['best-deals'].urlHealth, 'hallucinated');
+  assert.strictEqual(M.HEALTH[ver.evidence['best-deals'].urlHealth], 'dead');
+  const c = M.credibility(ver.summary);
+  assert.strictEqual(c.text, '6 claims · 1 supported · 1 partial · 1 contradicted · 1 unknown · 1 unchecked · links: 3 live, 1 dead, 1 blocked');
+  assert.deepStrictEqual(c.segments.map((x) => x.status), ['supported', 'partial', 'contradicted', 'unknown', 'unchecked']);
+  const board = M.normalizeBoard(supLoad('mas/board.js').MAS_BOARD);
+  const caught = M.checkersCaught(ver, board);
+  assert.deepStrictEqual(caught.claims.map((x) => x.claimId), ['c3', 'c4']);
+  assert.deepStrictEqual(caught.reviews.map((x) => x.target), ['marketplace-finder']);
+  assert.deepStrictEqual(Object.keys(M.claimStatusMap(ver)), ['c1', 'c2', 'c3', 'c4', 'c5', 'c6']);
+  assert.strictEqual(M.normalizeVerification(null), null);
+  const bad = M.normalizeVerification({ claims: [{ claimId: 'z', status: 'weird', verdicts: [null, { status: 'x' }] }], evidence: [{ sourceId: 's', urlHealth: 'boom', grade: 'Z' }], summary: { claims: -3 } });
+  assert.deepStrictEqual([bad.claims[0].status, bad.claims[0].verdicts.length, bad.evidence.s.urlHealth, bad.evidence.s.grade, bad.summary.claims], ['unchecked', 1, null, null, 0]);
+});
+
+test('board: reviewer pairs with their last verdict, the ledger line, usage', () => {
+  const s = supLoad('mas/structure.js').MAS_STRUCTURE, board = M.normalizeBoard(supLoad('mas/board.js').MAS_BOARD);
+  assert.deepStrictEqual(M.reviewPairs(s, board).map((p) => [p.from, p.to, p.verdict, p.bad]), [['catch-checker', 'retail-finder', 'accept', false], ['catch-checker', 'marketplace-finder', 'revise', true]]);
+  assert.deepStrictEqual(M.reviewPairs(s, null).map((p) => p.to), ['retail-finder', 'marketplace-finder'], 'from the team design alone');
+  assert.deepStrictEqual(M.reviewPairs({ roles: [{ id: 'x', reviewerOf: ['x'] }] }, null), [], 'nobody reviews themselves');
+  assert.strictEqual(M.ledgerLine(board.ledger, (id) => (id === 'catch-checker' ? 'Catch checker' : id)), 'Progressing · next: Catch checker');
+  assert.strictEqual(M.ledgerLine({ looping: true, stalls: 2 }), 'Looping · 2 stalls');
+  assert.strictEqual(M.ledgerLine(null), '');
+  const u = M.usageInfo(board.usage['marketplace-finder']);
+  assert.strictEqual(u.text, '64k in · 6.2k out · 7 turns');
+  assert.strictEqual(u.warn, 'Usage limit: allowed warning · resets 14:00');
+  assert.strictEqual(M.usageInfo(board.usage.lead).text, '41k in · 5.3k out · $0.62 · 4 turns');
+  assert.strictEqual(M.usageTotal(board.usage).text, '226k tokens · $0.62 across 4 agents');
+  assert.strictEqual(M.backendLabel('claude-code'), 'Claude Code');
+  assert.strictEqual(M.backendLabel('codex'), 'Codex');
+  assert.strictEqual(M.backendLabel('other'), 'other');
+  assert.strictEqual(M.normalizeBoard('x'), null);
+});
+
+test('tool entries: strings or {name, effect}; ask and deny are said in words', () => {
+  assert.deepStrictEqual(M.toolInfo('web search'), { name: 'web search', effect: 'allow', text: 'web search' });
+  assert.strictEqual(M.toolInfo({ name: 'browse the web', effect: 'ask' }).text, 'browse the web (asks first)');
+  assert.strictEqual(M.toolInfo({ name: 'run commands', effect: 'deny' }).text, 'run commands (not allowed)');
+  assert.strictEqual(M.toolInfo({ name: 'x', effect: 'weird' }).effect, 'allow');
+  assert.deepStrictEqual([M.toolInfo({}), M.toolInfo(null), M.toolInfo(5), M.toolInfo('')], [null, null, null, null]);
+  const app = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
+  assert.doesNotMatch(app, /\(m\.tools \|\| \[\]\)\.join/, 'never prints [object Object]');
+});
+
+test('the panel loads the 0.2 modules with plain script tags, and reads 0.2 snapshots only for SDK projects', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const app = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
+  const order = ['model.js', 'inbox.js', 'office.js', 'app.js'].map((f) => html.indexOf('<script src="' + f + '"></script>'));
+  assert.ok(order.every((i, k) => i > 0 && (k === 0 || i > order[k - 1])), 'model, inbox, office, app in order');
+  assert.doesNotMatch(html, /\son[a-z]+=/i, 'no inline event handlers (CSP script-src self)');
+  assert.match(app, /if \(M\.isSdk\(next\)\) await Promise\.all\(Object\.keys\(EXTRA\)/);
+  assert.doesNotMatch(app, /console\.(log|debug)\(/);
+  assert.doesNotMatch(app, /token\(\)[^;\n]*(innerHTML|textContent|href|src)/, 'the token never reaches the page');
 });
 
 console.log('\n' + passed + ' passed, ' + failed + ' failed');

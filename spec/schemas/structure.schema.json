@@ -18,6 +18,10 @@
     "locked": {
       "type": "boolean"
     },
+    "signature": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
     "topology": {
       "enum": [
         "staged",
@@ -27,6 +31,31 @@
     },
     "rationale": {
       "type": "string"
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "maxParallel": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maxTurnMinutes": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maxRunMinutes": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maxQuestionsPerRole": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stallMinutes": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
     },
     "lead": {
       "type": "object",
@@ -57,7 +86,27 @@
         "tools": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": [
+              "string",
+              "object"
+            ],
+            "minLength": 1,
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "effect": {
+                "enum": [
+                  "allow",
+                  "ask",
+                  "deny"
+                ]
+              }
+            }
           }
         },
         "group": {
@@ -79,6 +128,68 @@
         },
         "role": {
           "type": "string"
+        },
+        "backend": {
+          "enum": [
+            "claude-code",
+            "codex"
+          ]
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "delegate": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
+                "enum": [
+                  "allow",
+                  "lead",
+                  "human"
+                ]
+              },
+              "kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tools": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "roles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "subjectTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "expires": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
         }
       }
     },
@@ -139,7 +250,27 @@
           "tools": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": [
+                "string",
+                "object"
+              ],
+              "minLength": 1,
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "effect": {
+                  "enum": [
+                    "allow",
+                    "ask",
+                    "deny"
+                  ]
+                }
+              }
             }
           },
           "group": {
@@ -161,6 +292,113 @@
           },
           "role": {
             "type": "string"
+          },
+          "output": {
+            "type": "string"
+          },
+          "backend": {
+            "enum": [
+              "claude-code",
+              "codex"
+            ]
+          },
+          "model": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reviewerOf": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cleanContext": {
+            "type": "boolean"
+          },
+          "review": {
+            "type": "object",
+            "properties": {
+              "maxRounds": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "onExceed": {
+                "enum": [
+                  "ask-human"
+                ]
+              }
+            }
+          },
+          "unknownTools": {
+            "enum": [
+              "ask",
+              "deny"
+            ]
+          }
+        }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "after": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "plan",
+              "stage",
+              "final"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "blocking": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "verify": {
+      "type": "object",
+      "properties": {
+        "claims": {
+          "type": "boolean"
+        },
+        "urlHealth": {
+          "type": "boolean"
+        },
+        "flagWhen": {
+          "type": "object",
+          "properties": {
+            "contradicted": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "unknownShare": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "hallucinated": {
+              "type": "integer",
+              "minimum": 1
+            }
           }
         }
       }

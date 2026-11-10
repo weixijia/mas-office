@@ -81,12 +81,17 @@ Source: `references/docs/claude__legal-and-compliance.md`; summary in `docs/rese
 
 | Path | What |
 |---|---|
-| `spec/` | Protocol 0.1: README, JSON Schemas, conformance cases. Both reducers must pass them. |
-| `packages/node/` | npm package `mas-office`: JS SDK and CLI (`serve`, `demo`, `init --kit`, `validate`, `reduce`, `export`, `hook`). |
+| `spec/` | Protocol 0.2: README, JSON Schemas, conformance cases, RFCs. Both reducers must pass them. |
+| `packages/node/` | npm package `mas-office`: JS SDK and CLI (`up`, `serve`, `demo`, `init --kit`, `team`, `verify`, `validate`, `reduce`, `export`, `hook`). |
+| `packages/node/src/team/` | Team design v2: `normalizeTeam`, `lockTeam`, `compileRole`, `decideTool` (the single enforcement point), `teamToMarkdown`. Pure, no session I/O. |
+| `packages/node/src/policy/` | Delegation rules (`matchDelegation`): which approvals the policy or the Lead may give. Pure. |
+| `packages/node/src/verify/` | Claims, source cards, URL health, verdict merging, checker prompts. Pure except the URL health check. |
+| `packages/runtime/` | npm package `mas-office-runtime`: Claude Code (Agent SDK) and Codex (`codex app-server`) adapters, the engine, `mas-office up`. Depends on `mas-office` and `@anthropic-ai/claude-agent-sdk`. |
 | `packages/python/` | Python SDK and framework integrations. |
 | `panel/` | The office panel: `model.js` holds pure functions, `office.js` draws, `app.js` runs the UI. Plain HTML/JS. |
 | `kit/` | No-code `AGENTS.md` kit. Its `CLAUDE.md` is for kit users, not for this repo. |
 | `examples/`, `site/` | Example workspaces and the project website. |
+| `eval/` | Evaluation harness (Python, standard library): tasks, locked team designs, metrics from the event log, rubric sheets, HCI study protocol. Runs real sessions only through `mas-office up`. |
 | `docs/research/` | Prior art, positioning, landscape survey (Chinese research notes). |
 | `docs/design/` | Design documents, including `reuse-map.md`. |
 | `references/` | Pinned third-party reference code (see §2). |
@@ -96,8 +101,9 @@ Source: `references/docs/claude__legal-and-compliance.md`; summary in `docs/rese
 - Code, comments, docstrings and commit messages are in English. Internal research and design notes may be in Chinese.
 - Protocol changes are additive and versioned. A reducer change needs matching JS and Python changes plus a conformance case. Spec changes follow `spec/rfcs/`.
 - Checks before claiming a change works:
-  - `npm test`
+  - `npm test` (`mas-office`, `mas-office-runtime` and the panel tests)
   - `PYTHONPATH=packages/python/src python -m pytest packages/python -q`
+  - `PYTHONPATH=packages/python/src:eval python -m pytest eval -q`
   - `node packages/node/bin/mas-office.js validate examples`
   - `git diff --check`
 - Commits use DCO (`git commit -s`). Release steps are in `.omc/RELEASE_RULE.md` (local) and `development_log.md` §6.

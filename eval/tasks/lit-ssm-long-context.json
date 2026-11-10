@@ -1,0 +1,48 @@
+{
+  "id": "lit-ssm-long-context",
+  "title": "State space models on long-context retrieval",
+  "category": "literature",
+  "task": "Summarise what the published evidence says about how selective state space models (for example Mamba and its successors) compare with Transformers on long-context retrieval and recall tasks such as associative recall, needle-in-a-haystack or phonebook lookup. Cover peer-reviewed papers and widely cited preprints. For each finding, name the paper, the benchmark, the model sizes compared, and the direction of the result. Then give an overall judgement of where the evidence is strong, where it is mixed, and what is still open.",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "At least five distinct papers or preprints, each with the benchmark, model sizes and direction of the result."
+    },
+    {
+      "id": "R2",
+      "text": "Both results favouring SSMs and results favouring Transformers or hybrids are covered if they exist."
+    },
+    {
+      "id": "R3",
+      "text": "An overall judgement separating strong, mixed and open questions."
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "kind": "must-cite",
+      "text": "Every paper is cited with a resolvable link (arXiv, DOI or venue page) and the claim attributed to it matches that paper."
+    },
+    {
+      "id": "C2",
+      "kind": "must-compare",
+      "text": "Results are compared at similar model sizes or the answer says when sizes differ."
+    },
+    {
+      "id": "C3",
+      "kind": "must-state-uncertainty",
+      "text": "Preprints are marked as not peer-reviewed, and conflicting results are reported as conflicting rather than averaged away."
+    },
+    {
+      "id": "C4",
+      "kind": "freshness",
+      "text": "The answer says up to which date the literature was searched."
+    },
+    {
+      "id": "C5",
+      "kind": "must-cite",
+      "text": "No paper is cited that the rater cannot find (title, authors and year resolve to a real work)."
+    }
+  ],
+  "notes": "Invented or mis-attributed papers are the main failure mode; C5 is the key item. Raters should resolve every cited link."
+}

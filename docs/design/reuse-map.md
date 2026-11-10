@@ -35,6 +35,41 @@
 | C15 | 打包与发布（Web 优先，桌面壳的选择） | [experience.md](reuse-map/experience.md) |
 | C16 | 远程 / 手机端控制 | [runtime.md](reuse-map/runtime.md) |
 
+## 实现状态（v0.3.0，2026-11-10）
+
+| ID | 状态 | 我们的文件 | 还没做的 |
+|---|---|---|---|
+| C1 | 已实现 | `packages/runtime/src/backends/claude.js` | interrupt 未在真实 Claude CLI 上验证 |
+| C2 | 已实现 | `packages/runtime/src/backends/codex.js` | 把官方 Codex TUI 接到同一个 thread |
+| C3 | 未开始 | （计划：可选包 `mas-office-terminal`） | 全部 |
+| C4 | 已实现 | `packages/runtime/src/engine/project.js`（停滞检测）、`broker.js`（待决请求） | — |
+| C5 | 已实现 | `spec/rfcs/0001-protocol-0.2.md`，两个 reducer，conformance 09–16 | — |
+| C6 | 已实现 | `packages/node/src/cli/server.js`、`packages/runtime/src/index.js` | daemon 重启后重新接上待批准的请求（目前只能过期重问） |
+| C7 | 已实现 | `packages/runtime/src/engine/project.js`、`prompts.js`，`packages/node/src/policy/` | 每个角色完成后给 Lead 的事件摘要 |
+| C8 | 已实现 | `packages/node/src/team/` | `teamFromMarkdown` |
+| C9 | 已实现 | `panel/inbox.js`、`panel/app.js` | — |
+| C10 | 部分实现 | `panel/office.js`、`panel/app.js`、`panel/inbox.js`（reviewer 连线、举手和等待计时、`N`、屏幕边缘指针、`1–9` 打开阶段） | CEO / 总控概览（目前只有 Lead 进度账本的一行摘要） |
+| C11 | 部分实现 | `panel/app.js`（记录、产出、聊天、Stop） | 终端 tab（依赖 C3） |
+| C12 | 已实现 | `packages/node/src/verify/`、`packages/runtime/src/engine/project.js` | — |
+| C13 | 沿用 kit | `kit/.mcp.json`（`mas-browser`），词表 `browse the web` 编译到 `packages/node/src/team/compile.js` | — |
+| C14 | 框架已实现 | `eval/` | 评测运行、用户研究 |
+| C15 | 未开始 | — | 桌面壳；npm 0.3.0 待发布 |
+| C16 | 未开始 | — | 全部 |
+
+### 已改编
+
+代码改编自以下来源，文件头都写了 `Adapted from …`，详见 [`THIRD_PARTY_NOTICES.md`](../../THIRD_PARTY_NOTICES.md)：
+
+| 组件 | 来源（固定 commit 见 THIRD_PARTY_NOTICES） | License | 改编到 |
+|---|---|---|---|
+| C12 | `assafelovic/gpt-researcher` `gpt_researcher/scraper/scraper.py` | Apache-2.0 | `packages/node/src/verify/url-health.js`（`looksBlocked`、`looksLikeWordList`、`looksLikeUnextractedPdf`） |
+| C12 | `Alibaba-NLP/DeepResearch` 的写作和搜索提示词 | Apache-2.0 | `packages/node/src/verify/prompts.js`（`leadWriteupRules`、`finderRules`） |
+| C12 | `Ayanami0730/deep_research_bench` `utils/validate.py` | Apache-2.0 | `packages/node/src/verify/prompts.js`（`checkerRules`） |
+| C12 | `Libr-AI/OpenFactVerification` `factcheck/utils/prompt/chatgpt_prompt.py` | MIT | `packages/node/src/verify/prompts.js`（`checkerRules`） |
+| C9 | `AgentSystemLabs/agent-office` `needsyou/logic.ts`、`nextup.ts`、`ui/compass.ts` | MIT | `panel/inbox.js`（`waited`、`waitKey`、`NextUp`、`edgeMarks`） |
+| C9 | `paperclipai/paperclip` `ui/src/lib/blockedInbox.ts` | MIT | `panel/inbox.js`（`compareRequests`） |
+| C9 | `KbWen/agent-virtual-office` `src/inference/desktopNotifier.js` | MIT | `panel/inbox.js`（`shouldNotify`）、`panel/app.js`（`notifyTick`） |
+
 ## 维护规则
 
 - 新增参考项目的步骤：

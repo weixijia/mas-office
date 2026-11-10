@@ -7,14 +7,16 @@ import { validate } from '../schema.js';
 import { schemasDir } from '../paths.js';
 import { parseArgs } from '../args.js';
 
-const PROJECT_DOCS = ['me/task', 'mas/structure', 'mas/state', 'mas/env', 'outputs/result'];
+const PROJECT_DOCS = [
+  'me/task', 'mas/structure', 'mas/state', 'mas/env', 'mas/inbox', 'mas/board', 'outputs/result', 'outputs/verification',
+];
 const SKIP_DIRS = new Set(['home', 'office', 'harness', 'node_modules']);
 
 function loadSchemas() {
   const dir = schemasDir();
   if (!dir) throw new Error('Cannot find the JSON Schemas (spec/schemas). Reinstall mas-office.');
   const schemas = {};
-  for (const name of ['projects', 'env', 'task', 'structure', 'state', 'status', 'result', 'event']) {
+  for (const name of ['projects', 'env', 'task', 'structure', 'state', 'status', 'result', 'event', 'inbox', 'board', 'verification']) {
     schemas[name] = JSON.parse(fs.readFileSync(path.join(dir, `${name}.schema.json`), 'utf8'));
   }
   return schemas;

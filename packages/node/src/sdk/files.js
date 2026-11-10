@@ -13,6 +13,9 @@ export const GLOBALS = {
   state: 'MAS_STATE',
   result: 'MAS_RESULT',
   status: 'MAS_STATUS',
+  inbox: 'MAS_INBOX',
+  board: 'MAS_BOARD',
+  verification: 'MAS_VERIFICATION',
 };
 
 const DOCUMENTS = [
@@ -22,6 +25,9 @@ const DOCUMENTS = [
   [/(?:^|\/)mas\/structure$/, 'structure'],
   [/(?:^|\/)mas\/state$/, 'state'],
   [/(?:^|\/)outputs\/result$/, 'result'],
+  [/(?:^|\/)mas\/inbox$/, 'inbox'],
+  [/(?:^|\/)mas\/board$/, 'board'],
+  [/(?:^|\/)outputs\/verification$/, 'verification'],
   [/(?:^|\/)mas\/status\/([^/]+)$/, 'status'],
 ];
 
@@ -77,8 +83,8 @@ export function writeDocument(base, globalName, value, { statusId, cache } = {})
 
 /**
  * Write a reducer snapshot into a project folder: `mas/structure`, `mas/state`,
- * `mas/status/<id>` for every status, and `outputs/result` when there is one
- * (removed when there is none, per spec §4.5).
+ * `mas/status/<id>` for every status, `mas/inbox`, `mas/board`, and `outputs/result` and
+ * `outputs/verification` when there is one (removed when there is none, per spec §4.5).
  * Statuses whose id is not a safe file name are skipped.
  */
 export function writeSnapshots(projectDir, snapshot, { cache } = {}) {
@@ -88,8 +94,13 @@ export function writeSnapshots(projectDir, snapshot, { cache } = {}) {
   for (const [id, status] of Object.entries(snapshot.statuses)) {
     if (isValidAgentId(id)) writeDocument(at(`mas/status/${id}`), GLOBALS.status, status, { statusId: id, cache });
   }
-  if (snapshot.result) writeDocument(at('outputs/result'), GLOBALS.result, snapshot.result, { cache });
-  else removeDocument(at('outputs/result'), { cache }); // never show the previous run's result as current
+  if (snapshot.inbox) writeDocument(at('mas/inbox'), GLOBALS.inbox, snapshot.inbox, { cache });
+  if (snapshot.board) writeDocument(at('mas/board'), GLOBALS.board, snapshot.board, { cache });
+  // Never show the previous run's result or verification as current.
+  for (const kind of ['result', 'verification']) {
+    if (snapshot[kind]) writeDocument(at(`outputs/${kind}`), GLOBALS[kind], snapshot[kind], { cache });
+    else removeDocument(at(`outputs/${kind}`), { cache });
+  }
 }
 
 /** Remove `<base>.json` and `<base>.js` if they exist. */

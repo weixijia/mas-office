@@ -1,0 +1,33 @@
+{
+  "name": "mas-office-runtime",
+  "version": "0.3.0",
+  "description": "Drive a MAS Office team of real Claude Code and Codex sessions: session adapters, scheduler, review loop, gates and the Lead.",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./backends/claude": "./src/backends/claude.js",
+    "./backends/codex": "./src/backends/codex.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.14"
+  },
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.322",
+    "mas-office": "^0.3.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weixijia/mas-office.git",
+    "directory": "packages/runtime"
+  }
+}

@@ -32,7 +32,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 100,
-      "t": "2026-11-06T10:00:07Z"
+      "t": "2026-11-06T10:00:07Z",
+      "waitingOn": [],
+      "stopReason": null
     },
     "w": {
       "state": "done",
@@ -41,7 +43,9 @@
       "flag": null,
       "flagKind": null,
       "progress": 100,
-      "t": "2026-11-06T10:00:05Z"
+      "t": "2026-11-06T10:00:05Z",
+      "waitingOn": [],
+      "stopReason": null
     }
   },
   "state": {
@@ -63,5 +67,19 @@
     "sources": [],
     "flags": [],
     "work": []
-  }
+  },
+  "inbox": {
+    "pending": [],
+    "recent": [],
+    "commands": []
+  },
+  "board": {
+    "tasks": [],
+    "ledger": null,
+    "reviews": [],
+    "recoveries": [],
+    "usage": {},
+    "agents": {}
+  },
+  "verification": null
 }

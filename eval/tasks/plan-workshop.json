@@ -1,0 +1,47 @@
+{
+  "id": "plan-workshop",
+  "title": "Plan a one-day academic workshop",
+  "category": "planning",
+  "task": "Plan a one-day academic workshop for about 40 people in Manchester, UK, to take place about four months from now. I need: three candidate venues that can seat 40 with a projector (at least one on a university campus), what each costs for a day and what is included, a catering estimate per person for coffee breaks and lunch, a draft schedule for the day (keynote, two paper sessions, a poster or discussion slot), a total budget, and a timeline of tasks counting back from the event date (call for papers, registration, catering numbers).",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "Three venues in Manchester seating at least 40 with AV, at least one on a university campus, with day cost and inclusions."
+    },
+    {
+      "id": "R2",
+      "text": "Per-person catering estimate for breaks and lunch, and a total budget."
+    },
+    {
+      "id": "R3",
+      "text": "A draft schedule with keynote, two paper sessions and a poster or discussion slot."
+    },
+    {
+      "id": "R4",
+      "text": "A backwards timeline of preparation tasks with dates relative to the event."
+    }
+  ],
+  "checks": [
+    {
+      "id": "C1",
+      "kind": "must-cite",
+      "text": "Each venue's capacity, price and facilities link to the venue's own page or rate card."
+    },
+    {
+      "id": "C2",
+      "kind": "must-compare",
+      "text": "The venues are compared on cost, capacity, facilities, accessibility and what is included."
+    },
+    {
+      "id": "C3",
+      "kind": "must-state-uncertainty",
+      "text": "Prices that need a quote, or that are from rate cards that may be out of date, are marked as such."
+    },
+    {
+      "id": "C4",
+      "kind": "freshness",
+      "text": "The answer states when the venue and catering prices were looked up."
+    }
+  ],
+  "notes": "Venue prices are often 'on request'; an answer that says so scores better than one that invents a number."
+}
