@@ -27,9 +27,8 @@ pip install -e mas-office/packages/python
 
 Not on PyPI yet. Without a clone: `pip install "mas-office @ git+https://github.com/weixijia/mas-office#subdirectory=packages/python"`.
 
-The viewer needs Node.js 18+. From your `mas-office` clone, `node packages/node/bin/mas-office.js serve …`
-(run from the root of the clone) serves the 0.3.0 panel with the inbox. `npx mas-office serve …` runs
-the version on npm, which is 0.2.2 (no inbox) until 0.3.0 is published.
+The viewer needs Node.js 18+: `npx mas-office serve …` runs it from npm. From your `mas-office`
+clone, `node packages/node/bin/mas-office.js serve …` (run from the root of the clone) does the same.
 
 ## Example
 
@@ -51,7 +50,7 @@ with Office(workspace="./runs") as office:
     run.finish()
 ```
 
-Then view it with the Node CLI: `node packages/node/bin/mas-office.js serve ./runs --open` from your clone.
+Then view it with the Node CLI: `npx mas-office serve ./runs --open`.
 
 ### Requests, claims and verdicts (protocol 0.2)
 
@@ -86,7 +85,7 @@ Try it without writing any code — a simulated 5-agent team over about 30 secon
 ```bash
 cd mas-office
 python -m mas_office demo --workspace ./runs     # or: mas-office-py demo
-node packages/node/bin/mas-office.js serve ./runs --open
+npx mas-office serve ./runs --open
 ```
 
 ## API

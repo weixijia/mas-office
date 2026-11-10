@@ -4,7 +4,7 @@
 
 - 项目目录：`~/Documents/mas-office`（GitHub：`weixijia/mas-office`，npm：`mas-office`、`mas-office-runtime`）
 - 网站：https://www.xijiawei.com/mas-office/
-- 最后更新：2026-11-10（最新 tag `v0.2.2`，npm `latest` = 0.2.2。v0.3.0 的代码和文档已完成，**尚未提交、未打 tag、未发布**；`mas-office` 和 `mas-office-runtime` 的 0.3.0 都还不在 npm 上）
+- 最后更新：2026-11-10（最新 tag `v0.3.0`，npm `latest`：`mas-office` 0.3.0、`mas-office-runtime` 0.3.0，2026-11-10 发布）
 
 ---
 
@@ -52,9 +52,11 @@ site/            项目网站（GitHub Pages）
 | 2026-11-07 | `2696fbf` | | 开发日志、路线图重写 |
 | 2026-11-07 | `61d4ab9` | **v0.2.2** | 修复结果抽屉不弹出；README / 网站 / 演示 GIF 更新 |
 | 2026-11-07 | `e2f5d24`–`e6066df` | | 产品定位、复用优先的参考库、README / 路线图 / 网站按 agent 团队重新定位 |
-| 2026-11-10 | （未提交） | **v0.3.0** | 驱动真实会话：`mas-office-runtime`、协议 0.2、收件箱、engine、核对层、评测框架（见 5c） |
+| 2026-11-10 | `89301c0` | | 驱动真实会话：`mas-office-runtime`、协议 0.2、收件箱、engine、核对层、评测框架（见 5c） |
+| 2026-11-10 | `c14ae03`–`cf57fd4` | | 网站和所有 README 按 0.3.0 重写，加入新截图 |
+| 2026-11-10 | `c1fe4dd` | **v0.3.0** | runtime 测试在 Node 18 上通过；包里带上 LICENSE。tag `v0.3.0` 指向这个 commit，npm 发布 `mas-office` 和 `mas-office-runtime` 0.3.0 |
 
-npm 发布：0.1.0、0.1.1、0.2.0、0.2.1、0.2.2 都已公开，账号 `simonwxj`。0.3.0（`mas-office` 和新包 `mas-office-runtime`）待发布。PyPI 尚未发布。
+npm 发布：`mas-office` 0.1.0、0.1.1、0.2.0、0.2.1、0.2.2、0.3.0，以及新包 `mas-office-runtime` 0.3.0（2026-11-10）都已公开，账号 `simonwxj`。PyPI 尚未发布。
 
 ---
 
@@ -196,7 +198,7 @@ npm 发布：0.1.0、0.1.1、0.2.0、0.2.1、0.2.2 都已公开，账号 `simonw
 
 ## 5c. v0.3.0 — 驱动真实会话：协议 0.2、收件箱、engine、核对层
 
-目标（来自 §8 的方向和决策 19）：MAS Office 从"显示一支团队的面板"变成"驱动一支由真实 Claude Code 和 Codex 会话组成的团队的 runtime"。2026-11-10 完成，尚未提交和发布。包之间的契约见 `docs/design/runtime.md`，协议见 `spec/rfcs/0001-protocol-0.2.md`。
+目标（来自 §8 的方向和决策 19）：MAS Office 从"显示一支团队的面板"变成"驱动一支由真实 Claude Code 和 Codex 会话组成的团队的 runtime"。2026-11-10 完成，主体提交为 `89301c0`，tag `v0.3.0`（`c1fe4dd`），同日把 `mas-office` 和 `mas-office-runtime` 0.3.0 发布到 npm（账号 `simonwxj`，两个包的 `latest` 都是 0.3.0，已在仓库外从 registry 全新安装验证）。包之间的契约见 `docs/design/runtime.md`，协议见 `spec/rfcs/0001-protocol-0.2.md`。
 
 ### 5c.1 做了什么
 
@@ -244,7 +246,7 @@ npm 发布：0.1.0、0.1.1、0.2.0、0.2.1、0.2.2 都已公开，账号 `simonw
 - daemon 重启后不能重新接上待批准的请求：它们以 `expired` 关闭，agent 重新提问。
 - `teamFromMarkdown`（从 Markdown 读回团队设计）没做，只有 `teamToMarkdown`。
 - kit 还没迁到同一个 engine；评测运行、用户研究、桌面 app、PyPI 都没做。
-- Python 包版本号仍是 0.2.2（`pyproject.toml`、`__init__.py`），要和 0.3.0 一起改，见 §6 第 1 条。
+- Python 包版本号已改为 0.3.0（`pyproject.toml`、`__init__.py`），但还没有发布到 PyPI。
 
 ## 6. 发布流程与注意事项
 
@@ -261,6 +263,8 @@ npm 发布：0.1.0、0.1.1、0.2.0、0.2.1、0.2.2 都已公开，账号 `simonw
    - npm 登录过期时 `npm publish` 报 `E404 PUT`，`npm whoami` 也会失败；用 `npm login --auth-type=web` 重新登录。
    - 不要索要、记录或使用验证码和 recovery codes。
 8. 发布后用 `npm view mas-office@X.Y.Z dist.shasum --prefer-online` 和 `dist-tags` 核对，再做仓库外的 registry 安装验证。
+   - 0.3.0 起，npm 对 publish 先回 202 "being processed"；新包在处理完之前会显示一个临时版本 `0.0.0-stage`（`mas-office-runtime` 首发时出现过），处理要几分钟。等 `npm view <pkg> dist-tags` 显示新版本再做安装验证。
+   - 有依赖关系的包按顺序发：先 `mas-office`，再依赖它 `^0.3.0` 的 `mas-office-runtime`。
 
 其他坑：
 - 搬目录后 Python 旧 `__pycache__` 记着旧路径，导致 `test_invalid_emits_warn_once_per_problem_and_never_raise` 失败（比较 warning 的文件名）。清掉 `packages/python` 下的 `__pycache__`（已被 git 忽略）即可。
@@ -371,14 +375,13 @@ npm 发布：0.1.0、0.1.1、0.2.0、0.2.1、0.2.2 都已公开，账号 `simonw
 - ~~评测集具体选哪 8–10 个任务、怎么做人工抽查~~ → v0.3.0 实现中决定：9 个任务 + 盲评评分表，见决策 30（待用户确认）。
 - ~~由我们的产品调用用户本机的 `claude -p`，在 Anthropic 条款里属于灰区~~ → 已澄清，见决策 20。
 - 终端小人用哪套视角和美术风格（建议俯视或侧视的半字符块像素风），以及桌面版用 Tauri 还是 Electron（倾向 Tauri）。
-- 0.3.0 怎么发布：两个包一起发（`mas-office-runtime` 依赖 `mas-office` `^0.3.0`，必须先发 `mas-office`），以及 Python 包是否同步升到 0.3.0。
+- ~~0.3.0 怎么发布~~ → 2026-11-10 两个包都已发布（先 `mas-office`，再 `mas-office-runtime`）；Python 包版本号同步到 0.3.0，PyPI 仍未发布。
 - 决策 16 定的是 TypeScript，但 v0.3.0 的 runtime 和核心包仍是带 JSDoc 的 JavaScript（ESM）。要不要迁移、何时迁移，待定。
 
 ---
 
 ## 9. 已知问题与待办
 
-- v0.3.0 尚未提交、未打 tag、未发布到 npm（`mas-office`、`mas-office-runtime`）。
 - PyPI 尚未发布。
 - ~~协议里 `round`/`question`/`previous` 没有 conformance case，reducer 不生成~~ → v0.3.0 已解决：reducer 生成，conformance case 15。
 - v0.3.0 的缺口（详见 5c.4）：原始终端 tab 与接手终端（`mas-office-terminal`）、接入官方 Codex TUI、Codex 0.167.0 下无法限制读取范围、Codex 不报费用、interrupt 未在真实 Claude CLI 上验证、daemon 重启后待批准请求只能过期重问、`teamFromMarkdown`、kit 迁到同一 engine、评测运行与用户研究、桌面 app。

@@ -168,7 +168,7 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
   /* the panel's numbered tags: an ink square, the number in mono */
   .step-num { display: inline-grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 0; background: var(--ink); color: var(--bg); font: 500 13px/1 var(--font-mono); }
 
-  /* the terminal: the real output of a run started from a clone */
+  /* the terminal: the real output of mas-office up */
   .term { display: flex; flex-direction: column; border: 1px solid var(--ink); background: var(--p-surface); min-height: 0; }
   .term__bar { display: flex; align-items: center; gap: var(--s-3); height: 40px; padding: 0 var(--s-4); border-bottom: 1px solid var(--ink); font: 500 13px/1 var(--font-mono); color: var(--muted); }
   .term__bar i { width: 10px; height: 10px; border: 1px solid var(--ink); }
@@ -319,7 +319,7 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
           <button class="btn btn--primary btn-copy" type="button" data-copy="npx mas-office demo"><span class="sr-only">Copy </span><code>npx mas-office demo</code><svg class="ic-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.25" y="5.25" width="8" height="8"/><path d="M10.75 3V2.75h-8v8H3"/></svg><svg class="ic-done" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></button>
           <a class="btn btn--secondary" href="https://github.com/weixijia/mas-office">View on GitHub</a>
         </div>
-        <p class="hero__start"><span>Run your own team from a clone: <code>npm install</code>, then <code>mas-office up</code>.</span><a class="link" href="#signin">See the quick start</a><a class="link" href="https://github.com/weixijia/mas-office/tree/main/docs">Read the docs</a></p>
+        <p class="hero__start"><span>Run your own team: <code>npm install mas-office mas-office-runtime</code>, then <code>mas-office up</code>.</span><a class="link" href="#signin">See the quick start</a><a class="link" href="https://github.com/weixijia/mas-office/tree/main/docs">Read the docs</a></p>
       </div>
       <div class="hero__window" data-fx="grain-gradient" data-fx-seed="4" data-fx-params='{"speed":0,"grainMotion":0,"calm":0}'>
         <div class="ly-piece office-win" data-office-live>
@@ -515,11 +515,11 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
             <li>Runs use your plan: three sessions at once by default, with the usage each program reports.</li>
             <li>The server listens on <code>127.0.0.1</code>. Only the browser opened from the printed link can answer or message agents.</li>
           </ul>
-          <p class="note">Version 0.3.0 is not on npm yet, so run it from a clone, with the workspace outside the clone. There, <code>mas-office</code> is <code>node packages/node/bin/mas-office.js</code>.</p>
+          <p class="note">Keep the workspace outside any folder whose <code>CLAUDE.md</code> the roles should not read: Claude Code loads parent <code>CLAUDE.md</code> files.</p>
         </div>
-        <div class="term span-6 start-7" role="group" aria-label="Quick start from a clone, with the output of mas-office up">
-          <div class="term__bar"><i aria-hidden="true"></i>Quick start from a clone · Node 18.14 or later</div>
-          <pre><span class="l"><span class="p">$ </span>git clone https://github.com/weixijia/mas-office &amp;&amp; cd mas-office</span><span class="l"><span class="p">$ </span>npm install</span><span class="l"><span class="p">$ </span>claude auth login     <span class="c"># you sign in yourself</span></span><span class="l"><span class="p">$ </span>codex login           <span class="c"># the example's checker runs on Codex</span></span><span class="l"><span class="p">$ </span>mkdir -p ~/mas-work/deals/mas    <span class="c"># outside the clone</span></span><span class="l"><span class="p">$ </span>cp examples/price-compare/mas/structure.js ~/mas-work/deals/mas/</span><span class="l"><span class="p">$ </span>node packages/node/bin/mas-office.js up ~/mas-work \</span><span class="l">    --project deals --open \</span><span class="l">    --task "Find the best UK price for Sony WH-1000XM6 headphones"</span><span class="l">MAS Office is running the team in ~/mas-work</span><span class="l">  Claude Code 2.1.322: <span class="ok">ready</span> (your own sign-in; MAS Office never sees it)</span><span class="l">  Codex 0.167.0: <span class="ok">ready</span> (your own sign-in; MAS Office never sees it)</span><span class="l">  At most 3 roles work at once (plus the Lead). Each session uses your own plan's limits.</span><span class="l">  Panel: http://127.0.0.1:4747/office/?token=…</span></pre>
+        <div class="term span-6 start-7" role="group" aria-label="Quick start with npm, with the output of mas-office up">
+          <div class="term__bar"><i aria-hidden="true"></i>Quick start · Node 18.14 or later</div>
+          <pre><span class="l"><span class="p">$ </span>mkdir ~/mas-work &amp;&amp; cd ~/mas-work</span><span class="l"><span class="p">$ </span>npm install mas-office mas-office-runtime</span><span class="l"><span class="p">$ </span>claude auth login     <span class="c"># you sign in yourself</span></span><span class="l"><span class="p">$ </span>codex login           <span class="c"># the example's checker runs on Codex</span></span><span class="l"><span class="p">$ </span>mkdir -p deals/mas</span><span class="l"><span class="p">$ </span>curl -fsSL https://raw.githubusercontent.com/weixijia/mas-office/main/examples/price-compare/mas/structure.js \</span><span class="l">    -o deals/mas/structure.js</span><span class="l"><span class="p">$ </span>npx mas-office team check deals</span><span class="l"><span class="p">$ </span>npx mas-office up . --project deals --open \</span><span class="l">    --task "Find the best UK price for Sony WH-1000XM6 headphones"</span><span class="l">MAS Office is running the team in ~/mas-work</span><span class="l">  Claude Code 2.1.322: <span class="ok">ready</span> (your own sign-in; MAS Office never sees it)</span><span class="l">  Codex 0.167.0: <span class="ok">ready</span> (your own sign-in; MAS Office never sees it)</span><span class="l">  At most 3 roles work at once (plus the Lead). Each session uses your own plan's limits.</span><span class="l">  Panel: http://127.0.0.1:4747/office/?token=…</span></pre>
         </div>
       </div>
     </div>
@@ -617,7 +617,7 @@ html[data-radius="sharp"] { --r-sm: 2px; --r-md: 0px; --r-lg: 0px; --r-btn: 2px;
     <div class="closing__cta close--type">
       <div class="section-head">
         <h2 id="close-h">Watch a simulated five-agent team</h2>
-        <p class="t-small muted">Node 18 or later, no sign-in. Plays the published 0.2.2 viewer.</p>
+        <p class="t-small muted">Node 18 or later, no sign-in.</p>
       </div>
       <button class="btn btn--primary btn--xl btn--wide btn-copy" type="button" data-copy="npx mas-office demo"><span class="sr-only">Copy </span><code>npx mas-office demo</code><svg class="ic-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.25" y="5.25" width="8" height="8"/><path d="M10.75 3V2.75h-8v8H3"/></svg><svg class="ic-done" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></button>
     </div>

@@ -21,17 +21,17 @@ npm install mas-office                        # the SDK and the `mas-office` com
 npm install mas-office mas-office-runtime     # also run teams of real sessions (Node ≥ 18.14)
 ```
 
-From a clone of the repository: `npm install` at the root links both packages, and `node packages/node/bin/mas-office.js` stands for `mas-office`. To use the SDK from a clone, `npm install /path/to/mas-office/packages/node`.
+From a clone of the repository (for contributors): `npm install` at the root links both packages, and `node packages/node/bin/mas-office.js` stands for `mas-office`. To use the SDK from a clone, `npm install /path/to/mas-office/packages/node`.
 
 ## Run a team
 
 ```sh
 claude auth login                                    # sign in yourself (and `codex login` for Codex roles)
-mas-office team lock <workspace>/<project>           # check and sign mas/structure.json
-mas-office up <workspace> --project <project> --task "…" --open
+npx mas-office team lock <workspace>/<project>       # check and sign mas/structure.json
+npx mas-office up <workspace> --project <project> --task "…" --open
 ```
 
-Every role is the unmodified `claude` or `codex` on your computer, signed in by you; MAS Office never sees your sign-in. How to design a team, what a run does and what the inbox shows: [README](https://github.com/weixijia/mas-office#design-and-lock-a-team).
+Every role is the unmodified `claude` or `codex` on your computer, signed in by you; MAS Office never sees your sign-in. A step-by-step start with an example team is in the [README](https://github.com/weixijia/mas-office#quick-start); how to design a team, what a run does and what the inbox shows follow from there.
 
 ## SDK
 

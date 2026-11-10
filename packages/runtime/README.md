@@ -18,7 +18,7 @@ You also need:
 - Claude Code (`claude`) installed and signed in by you: `claude auth login`.
 - Codex (`codex`) installed and signed in by you (`codex login`), if any role has `"backend": "codex"`.
 
-Version 0.3.0 is not on npm yet. From a clone of the repository, `npm install` at the root links `mas-office` and `mas-office-runtime`, and `node packages/node/bin/mas-office.js` stands for `mas-office`. Keep workspaces outside the clone: Claude Code loads parent `CLAUDE.md` files, so the repository's developer instructions would reach the sessions.
+From a clone of the repository (for contributors), `npm install` at the root links `mas-office` and `mas-office-runtime`, and `node packages/node/bin/mas-office.js` stands for `mas-office`. Keep workspaces outside the clone: Claude Code loads parent `CLAUDE.md` files, so the repository's developer instructions would reach the sessions.
 
 This package never signs you in and never sees your sign-in. At start it asks each program only whether you are signed in (`claude auth status`, Codex `account/read`) and prints the result.
 

@@ -32,37 +32,36 @@
 
 ## 快速开始
 
+**在真实会话上运行团队**（Node ≥ 18.14）：
+
+```bash
+mkdir ~/mas-work && cd ~/mas-work
+npm install mas-office mas-office-runtime        # Node 18.14 或更高
+claude auth login                                # 你自己登录
+codex login                                      # 示例里的 checker 跑在 Codex 上
+mkdir -p deals/mas
+curl -fsSL https://raw.githubusercontent.com/weixijia/mas-office/main/examples/price-compare/mas/structure.js -o deals/mas/structure.js
+npx mas-office team check deals
+npx mas-office up . --project deals --open --task "Find the best UK price for Sony WH-1000XM6 headphones"
+```
+
+`up` 先报告 Claude Code 和 Codex 是否已安装、是否已登录，然后打印一个带访问 token 的面板链接（`--open` 会直接打开它）。示例设计已经锁定；改过之后要重新运行 `npx mas-office team lock deals`。工作区不要放在含有你不想让角色读到的 `CLAUDE.md` 的文件夹里：Claude Code 会加载上级目录的 `CLAUDE.md`。下文的 `mas-office` 指在这个文件夹里运行 `npx mas-office`（或者 `npm install -g mas-office` 之后直接运行这个命令）。
+
 **看一支模拟团队**（Node ≥ 18，不需要登录）：
 
 ```bash
 npx mas-office demo
 ```
 
-它运行的是 npm 上已发布的 `mas-office` 0.2.2：一个五人团队在 0.2 的查看器里规划里斯本周末，没有收件箱，也没有 agent 抽屉。在 clone 下来的仓库里，`node packages/node/bin/mas-office.js demo` 会用 0.3.0 的面板播放同一支团队。
+一个五人团队规划里斯本周末：两个 finder 并行搜索，预算检查员发现问题，规划员接手，最后由 Lead 写出结果。
 
 <details>
-<summary><code>demo</code> 命令（0.2 查看器）</summary>
+<summary><code>demo</code> 命令（用 0.2 查看器录制）</summary>
 <br>
-<img src="docs/assets/demo.gif" alt="0.2 查看器演示：两个 finder 并行搜索，预算检查员提出问题，规划员接手，结果完成后团队庆祝" width="900">
+<img src="docs/assets/demo.gif" alt="用 0.2 查看器录制的演示：两个 finder 并行搜索，预算检查员提出问题，规划员接手，结果完成后团队庆祝" width="900">
 </details>
 
-**在真实会话上运行团队。** 0.3.0 和新的 `mas-office-runtime` 包还没有发布到 npm，所以先从 clone 运行（Node ≥ 18.14）：
-
-```bash
-git clone https://github.com/weixijia/mas-office && cd mas-office
-npm install                      # 链接 mas-office 和 mas-office-runtime
-claude auth login                # 你自己登录
-codex login                      # 示例里的 Catch checker 跑在 Codex 上
-
-# 工作区放在 clone 之外：否则 Claude Code 会加载这个仓库的 CLAUDE.md。
-mkdir -p ~/mas-work/deals/mas
-cp examples/price-compare/mas/structure.js ~/mas-work/deals/mas/
-node packages/node/bin/mas-office.js team check ~/mas-work/deals
-node packages/node/bin/mas-office.js up ~/mas-work --project deals --open \
-  --task "Find the best UK price for Sony WH-1000XM6 headphones, new, delivered within 3 days"
-```
-
-`up` 先报告 Claude Code 和 Codex 是否已安装、是否已登录，然后打印一个带访问 token 的面板链接（`--open` 会直接打开它）。示例设计已经锁定；改过之后要重新运行 `team lock`。0.3.0 发布后，同样的事就是 `npm install mas-office mas-office-runtime` 加 `npx mas-office up …`。下文的 `mas-office` 在 clone 里指 `node packages/node/bin/mas-office.js`。
+**从 clone 运行**（给贡献者）：`git clone https://github.com/weixijia/mas-office && cd mas-office && npm install` 会链接两个包，`node packages/node/bin/mas-office.js` 就相当于 `mas-office`。工作区要放在 clone 之外，否则 Claude Code 会加载这个仓库的 `CLAUDE.md`。
 
 ## 设计并锁定团队
 
@@ -185,7 +184,7 @@ mas-office up <workspace> --project <p> --task "…" [--max-parallel 3] [--open]
 
 办公室视图适用于任何多 agent 系统。producer 把事件追加到 `<project>/mas/events.jsonl`（或 POST 给 `mas-office serve`），一个确定性的 reducer 把日志变成面板要画的快照。协议 0.2 增加了等人处理的请求、带回执的发回给 agent 的命令、任务、审查、结论、证据和判定。契约见 [`spec/README.md`](spec/README.md)；0.2 的说明见 [RFC 0001](spec/rfcs/0001-protocol-0.2.md)。
 
-**JavaScript**（`npm install mas-office`；从 clone 安装：`npm install /path/to/mas-office/packages/node`）：
+**JavaScript**（`npm install mas-office`）：
 
 ```js
 import { Office } from 'mas-office';
@@ -292,7 +291,7 @@ npx mas-office init --kit my-team
 - `team show` 能打印 Markdown，但还不能从 Markdown 读回设计；请编辑 JSON。
 - 无代码 kit 还没有迁到同一个 engine 上。
 - 目前做过一次真实的端到端运行（2026-11-10：Lead 和一个 finder 跑在 Claude Code 上，checker 跑在 Codex 上；checker 把工作打回一次，第 2 轮接受）。评测还没有跑过，所以没有任何关于答案质量的测量。
-- 0.3.0 还没有发布到 npm，Python SDK 还没有发布到 PyPI。
+- Python SDK 还没有发布到 PyPI。
 
 计划见 [ROADMAP.md](ROADMAP.md)；各版本的变化见 [CHANGELOG.md](CHANGELOG.md)。
 

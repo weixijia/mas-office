@@ -32,37 +32,36 @@ The first use case is research and decision tasks: price comparisons, trip plans
 
 ## Quick start
 
+**Run a team on real sessions** (Node ≥ 18.14):
+
+```bash
+mkdir ~/mas-work && cd ~/mas-work
+npm install mas-office mas-office-runtime        # Node 18.14 or later
+claude auth login                                # you sign in yourself
+codex login                                      # the example's checker runs on Codex
+mkdir -p deals/mas
+curl -fsSL https://raw.githubusercontent.com/weixijia/mas-office/main/examples/price-compare/mas/structure.js -o deals/mas/structure.js
+npx mas-office team check deals
+npx mas-office up . --project deals --open --task "Find the best UK price for Sony WH-1000XM6 headphones"
+```
+
+`up` reports whether Claude Code and Codex are installed and signed in, then prints a panel link that carries an access token (`--open` opens it). The example design is already locked; if you change it, run `npx mas-office team lock deals` again. Keep workspaces outside any folder with a `CLAUDE.md` you don't want the roles to read: Claude Code loads parent `CLAUDE.md` files. Below, `mas-office` means `npx mas-office` in that folder (or the command itself after `npm install -g mas-office`).
+
 **Watch a simulated team** (Node ≥ 18, no sign-in):
 
 ```bash
 npx mas-office demo
 ```
 
-This runs the published `mas-office` 0.2.2: a five-agent team plans a weekend in Lisbon in the 0.2 viewer, without the inbox or the agent drawer. From a clone, `node packages/node/bin/mas-office.js demo` plays the same team in the 0.3.0 panel.
+A five-agent team plans a weekend in Lisbon: two finders search in parallel, a budget checker raises a problem, a planner takes over, and the Lead writes the result.
 
 <details>
-<summary>The <code>demo</code> command (0.2 viewer)</summary>
+<summary>The <code>demo</code> command (recorded with the 0.2 viewer)</summary>
 <br>
-<img src="docs/assets/demo.gif" alt="The 0.2 viewer demo: two finder agents search in parallel, a budget checker raises a flag, a planner takes over, and the team celebrates when the result is ready" width="900">
+<img src="docs/assets/demo.gif" alt="The demo as recorded with the 0.2 viewer: two finder agents search in parallel, a budget checker raises a flag, a planner takes over, and the team celebrates when the result is ready" width="900">
 </details>
 
-**Run a team on real sessions.** Version 0.3.0 and the new `mas-office-runtime` package are not on npm yet, so run it from a clone (Node ≥ 18.14):
-
-```bash
-git clone https://github.com/weixijia/mas-office && cd mas-office
-npm install                      # links mas-office and mas-office-runtime
-claude auth login                # sign in yourself
-codex login                      # the example's Catch checker runs on Codex
-
-# Keep the workspace outside the clone: Claude Code would otherwise load this repo's CLAUDE.md.
-mkdir -p ~/mas-work/deals/mas
-cp examples/price-compare/mas/structure.js ~/mas-work/deals/mas/
-node packages/node/bin/mas-office.js team check ~/mas-work/deals
-node packages/node/bin/mas-office.js up ~/mas-work --project deals --open \
-  --task "Find the best UK price for Sony WH-1000XM6 headphones, new, delivered within 3 days"
-```
-
-`up` reports whether Claude Code and Codex are installed and signed in, then prints a panel link that carries an access token (`--open` opens it). The example design is already locked; if you change it, run `team lock` again. Once 0.3.0 is published, the same commands will be `npm install mas-office mas-office-runtime` and `npx mas-office up …`. Below, `mas-office` stands for `node packages/node/bin/mas-office.js` in a clone.
+**From a clone** (for contributors): `git clone https://github.com/weixijia/mas-office && cd mas-office && npm install` links both packages, and `node packages/node/bin/mas-office.js` stands for `mas-office`. Keep workspaces outside the clone, because Claude Code would load this repository's `CLAUDE.md`.
 
 ## Design and lock a team
 
@@ -185,7 +184,7 @@ The rules behind this are in [`CLAUDE.md`](CLAUDE.md) §3.
 
 The office view works for any multi-agent system. Producers append events to `<project>/mas/events.jsonl` (or post them to `mas-office serve`); a deterministic reducer turns the log into the snapshots the panel draws. Protocol 0.2 adds requests that wait for a person, commands back to agents with acknowledgements, tasks, reviews, claims, evidence and verdicts. The contract is [`spec/README.md`](spec/README.md); 0.2 is described in [RFC 0001](spec/rfcs/0001-protocol-0.2.md).
 
-**JavaScript** (`npm install mas-office`; from a clone, `npm install /path/to/mas-office/packages/node`):
+**JavaScript** (`npm install mas-office`):
 
 ```js
 import { Office } from 'mas-office';
@@ -292,7 +291,7 @@ In Claude Code, choose **"Yes, I trust this folder"** when you first open it; on
 - `team show` prints Markdown, but a design cannot be read back from Markdown; edit the JSON.
 - The no-code kit does not run on the same engine yet.
 - One real end-to-end run has been made (2026-11-10: the Lead and a finder on Claude Code, the checker on Codex; the checker sent the work back once and accepted it in round 2). No evaluation runs have been made, so there are no measurements of answer quality.
-- 0.3.0 is not on npm yet, and the Python SDK is not on PyPI.
+- The Python SDK is not on PyPI yet.
 
 The plan is in [ROADMAP.md](ROADMAP.md); changes per version are in [CHANGELOG.md](CHANGELOG.md).
 
