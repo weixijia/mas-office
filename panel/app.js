@@ -30,6 +30,12 @@
   const FIXED = !!FIXED_ROOT || params.get('demo') === '1';
   // Published examples are immutable: load once, without live-server probing or snapshot polling.
   const STATIC = params.get('static') === '1';
+  // ?view=office: embed mode for a host app (the Mac app's WKWebView, an iframe). Only the office drawing is shown,
+  // filling the view; the host draws the inbox, drawers and controls itself and talks to the drawing through
+  // window.MASEmbed (select, highlightStage) and the messages embedPost sends. Keys and the result drawer are off.
+  const EMBED = M.embedOptions(location.search);
+  if (EMBED) document.body.classList.add('embed');
+  if (EMBED && EMBED.clear) document.body.classList.add('embed-clear');
 
   const FILES = { env: 'mas/env.js', state: 'mas/state.js', task: 'me/task.js', structure: 'mas/structure.js', result: 'outputs/result.js' };
   const GLOBALS = { env: 'MAS_ENV', state: 'MAS_STATE', task: 'MAS_TASK', structure: 'MAS_STRUCTURE', result: 'MAS_RESULT' };
@@ -155,12 +161,13 @@
     const st = await loadScript('home/projects.js', '../home/projects.js');
     const home = st === 'ok' && window.MAS_HOME === undefined ? S.home : st === 'ok' ? M.normalizeHome(window.MAS_HOME) : null;
     const homeSig = sigOf(home);
-    const cur = home ? home.current : '';
+    const embedProject = EMBED && EMBED.project; // the host chose the project: home/projects only lists them
+    const cur = embedProject || (home ? home.current : '');
     if (cur !== S.current) { if (S.current !== undefined) resetProject(); S.current = cur; }
     const homeChanged = homeSig !== S.sigs.home;
     S.home = home; S.sigs.home = homeSig;
-    ROOT = !home ? '../' : '../' + home.current + '/';
-    S.index = !!home && !home.current;
+    ROOT = embedProject ? '../' + embedProject + '/' : !home ? '../' : '../' + home.current + '/';
+    S.index = !embedProject && !!home && !home.current;
     if (!S.index) return true;
     const env = await readData('home/env.js', 'MAS_ENV', null, '../home/env.js');
     const envSig = sigOf(env.value);
@@ -335,6 +342,22 @@
 
   /* ---------- the drawing ---------- */
   const office = window.MASOffice.create($('#drawing-host'), { onSelect: (id) => select(id) });
+  /* ---------- embed mode: the host app's side of the drawing ---------- */
+  // Tell the host (WKWebView message handler `masOffice`, or the parent of an iframe): {type: 'ready'} once,
+  // {type: 'select', agentId} when the person clicks an agent (agentId null: clicked the empty office).
+  function embedPost(msg) {
+    if (!EMBED) return;
+    try { const h = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.masOffice; if (h) h.postMessage(msg); } catch (e) { /* no native host */ }
+    try { if (window.parent && window.parent !== window) window.parent.postMessage(msg, '*'); } catch (e) { /* no parent frame */ }
+  }
+  if (EMBED) {
+    // The host's own selection: highlight it here without echoing a message back.
+    window.MASEmbed = Object.freeze({
+      select(id) { const v = typeof id === 'string' && id ? id : null; S.selected = v; S.stage = null; office.setSelected(v); if (S.loadedOnce) renderOffice(); },
+      highlightStage(gid) { S.stage = typeof gid === 'string' && gid ? gid : null; if (S.loadedOnce) renderOffice(); }
+    });
+    embedPost({ type: 'ready' });
+  }
   function renderOffice() {
     $('#drawing-host').hidden = S.index;
     $('#index-sheet').hidden = !S.index;
@@ -362,6 +385,11 @@
   // while the team is still a draft, the title block shows its role card as before. Selecting it again closes it.
   function select(id, opts) {
     if (id && id === S.selected && !(opts && opts.keep)) id = null;
+    if (EMBED) { // the host opens its own agent view: here the drawing only marks the selection
+      S.selected = id || null; S.stage = null; office.setSelected(S.selected); renderOffice();
+      embedPost({ type: 'select', agentId: S.selected });
+      return;
+    }
     const live = !!(struct() && struct().locked) && !S.index;
     S.selected = id;
     S.stage = null;
@@ -534,7 +562,7 @@
   // whatever opened it. Closing an agent or stage drawer also ends that selection.
   function setDrawer(open, opts) {
     const dr = $('#drawer');
-    if (!dr) return;
+    if (!dr || (EMBED && open)) return; // embed mode: the host shows results and agents natively
     const was = S.drawer;
     S.drawer = !!open;
     dr.classList.toggle('open', S.drawer);
@@ -676,7 +704,7 @@
       // it arrived while the page was open: the drawer slides out over the office (the drawing keeps its size);
       // a result that was already there on opening only gets its card in the title block
       // the replayed demo (?demo=1, e.g. the website) keeps its wrap party in view: card only
-      const due = !S.demo && M.drawerDue(S.autoRun, ri.key) && !S.seenKeys.has(ri.key);
+      const due = !S.demo && !EMBED && M.drawerDue(S.autoRun, ri.key) && !S.seenKeys.has(ri.key);
       S.autoRun = ri.key; S.seenKeys.add(ri.key);
       if (due) {
         // already open on the result: jump to the new round; open on an agent: the person is busy there, the card waits
@@ -1365,6 +1393,7 @@
     (el.tagName === 'INPUT' && !/^(radio|checkbox|button|submit|reset|range|color|file)$/i.test(el.type || '')));
   const nextUp = new I.NextUp(), nextIdle = new I.NextUp();
   function onKey(e) {
+    if (EMBED) return; // embed mode: the host app owns the keyboard
     const t = e.target;
     if (t && t.id === 'cf-text' && e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); sendChat(); return; }
     if (e.key === 'Escape') {
@@ -1454,7 +1483,7 @@
   function notifyTick() {
     const v = V(), waitingIds = new Set(v.waiting.map((w) => w.id));
     Object.keys(S.osNotes).forEach((id) => { if (!waitingIds.has(id)) { try { S.osNotes[id].close(); } catch (e) { /* gone */ } delete S.osNotes[id]; } });
-    if (!notifySupported() || !S.notify) return;
+    if (!notifySupported() || !S.notify || EMBED) return; // embed mode: the host app notifies
     const s = struct();
     v.waiting.forEach((w) => {
       const key = I.waitKey(w.id, w.since);

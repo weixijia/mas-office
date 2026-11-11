@@ -280,6 +280,14 @@ In Claude Code, choose **"Yes, I trust this folder"** when you first open it; on
 
 `mas-office <command> --help` lists each command's options. Without a runtime, `serve` leaves commands for an agent in `<project>/mas/commands/<agentId>.jsonl`, for a file-only assistant to pick up.
 
+## Mac app
+
+A native Mac app runs the same engine with a native inbox, agent page, result and settings, a menu bar item and notifications. Build it from a clone with `apps/mac/scripts/build-app.sh`; see [`apps/mac/README.md`](apps/mac/README.md). It is signed ad hoc, not notarised.
+
+![The Mac app's main window](docs/assets/mac-app.png)
+
+*Rendered from a fixture with made-up data.*
+
 ## Limits today
 
 - No raw-terminal tab and no terminal take-over yet; they are planned as the optional `mas-office-terminal` package. Attaching the official Codex TUI to a role's thread is not supported yet.

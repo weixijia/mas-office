@@ -657,6 +657,16 @@ body.sdk .needs { margin-left: auto; } body.sdk .needs[hidden] + .sb-toggle { ma
   body.drawer-open { overflow: hidden; }
 }
 
+/* ---------- embed mode (?view=office): the drawing alone, filling the host's view (Mac app, iframe) ---------- */
+/* Fixed per mode, like the status band: nothing that happens in the run can resize the office. */
+body.embed { display: grid; grid-template-rows: minmax(0, 1fr); height: 100%; overflow: hidden; }
+body.embed .rule, body.embed .side, body.embed .status, body.embed .drawer, body.embed .pointers,
+body.embed .claim-card, body.embed .keys { display: none !important; }
+body.embed .sheet { display: grid; grid-template-columns: minmax(0, 1fr); }
+body.embed .stage { padding: 12px 16px; }
+body.embed .drawing-host { margin-top: 0; }
+body.embed.embed-clear, body.embed.embed-clear .sheet, body.embed.embed-clear .stage { background: transparent; }
+
 @keyframes sip { 0%, 74%, 100% { transform: rotate(-40deg); } 80%, 88% { transform: rotate(-100deg); } }
 @keyframes sipcup { 0%, 74%, 100% { transform: none; } 80%, 88% { transform: translate(var(--sipx), var(--sipy)); } }
 @keyframes cheer-l { 0%, 100% { transform: rotate(0); } 40%, 60% { transform: rotate(160deg); } }

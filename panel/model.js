@@ -754,6 +754,14 @@
   // home/projects.js: several MAS in one workspace. Folders must be plain slugs; the first entry for a folder wins;
   // a valid `current` is kept even before its entry is written. Returns null when there is no home file (legacy layout).
   const FOLDER_RE = /^[a-z0-9][a-z0-9-]{0,63}$/;
+  // ?view=office (embed mode): null when off, else {project, clear}. `project` is a folder name to draw instead of
+  // home/projects' current one (anything else is ignored); `bg=transparent` lets the host's background show through.
+  function embedOptions(search) {
+    const p = new URLSearchParams(typeof search === 'string' ? search : '');
+    if (p.get('view') !== 'office') return null;
+    const project = p.get('project');
+    return { project: project && FOLDER_RE.test(project) ? project : null, clear: p.get('bg') === 'transparent' };
+  }
   function normalizeHome(raw) {
     if (!raw || typeof raw !== 'object') return null;
     const seen = new Set(), projects = [];
@@ -1052,7 +1060,7 @@
     normalizeBoard, backendLabel, reviewPairs, toolInfo, ledgerLine, usageInfo, usageTotal,
     phaseLine, activityFor, clampProgress, formatElapsed, formatClock, teamProgress, statusKey,
     buildDemoScript, demoStatusesAt, demoWork,
-    PLAN, planOffice, gridRoute, polyXRange, convexHull, layoutLabels, leaderPath, pathsCross, roleBoxes, leaderCrossings, pathLength, polysOverlap, letterRooms, normalizeWork, resultRounds, drawerDue, normalizeHome, headline, seededRandom, loungeLayout, pickStation, partyDue, figBox, boxesOverlap
+    PLAN, planOffice, gridRoute, polyXRange, convexHull, layoutLabels, leaderPath, pathsCross, roleBoxes, leaderCrossings, pathLength, polysOverlap, letterRooms, normalizeWork, resultRounds, drawerDue, normalizeHome, embedOptions, headline, seededRandom, loungeLayout, pickStation, partyDue, figBox, boxesOverlap
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof window !== 'undefined') window.MASModel = api;

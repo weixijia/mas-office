@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Added
+
+- **A native Mac app** (`apps/mac`, SwiftUI and AppKit): inbox, agent page with transcript and chat, result with checked claims, run controls, team design, setup check, settings, a menu bar item, notifications with Allow once / Deny, and the Dock badge are native; the office drawing is the panel in a web view. It starts `mas-office up` itself, with the Node you have installed. Built with `apps/mac/scripts/build-app.sh`; signed ad hoc.
+- `mas-office up --json`: one JSON line with the address and token for a program that embeds the engine; it stops when its stdin closes.
+- Panel embed mode `?view=office`: only the office drawing, with `window.MASEmbed` for a host to select agents.
+- `mas-office up` indexes project folders that hold a team design but are not in `home/projects` yet.
+
 ## [0.3.0] — 2026-11-10
 
 MAS Office now runs the team, not only shows it. Every role of a locked design is a real Claude Code or Codex session on your computer, signed in by you, and the panel is where you answer and steer it.

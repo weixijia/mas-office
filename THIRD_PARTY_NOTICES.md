@@ -56,3 +56,10 @@ Copyright (c) 2025 Paperclip AI
 - Source files: `src/inference/desktopNotifier.js`
 - License: MIT
 Copyright (c) 2026 KbWen
+
+## deepseek-ai/deepseek-harness @ fcc0ad462172522aaf5c93a7b2e01f6b9f0b0159
+- Files in MAS Office: `apps/mac/Sources/MASOfficeKit/System/ShellEnvironment.swift`
+- Source files: `apps/desktop/src/login-shell-environment.ts`
+- License: MIT
+- Changes: ported from TypeScript to Swift; only a minimal set of variables is passed on.
+Copyright (c) 2026 DeepSeek

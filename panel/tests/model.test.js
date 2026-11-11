@@ -807,5 +807,64 @@ test('the panel loads the 0.2 modules with plain script tags, and reads 0.2 snap
   assert.doesNotMatch(app, /token\(\)[^;\n]*(innerHTML|textContent|href|src)/, 'the token never reaches the page');
 });
 
+/* ---------- embed mode (?view=office) for a host app ---------- */
+test('embed options: only ?view=office turns it on; project is a folder name; bg=transparent', () => {
+  assert.strictEqual(M.embedOptions(''), null);
+  assert.strictEqual(M.embedOptions('?demo=1'), null, 'the demo is not embed mode');
+  assert.strictEqual(M.embedOptions('?view=sheet'), null);
+  assert.deepStrictEqual(M.embedOptions('?view=office'), { project: null, clear: false });
+  assert.deepStrictEqual(M.embedOptions('?view=office&project=deals&bg=transparent'), { project: 'deals', clear: true });
+  ['../x', 'Deals', '-x', 'a/b', '%2e%2e', 'a'.repeat(65), ''].forEach((p) =>
+    assert.strictEqual(M.embedOptions('?view=office&project=' + encodeURIComponent(p)).project, null, p));
+  assert.strictEqual(M.embedOptions(null), null);
+});
+
+test('embed mode: no keys, no drawer, no auto-opened result, selection goes to the host', () => {
+  const app = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
+  assert.match(app, /function onKey\(e\) \{\n\s+if \(EMBED\) return;/, 'keyboard shortcuts are off');
+  assert.match(app, /if \(!dr \|\| \(EMBED && open\)\) return;/, 'the drawer never opens');
+  assert.match(app, /const due = !S\.demo && !EMBED && /, 'a new result does not slide a drawer out');
+  assert.match(app, /if \(EMBED\) \{[^}]*embedPost\(\{ type: 'select', agentId: S\.selected \}\)/, 'a click selects in the host');
+  const css = fs.readFileSync(path.join(__dirname, '..', 'style.css'), 'utf8');
+  ['.rule', '.side', '.status', '.drawer', '.pointers', '.keys'].forEach((sel) => assert.ok(css.includes('body.embed ' + sel), sel + ' is hidden'));
+  assert.doesNotMatch(css, /body\.embed[^{]*drawer-open/, 'nothing in the run restyles the embedded drawing');
+});
+
+test('embed mode: MASEmbed drives the drawing without echoing, clicks are posted to the host', () => {
+  const vm = require('vm');
+  const source = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
+  const code = source.slice(source.indexOf('  function embedPost(msg) {'), source.indexOf('  function renderOffice() {'));
+  const run = (embed, parent) => {
+    // Messages are built in another realm: compare them as JSON.
+    const posted = [], framed = [], office = { sel: undefined, setSelected(id) { this.sel = id; } };
+    const window = { webkit: { messageHandlers: { masOffice: { postMessage: (m) => posted.push(JSON.parse(JSON.stringify(m))) } } } };
+    window.parent = parent ? { postMessage: (m, origin) => framed.push([JSON.parse(JSON.stringify(m)), origin]) } : window;
+    const ctx = { EMBED: embed, S: { selected: null, stage: null, loadedOnce: true }, office, window, renders: 0, Object };
+    ctx.renderOffice = () => { ctx.renders++; };
+    vm.runInNewContext(code + '\nthis.embedPost = embedPost;', ctx);
+    return { ctx, posted, framed, office, window };
+  };
+  const off = run(null, false);
+  assert.strictEqual(off.window.MASEmbed, undefined, 'normal mode exposes nothing');
+  assert.deepStrictEqual(off.posted, []);
+  off.ctx.embedPost({ type: 'select', agentId: 'x' });
+  assert.deepStrictEqual(off.posted, [], 'normal mode posts nothing');
+
+  const on = run({ project: 'deals', clear: false }, true);
+  assert.deepStrictEqual(on.posted, [{ type: 'ready' }], 'ready once, to the native handler');
+  assert.deepStrictEqual(on.framed, [[{ type: 'ready' }, '*']], 'and to an iframe parent');
+  on.window.MASEmbed.select('retail-finder');
+  assert.strictEqual(on.office.sel, 'retail-finder');
+  assert.strictEqual(on.ctx.S.selected, 'retail-finder');
+  on.window.MASEmbed.select({ evil: 1 });
+  assert.strictEqual(on.office.sel, null, 'anything but an id clears the selection');
+  on.window.MASEmbed.highlightStage('B');
+  assert.strictEqual(on.ctx.S.stage, 'B');
+  assert.strictEqual(on.posted.length, 1, 'the host\'s own calls are not echoed back');
+  assert.ok(Object.isFrozen(on.window.MASEmbed));
+  on.ctx.embedPost({ type: 'select', agentId: 'lead' });
+  assert.deepStrictEqual(on.posted[1], { type: 'select', agentId: 'lead' });
+});
+
 console.log('\n' + passed + ' passed, ' + failed + ' failed');
 process.exit(failed ? 1 : 0);

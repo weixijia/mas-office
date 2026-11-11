@@ -280,6 +280,14 @@ npx mas-office init --kit my-team
 
 `mas-office <command> --help` 列出每个命令的选项。没有 runtime 时，`serve` 把发给 agent 的命令留在 `<project>/mas/commands/<agentId>.jsonl`，供只读写文件的助手取走。
 
+## Mac app
+
+原生 Mac app 运行同一个 engine，收件箱、agent 页、结果和设置都是原生界面，还有菜单栏图标和系统通知。在 clone 下来的仓库里用 `apps/mac/scripts/build-app.sh` 构建，详见 [`apps/mac/README.md`](apps/mac/README.md)。目前是 ad-hoc 签名，未公证。
+
+![Mac app 主窗口](docs/assets/mac-app.png)
+
+*由 fixture 渲染，数据是编的。*
+
 ## 目前的限制
 
 - 还没有原始终端 tab，也不能接手终端；计划做成可选包 `mas-office-terminal`。还不支持把官方 Codex TUI 接到角色的 thread 上。

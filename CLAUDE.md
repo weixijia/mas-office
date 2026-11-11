@@ -88,6 +88,7 @@ Source: `references/docs/claude__legal-and-compliance.md`; summary in `docs/rese
 | `packages/node/src/verify/` | Claims, source cards, URL health, verdict merging, checker prompts. Pure except the URL health check. |
 | `packages/runtime/` | npm package `mas-office-runtime`: Claude Code (Agent SDK) and Codex (`codex app-server`) adapters, the engine, `mas-office up`. Depends on `mas-office` and `@anthropic-ai/claude-agent-sdk`. |
 | `packages/python/` | Python SDK and framework integrations. |
+| `apps/mac/` | The native Mac app (SwiftPM, no Xcode project): `MASOfficeKit` (models, client, store, engine control), `MASOffice` (views), `MASOfficeChecks` (checks). Built with `apps/mac/scripts/build-app.sh`. |
 | `panel/` | The office panel: `model.js` holds pure functions, `office.js` draws, `app.js` runs the UI. Plain HTML/JS. |
 | `kit/` | No-code `AGENTS.md` kit. Its `CLAUDE.md` is for kit users, not for this repo. |
 | `examples/`, `site/` | Example workspaces and the project website. |
@@ -104,6 +105,7 @@ Source: `references/docs/claude__legal-and-compliance.md`; summary in `docs/rese
   - `npm test` (`mas-office`, `mas-office-runtime` and the panel tests)
   - `PYTHONPATH=packages/python/src python -m pytest packages/python -q`
   - `PYTHONPATH=packages/python/src:eval python -m pytest eval -q`
+  - for `apps/mac`: `swift build --package-path apps/mac`, `swift run --package-path apps/mac MASOfficeChecks`, `apps/mac/scripts/integration-check.sh`
   - `node packages/node/bin/mas-office.js validate examples`
   - `git diff --check`
 - Commits use DCO (`git commit -s`). Release steps are in `.omc/RELEASE_RULE.md` (local) and `development_log.md` §6.

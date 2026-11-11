@@ -17,3 +17,7 @@ build/
 # Third-party reference code (see references/README.md); fetched by references/fetch.mjs
 /references/repos/
 /references/docs/
+
+# macOS app (apps/mac): SwiftPM build products and the assembled .app / .dmg
+.build/
+apps/mac/build/

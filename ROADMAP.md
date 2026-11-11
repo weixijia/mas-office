@@ -113,7 +113,7 @@ MAS Office is about the **team**, and we put our effort into five things those t
 - [ ] A user study of supervising 4, 8 and 12 agents:
   - compared conditions: plain terminals, the office, and the office with a Lead;
   - measures: time to notice a blocked agent, context switches, situation awareness, trust calibration.
-- [ ] A desktop app around the panel and the daemon.
+- [x] A desktop app: a native Mac app (`apps/mac`). Not yet signed with a Developer ID or notarised.
 - [ ] Publish the evaluation set and the results.
 
 ## Producers and protocol (any time, contributions welcome)

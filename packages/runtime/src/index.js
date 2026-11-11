@@ -118,10 +118,14 @@ export function createRuntime({ workspace, server, backends, probes = {}, option
 
 /**
  * `mas-office up`: serve the workspace with a runtime attached.
+ * `printUrl: false` leaves out the panel link with its token (a parent process that read the token from
+ * `--json` mode passes it on itself; the token must not land in a log).
  * @param {{workspace: string, port?: number, host?: string, maxParallel?: number, startServer: Function,
- *   backends?: object, out?: (line: string) => void}} options
+ *   backends?: object, out?: (line: string) => void, printUrl?: boolean}} options
  */
-export async function up({ workspace, port = 4747, host = '127.0.0.1', maxParallel = 3, startServer, backends, out = console.log }) {
+export async function up({
+  workspace, port = 4747, host = '127.0.0.1', maxParallel = 3, startServer, backends, out = console.log, printUrl = true,
+}) {
   const all = backends ?? { 'claude-code': createClaudeBackend(), codex: createCodexBackend() };
   const probes = await probeBackends(all);
   const server = await startServer({ workspace, port, host });
@@ -142,8 +146,12 @@ export async function up({ workspace, port = 4747, host = '127.0.0.1', maxParall
     if (r.resumed) out(`  ${name}: a run was cut off. The panel asks whether to continue it.`);
     else if (r.expired) out(`  ${name}: ${r.expired} request(s) from a stopped session were closed.`);
   }
-  out(`  Panel: ${server.url}/office/?token=${server.token}`);
-  out('         (the token lets this browser answer requests and message agents; keep the link to yourself)');
+  if (printUrl) {
+    out(`  Panel: ${server.url}/office/?token=${server.token}`);
+    out('         (the token lets this browser answer requests and message agents; keep the link to yourself)');
+  } else {
+    out(`  Serving on ${server.url}`);
+  }
   return {
     server,
     runtime,

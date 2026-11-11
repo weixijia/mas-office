@@ -143,3 +143,88 @@ test('demo command serves, plays and exits with --exit', async () => {
   fs.rmSync(workspace, { recursive: true, force: true });
   assert.equal((await runCli(['demo', '--speed', '0'])).code, 2);
 });
+
+/* ---------- up --json: the handshake a parent process (the Mac app) reads ---------- */
+async function startJsonUp(argv, { printed = [] } = {}) {
+  const { PassThrough } = await import('node:stream');
+  const { upCommand } = await import('../../src/cli/commands/up.js');
+  const ws = tmpDir();
+  const lines = [];
+  const errs = [];
+  const app = { closed: 0 };
+  const fake = {
+    async up({ out, printUrl, maxParallel }) {
+      out(printUrl ? 'Panel: http://127.0.0.1:1/office/?token=secret-token' : 'Serving on http://127.0.0.1:1');
+      printed.push(printUrl);
+      return {
+        server: { url: 'http://127.0.0.1:1', port: 1, token: 'secret-token' },
+        runtime: { info: () => ({ backends: { 'claude-code': { available: true, loggedIn: false } }, maxParallel }) },
+        probes: { 'claude-code': { available: true, loggedIn: false, detail: 'probe only' } },
+        close: async () => { app.closed += 1; },
+      };
+    },
+  };
+  const stdin = new PassThrough();
+  let exited;
+  const exit = new Promise((resolve) => { exited = resolve; });
+  const before = { SIGINT: process.listeners('SIGINT'), SIGTERM: process.listeners('SIGTERM') };
+  upCommand([ws, ...argv], { out: (l) => lines.push(String(l)), err: (l) => errs.push(String(l)), runtime: fake, stdin, exit: exited });
+  const cleanup = () => {
+    for (const sig of ['SIGINT', 'SIGTERM']) for (const l of process.listeners(sig)) if (!before[sig].includes(l)) process.off(sig, l);
+  };
+  for (let i = 0; i < 200 && !errs.some((l) => /stop/.test(l)) && !lines.some((l) => /stop/.test(l)); i++) await new Promise((r) => setTimeout(r, 5));
+  return { lines, errs, stdin, exit, app, cleanup };
+}
+
+test('up --json prints exactly one handshake line on stdout and keeps the token out of the text', async () => {
+  const printed = [];
+  const t = await startJsonUp(['--json', '--port', '0', '--max-parallel', '2'], { printed });
+  try {
+    assert.equal(t.lines.length, 1, 'stdout is the handshake only');
+    assert.deepEqual(JSON.parse(t.lines[0]), {
+      url: 'http://127.0.0.1:1', port: 1, token: 'secret-token', maxParallel: 2,
+      backends: { 'claude-code': { available: true, loggedIn: false } },
+    });
+    assert.deepEqual(printed, [false], 'the runtime is told not to print the panel link');
+    assert.ok(t.errs.length > 0, 'text for people goes to stderr');
+    assert.ok(t.errs.every((l) => !l.includes('secret-token')), 'the token never reaches stderr');
+  } finally {
+    t.stdin.end();
+    await t.exit;
+    t.cleanup();
+  }
+});
+
+test('up --json shuts down cleanly when its stdin closes', async () => {
+  const t = await startJsonUp(['--json']);
+  try {
+    assert.equal(t.app.closed, 0);
+    t.stdin.end();
+    assert.equal(await t.exit, 0, 'exit code 0');
+    assert.equal(t.app.closed, 1, 'the runtime and server were closed once');
+    t.stdin.destroy();
+    await new Promise((r) => setTimeout(r, 10));
+    assert.equal(t.app.closed, 1, 'end and close together still close once');
+  } finally {
+    t.cleanup();
+  }
+});
+
+test('up without --json keeps printing for people on stdout and ignores stdin', async () => {
+  const t = await startJsonUp([]);
+  try {
+    assert.ok(t.lines.some((l) => l.includes('Panel: ')), 'the panel link is printed as before');
+    assert.ok(t.lines.every((l) => !l.startsWith('{')), 'no handshake line');
+    t.stdin.end();
+    await new Promise((r) => setTimeout(r, 20));
+    assert.equal(t.app.closed, 0, 'stdin closing does not stop the human mode');
+  } finally {
+    t.cleanup();
+  }
+});
+
+test('handshake falls back to the probes when the runtime has no info()', async () => {
+  const { handshake } = await import('../../src/cli/commands/up.js');
+  const app = { server: { url: 'u', port: 2, token: 't' }, probes: { codex: { available: false } } };
+  assert.deepEqual(handshake(app, 3), { url: 'u', port: 2, token: 't', backends: { codex: { available: false } }, maxParallel: 3 });
+});

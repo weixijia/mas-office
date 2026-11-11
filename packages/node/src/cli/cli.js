@@ -36,7 +36,7 @@ Creates a temporary workspace, serves it and plays a simulated 5-agent team
   --exit         Stop the server when the run finishes
   --speed <x>    Playback speed multiplier (default 1)`,
   up: `Usage: mas-office up [workspace=.] [--project <folder>] [--task "<text>"] [--exit]
-                     [--port 4747] [--host 127.0.0.1] [--max-parallel 3] [--open]
+                     [--port 4747] [--host 127.0.0.1] [--max-parallel 3] [--open] [--json]
 
 Runs the team you designed and locked. Every role is a real Claude Code or Codex
 session on this computer, signed in by you (claude auth login / codex login).
@@ -50,7 +50,10 @@ agent's transcript and chat box. Needs the runtime: npm install mas-office-runti
   --exit              With --task: stop when the run ends (exit 1 if it failed)
   --max-parallel <n>  Sessions working at once, 1-12 (default 3; each uses your plan)
   --port, --host      As for serve
-  --open              Open the panel in the browser`,
+  --open              Open the panel in the browser
+  --json              For programs that embed the runtime: print one JSON line
+                      {url, port, token, backends, maxParallel} when ready, send
+                      everything else to stderr, and stop when stdin closes`,
   serve: `Usage: mas-office serve [workspace=.] [--port 4747] [--host 127.0.0.1] [--open]
 
 Serves the panel at /office/, the workspace files read-only, and the API:
